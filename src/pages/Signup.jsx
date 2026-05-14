@@ -34,7 +34,7 @@ const Signup = () => {
       setError('')
 
       await axios.post(
-        'http://localhost:5000/api/auth/register',
+        'https://lab-project-be.vercel.app/api/auth/register',
         {
           name: formData.name,
           email: formData.email,

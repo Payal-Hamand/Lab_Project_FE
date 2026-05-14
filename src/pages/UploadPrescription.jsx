@@ -11,7 +11,7 @@ const UploadPrescription = () => {
     const formData = new FormData()
     formData.append('prescription', file)
 
-    await axios.post('http://localhost:5000/api/upload', formData)
+    await axios.post('https://lab-project-be.vercel.app/api/upload', formData)
 
     navigate('/compare')
   }

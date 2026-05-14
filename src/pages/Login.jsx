@@ -28,7 +28,7 @@ const Login = () => {
       setError('')
 
       const { data } = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        'https://lab-project-be.vercel.app/api/auth/login',
         formData
       )
 
