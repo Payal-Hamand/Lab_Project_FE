@@ -333,7 +333,7 @@ const VerifyReport = () => {
                     <div className="mt-10 text-center">
 
                       <a
-                        href={`https://labtest-cyan.vercel.app/${reportData.report}`}
+                        href={`https://lab-project-be.vercel.app/${reportData.report}`}
                         target="_blank"
                         rel="noreferrer"
                       >
