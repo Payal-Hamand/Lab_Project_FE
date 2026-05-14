@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: 'https://labtest-cyan.vercel.app/api',
+  baseURL: 'https://lab-project-be.vercel.app/api',
 })
 
 API.interceptors.request.use((req) => {
