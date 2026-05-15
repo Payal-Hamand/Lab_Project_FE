@@ -246,483 +246,621 @@ const AdminDashboard = () => {
       <Navbar />
 
       {/* Header */}
+      {/* Header */}
 
-      <div className="bg-blue-950 py-16">
+<div className="bg-blue-950 pt-6 pb-10 md:pt-10 md:pb-14">
 
-        <div className="max-w-7xl mx-auto px-6 text-white">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 text-white">
 
-          <h1 className="text-5xl font-bold">
+    {/* Badge */}
 
-            Admin Dashboard
+    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-2 rounded-full text-xs sm:text-sm">
 
-          </h1>
+      <div className="w-2 h-2 rounded-full bg-green-400"></div>
 
-          <p className="mt-4 text-blue-100 text-lg">
+      Admin Management Portal
 
-            Manage tests, packages &
-            staff
+    </div>
 
-          </p>
+    {/* Heading */}
 
-        </div>
+    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-5 leading-tight">
 
-      </div>
+      Admin Dashboard
 
-      {/* Main */}
+    </h1>
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
+    {/* Subtitle */}
+
+    <p className="text-sm sm:text-base lg:text-lg text-blue-100 mt-4 leading-7 max-w-2xl">
+
+      Manage tests, packages, staff,
+      bookings and laboratory operations.
+
+    </p>
+
+  </div>
+
+</div>
+
+{/* Main */}
+
+<div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-10">
 
         {/* Stats */}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
 
-          {/* Card */}
+  {/* Total Bookings */}
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm">
+  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
 
-            <div className="flex justify-between items-center">
+    <div className="flex items-center justify-between">
 
-              <div>
+      <div>
 
-                <p className="text-gray-500">
-                  Total Bookings
-                </p>
+        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
 
-                <h2 className="text-4xl font-bold mt-3">
+          Bookings
 
-                  {bookings.length}
+        </p>
 
-                </h2>
+        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-blue-950">
 
-              </div>
+          {bookings.length}
 
-              <div className="bg-blue-100 text-blue-600 p-5 rounded-2xl text-3xl">
+        </h2>
 
-                <FaClipboardList />
+      </div>
 
-              </div>
+      <div className="bg-blue-100 text-blue-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
 
-            </div>
+        <FaClipboardList />
 
-          </div>
+      </div>
 
-          {/* Card */}
+    </div>
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm">
+  </div>
 
-            <div className="flex justify-between items-center">
+  {/* Tests */}
 
-              <div>
+  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
 
-                <p className="text-gray-500">
-                  Total Tests
-                </p>
+    <div className="flex items-center justify-between">
 
-                <h2 className="text-4xl font-bold mt-3">
+      <div>
 
-                  {tests.length}
+        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
 
-                </h2>
+          Tests
 
-              </div>
+        </p>
 
-              <div className="bg-green-100 text-green-600 p-5 rounded-2xl text-3xl">
+        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-green-600">
 
-                <FaFlask />
+          {tests.length}
 
-              </div>
+        </h2>
 
-            </div>
+      </div>
 
-          </div>
+      <div className="bg-green-100 text-green-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
 
-          {/* Card */}
+        <FaFlask />
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm">
+      </div>
 
-            <div className="flex justify-between items-center">
+    </div>
 
-              <div>
+  </div>
 
-                <p className="text-gray-500">
-                  Pending Reports
-                </p>
+  {/* Pending */}
 
-                <h2 className="text-4xl font-bold mt-3">
+  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
 
-                  {
-                    bookings.filter(
-                      item =>
-                        item.status ===
-                        'Pending'
-                    ).length
-                  }
+    <div className="flex items-center justify-between">
 
-                </h2>
+      <div>
 
-              </div>
+        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
 
-              <div className="bg-yellow-100 text-yellow-600 p-5 rounded-2xl text-3xl">
+          Pending
 
-                <FaVial />
+        </p>
 
-              </div>
+        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-yellow-600">
 
-            </div>
+          {
+            bookings.filter(
+              item =>
+                item.status ===
+                'Pending'
+            ).length
+          }
 
-          </div>
+        </h2>
 
-          {/* Card */}
+      </div>
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm">
+      <div className="bg-yellow-100 text-yellow-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
 
-            <div className="flex justify-between items-center">
+        <FaVial />
 
-              <div>
+      </div>
 
-                <p className="text-gray-500">
-                  Completed
-                </p>
+    </div>
 
-                <h2 className="text-4xl font-bold mt-3">
+  </div>
 
-                  {
-                    bookings.filter(
-                      item =>
-                        item.status ===
-                        'Completed'
-                    ).length
-                  }
+  {/* Completed */}
 
-                </h2>
+  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
 
-              </div>
+    <div className="flex items-center justify-between">
 
-              <div className="bg-purple-100 text-purple-600 p-5 rounded-2xl text-3xl">
+      <div>
 
-                <FaBoxOpen />
+        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
 
-              </div>
+          Completed
 
-            </div>
+        </p>
 
-          </div>
+        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-purple-600">
 
-        </div>
+          {
+            bookings.filter(
+              item =>
+                item.status ===
+                'Completed'
+            ).length
+          }
+
+        </h2>
+
+      </div>
+
+      <div className="bg-purple-100 text-purple-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
+
+        <FaBoxOpen />
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
         {/* Action Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-10">
 
-        <div className="grid md:grid-cols-3 gap-6 mt-12">
+  {/* Create Test */}
 
-          {/* Create Test */}
+  <button
+    onClick={() =>
+      setActivePanel('test')
+    }
+    className="bg-white hover:bg-blue-600 hover:text-white transition rounded-2xl md:rounded-[30px] p-4 md:p-7 shadow-sm text-left group border border-gray-100 hover:shadow-xl"
+  >
 
-          <button
-            onClick={() =>
-              setActivePanel('test')
-            }
-            className="bg-white hover:bg-blue-600 hover:text-white transition rounded-[30px] shadow-sm p-8 text-left group"
-          >
+    <div className="flex items-start justify-between">
 
-            <div className="bg-blue-100 group-hover:bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl text-blue-600 group-hover:text-white">
+      <div>
 
-              <FaFlask />
+        <h2 className="text-lg md:text-2xl font-bold text-blue-950 group-hover:text-white transition">
 
-            </div>
+          Create Test
 
-            <h2 className="text-2xl font-bold mt-6">
+        </h2>
 
-              Create Test
+        <p className="mt-2 text-xs md:text-sm opacity-80 leading-6">
 
-            </h2>
+          Add new laboratory tests
 
-            <p className="mt-3 opacity-80">
+        </p>
 
-              Add new lab tests
+      </div>
 
-            </p>
+      <div className="bg-blue-100 group-hover:bg-white/20 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl text-blue-600 group-hover:text-white transition shrink-0">
 
-          </button>
+        <FaFlask />
 
-          {/* Create Package */}
+      </div>
 
-          <button
-            onClick={() =>
-              setActivePanel(
-                'package'
-              )
-            }
-            className="bg-white hover:bg-purple-600 hover:text-white transition rounded-[30px] shadow-sm p-8 text-left group"
-          >
+    </div>
 
-            <div className="bg-purple-100 group-hover:bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl text-purple-600 group-hover:text-white">
+  </button>
 
-              <FaBoxOpen />
+  {/* Create Package */}
 
-            </div>
+  <button
+    onClick={() =>
+      setActivePanel('package')
+    }
+    className="bg-white hover:bg-purple-600 hover:text-white transition rounded-2xl md:rounded-[30px] p-4 md:p-7 shadow-sm text-left group border border-gray-100 hover:shadow-xl"
+  >
 
-            <h2 className="text-2xl font-bold mt-6">
+    <div className="flex items-start justify-between">
 
-              Create Package
+      <div>
 
-            </h2>
+        <h2 className="text-lg md:text-2xl font-bold text-blue-950 group-hover:text-white transition">
 
-            <p className="mt-3 opacity-80">
+          Create Package
 
-              Add health packages
+        </h2>
 
-            </p>
+        <p className="mt-2 text-xs md:text-sm opacity-80 leading-6">
 
-          </button>
+          Add health packages
 
-          {/* Create Assistant */}
+        </p>
 
-          <button
-            onClick={() =>
-              setActivePanel(
-                'assistant'
-              )
-            }
-            className="bg-white hover:bg-green-600 hover:text-white transition rounded-[30px] shadow-sm p-8 text-left group"
-          >
+      </div>
 
-            <div className="bg-green-100 group-hover:bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl text-green-600 group-hover:text-white">
+      <div className="bg-purple-100 group-hover:bg-white/20 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl text-purple-600 group-hover:text-white transition shrink-0">
 
-              <FaUserPlus />
+        <FaBoxOpen />
 
-            </div>
+      </div>
 
-            <h2 className="text-2xl font-bold mt-6">
+    </div>
 
-              Create Assistant
+  </button>
 
-            </h2>
+  {/* Create Assistant */}
 
-            <p className="mt-3 opacity-80">
+  <button
+    onClick={() =>
+      setActivePanel('assistant')
+    }
+    className="bg-white hover:bg-green-600 hover:text-white transition rounded-2xl md:rounded-[30px] p-4 md:p-7 shadow-sm text-left group border border-gray-100 hover:shadow-xl"
+  >
 
-              Add lab staff
+    <div className="flex items-start justify-between">
 
-            </p>
+      <div>
 
-          </button>
+        <h2 className="text-lg md:text-2xl font-bold text-blue-950 group-hover:text-white transition">
 
-        </div>
+          Create Assistant
+
+        </h2>
+
+        <p className="mt-2 text-xs md:text-sm opacity-80 leading-6">
+
+          Add laboratory staff
+
+        </p>
+
+      </div>
+
+      <div className="bg-green-100 group-hover:bg-white/20 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl text-green-600 group-hover:text-white transition shrink-0">
+
+        <FaUserPlus />
+
+      </div>
+
+    </div>
+
+  </button>
+
+</div>
+
 
         {/* Bookings */}
 
-        <div className="bg-white rounded-[35px] shadow-sm mt-12 p-8 overflow-x-auto">
+<div className="bg-white rounded-2xl md:rounded-[35px] shadow-sm mt-8 md:mt-12 p-4 md:p-8">
 
-          <h2 className="text-3xl font-bold text-blue-950 mb-8">
+  {/* Top */}
 
-            Recent Bookings
+  <div className="flex items-center justify-between mb-6">
 
-          </h2>
+    <div>
 
-          <table className="w-full">
+      <h2 className="text-2xl md:text-3xl font-bold text-blue-950">
 
-            <thead>
+        Recent Bookings
 
-              <tr className="border-b">
+      </h2>
 
-                <th className="text-left py-4">
-                  Patient
-                </th>
+      <p className="text-gray-500 text-sm mt-1">
 
-                <th className="text-left py-4">
-                  Test
-                </th>
+        Latest patient booking activity
 
-                <th className="text-left py-4">
-                  Date
-                </th>
+      </p>
 
-                <th className="text-left py-4">
-                  Status
-                </th>
+    </div>
 
-                <th className="text-left py-4">
-                  Lab Assistant
-                </th>
+  </div>
 
-              </tr>
+  {/* Table */}
 
-            </thead>
+  <div className="overflow-x-auto rounded-2xl border border-gray-100">
 
-            <tbody>
+    <table className="w-full min-w-[850px]">
 
-              {
-                bookings.map((item) => (
+      <thead className="bg-blue-50">
 
-                  <tr
-                    key={item._id}
-                    className="border-b"
-                  >
+        <tr>
 
-                    <td className="py-5">
+          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
 
-                      {
-                        item.patientName
-                      }
+            Patient
 
-                    </td>
+          </th>
 
-                    <td>
+          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
 
-                      {
-                        item?.test
-                          ?.title
-                      }
+            Test
 
-                    </td>
+          </th>
 
-                    <td>
+          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
 
-                      {
-                        item.bookingDate
-                      }
+            Date
 
-                    </td>
+          </th>
 
-                    <td>
+          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
 
-                      <span
-                        className={`px-4 py-2 rounded-full text-sm
-                        
-                        ${
-                          item.status ===
-                          'Completed'
-                            ? 'bg-green-100 text-green-600'
-                            : 'bg-yellow-100 text-yellow-600'
-                        }
-                        
-                        `}
-                      >
+            Status
 
-                        {item.status}
+          </th>
 
-                      </span>
+          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
 
-                    </td>
+            Lab Assistant
 
-                    <td>
+          </th>
 
-                      {
-                        item.assignedLabAssistant
-                          ? item
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {
+          bookings.map((item) => (
+
+            <tr
+              key={item._id}
+              className="border-b border-gray-100 hover:bg-gray-50 transition"
+            >
+
+              {/* Patient */}
+
+              <td className="px-6 py-5">
+
+                <div>
+
+                  <h3 className="font-semibold text-blue-950">
+
+                    {item.patientName}
+
+                  </h3>
+
+                  <p className="text-sm text-gray-500 mt-1">
+
+                    {item.phone}
+
+                  </p>
+
+                </div>
+
+              </td>
+
+              {/* Test */}
+
+              <td className="px-6 py-5">
+
+                <div className="font-medium text-gray-700">
+
+                  {item?.test?.title}
+
+                </div>
+
+              </td>
+
+              {/* Date */}
+
+              <td className="px-6 py-5">
+
+                <div className="text-gray-600 text-sm">
+
+                  {item.bookingDate}
+
+                </div>
+
+              </td>
+
+              {/* Status */}
+
+              <td className="px-6 py-5">
+
+                <span
+                  className={`px-4 py-2 rounded-full text-xs font-semibold
+                  
+                  ${
+                    item.status ===
+                    'Completed'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-yellow-100 text-yellow-700'
+                  }
+                  
+                  `}
+                >
+
+                  {item.status}
+
+                </span>
+
+              </td>
+
+              {/* Assistant */}
+
+              <td className="px-6 py-5">
+
+                {
+                  item.assignedLabAssistant
+                    ? (
+
+                      <div>
+
+                        <p className="font-medium text-gray-800">
+
+                          {
+                            item
                               .assignedLabAssistant
                               .name
-                          : 'Not Assigned'
-                      }
+                          }
 
-                    </td>
+                        </p>
 
-                  </tr>
-                ))
-              }
+                        <p className="text-sm text-gray-500 mt-1">
 
-            </tbody>
+                          {
+                            item
+                              .assignedLabAssistant
+                              .email
+                          }
 
-          </table>
+                        </p>
 
-        </div>
+                      </div>
+                    )
+                    : (
+
+                      <span className="text-gray-400 text-sm">
+
+                        Not Assigned
+
+                      </span>
+                    )
+                }
+
+              </td>
+
+            </tr>
+          ))
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
 
       </div>
 
       {/* Sliding Panel */}
 
 {
-  activePanel && (
+ activePanel && (
 
-    <div className="fixed inset-0 bg-black/40 z-50 flex justify-end">
+  <div className="fixed inset-0 bg-black/40 z-50 flex justify-end">
 
-      <div className="bg-white w-full max-w-2xl h-screen overflow-y-auto p-10">
+    <div className="bg-white w-full sm:w-[90%] md:max-w-2xl h-screen overflow-y-auto p-4 sm:p-6 md:p-10">
 
-        {/* Top */}
+      {/* Top */}
 
-        <div className="flex items-center justify-between border-b pb-5">
+      <div className="flex items-start justify-between border-b pb-4 md:pb-5">
 
-          <div>
+        <div>
 
-            <h2 className="text-4xl font-bold text-blue-950">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-950 leading-tight">
 
-              {
-                activePanel === 'test'
-                  ? 'Create Test'
-                  : activePanel === 'package'
-                  ? 'Create Package'
-                  : 'Create Lab Assistant'
-              }
-
-            </h2>
-
-            <p className="text-gray-500 mt-2">
-
-              Fill all required details
-
-            </p>
-
-          </div>
-
-          <button
-            onClick={() =>
-              setActivePanel('')
+            {
+              activePanel === 'test'
+                ? 'Create Test'
+                : activePanel === 'package'
+                ? 'Create Package'
+                : 'Create Lab Assistant'
             }
-            className="text-4xl text-gray-500 hover:text-red-500"
-          >
 
-            ×
+          </h2>
 
-          </button>
+          <p className="text-gray-500 mt-2 text-sm md:text-base">
+
+            Fill all required details
+
+          </p>
 
         </div>
 
-        {/* TEST FORM */}
+        <button
+          onClick={() =>
+            setActivePanel('')
+          }
+          className="text-3xl md:text-4xl leading-none text-gray-500 hover:text-red-500 transition shrink-0"
+        >
 
-        {
-          activePanel === 'test' && (
+          ×
 
-            <form
-              onSubmit={handleCreateTest}
-              className="mt-10 space-y-6"
-            >
+        </button>
+
+      </div>
+
+      {/* TEST FORM */}
+
+      {
+        activePanel === 'test' && (
+
+          <form
+            onSubmit={handleCreateTest}
+            className="mt-6 md:mt-10 space-y-5 md:space-y-6"
+          >
+
+            <div>
+
+              <label className="font-semibold text-sm md:text-base">
+
+                Test Title
+
+              </label>
+
+              <input
+                type="text"
+                name="title"
+                value={testData.title}
+                onChange={handleTestChange}
+                placeholder="CBC Test"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
+
+            </div>
+
+            <div>
+
+              <label className="font-semibold text-sm md:text-base">
+
+                Category
+
+              </label>
+
+              <input
+                type="text"
+                name="category"
+                value={testData.category}
+                onChange={handleTestChange}
+                placeholder="Blood Test"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
+
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
               <div>
 
-                <label className="font-semibold">
-                  Test Title
-                </label>
+                <label className="font-semibold text-sm md:text-base">
 
-                <input
-                  type="text"
-                  name="title"
-                  value={testData.title}
-                  onChange={handleTestChange}
-                  placeholder="CBC Test"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
-
-              </div>
-
-              <div>
-
-                <label className="font-semibold">
-                  Category
-                </label>
-
-                <input
-                  type="text"
-                  name="category"
-                  value={testData.category}
-                  onChange={handleTestChange}
-                  placeholder="Blood Test"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
-
-              </div>
-
-              <div>
-
-                <label className="font-semibold">
                   Price
+
                 </label>
 
                 <input
@@ -731,15 +869,17 @@ const AdminDashboard = () => {
                   value={testData.price}
                   onChange={handleTestChange}
                   placeholder="499"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
+                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
                 />
 
               </div>
 
               <div>
 
-                <label className="font-semibold">
+                <label className="font-semibold text-sm md:text-base">
+
                   Report Time
+
                 </label>
 
                 <input
@@ -748,103 +888,117 @@ const AdminDashboard = () => {
                   value={testData.reportTime}
                   onChange={handleTestChange}
                   placeholder="12 Hours"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
+                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
                 />
 
               </div>
 
+            </div>
+
+            <div>
+
+              <label className="font-semibold text-sm md:text-base">
+
+                Description
+
+              </label>
+
+              <textarea
+                rows="4"
+                name="description"
+                value={testData.description}
+                onChange={handleTestChange}
+                placeholder="Complete Blood Count Test"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
+
+            </div>
+
+            <div>
+
+              <label className="font-semibold text-sm md:text-base">
+
+                Image URL
+
+              </label>
+
+              <input
+                type="text"
+                name="image"
+                value={testData.image}
+                onChange={handleTestChange}
+                placeholder="https://image-url.com"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
+
+            </div>
+
+            <button className="bg-blue-600 hover:bg-blue-700 transition text-white w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg">
+
+              Create Test
+
+            </button>
+
+          </form>
+        )
+      }
+
+      {/* PACKAGE FORM */}
+
+      {
+        activePanel === 'package' && (
+
+          <form
+            onSubmit={handleCreatePackage}
+            className="mt-6 md:mt-10 space-y-5 md:space-y-6"
+          >
+
+            <div>
+
+              <label className="font-semibold text-sm md:text-base">
+
+                Package Title
+
+              </label>
+
+              <input
+                type="text"
+                name="title"
+                value={packageData.title}
+                onChange={handlePackageChange}
+                placeholder="Full Body Checkup"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
+
+            </div>
+
+            <div>
+
+              <label className="font-semibold text-sm md:text-base">
+
+                Category
+
+              </label>
+
+              <input
+                type="text"
+                name="category"
+                value={packageData.category}
+                onChange={handlePackageChange}
+                placeholder="Health Package"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
+
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
               <div>
 
-                <label className="font-semibold">
-                  Description
-                </label>
+                <label className="font-semibold text-sm md:text-base">
 
-                <textarea
-                  rows="4"
-                  name="description"
-                  value={testData.description}
-                  onChange={handleTestChange}
-                  placeholder="Complete Blood Count Test"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
-
-              </div>
-
-              <div>
-
-                <label className="font-semibold">
-                  Image URL
-                </label>
-
-                <input
-                  type="text"
-                  name="image"
-                  value={testData.image}
-                  onChange={handleTestChange}
-                  placeholder="https://image-url.com"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
-
-              </div>
-
-              <button className="bg-blue-600 hover:bg-blue-700 transition text-white w-full py-4 rounded-2xl font-semibold text-lg">
-
-                Create Test
-
-              </button>
-
-            </form>
-          )
-        }
-
-        {/* PACKAGE FORM */}
-
-        {
-          activePanel === 'package' && (
-
-            <form
-              onSubmit={handleCreatePackage}
-              className="mt-10 space-y-6"
-            >
-
-              <div>
-
-                <label className="font-semibold">
-                  Package Title
-                </label>
-
-                <input
-                  type="text"
-                  name="title"
-                  value={packageData.title}
-                  onChange={handlePackageChange}
-                  placeholder="Full Body Checkup"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
-
-              </div>
-
-              <div>
-
-                <label className="font-semibold">
-                  Category
-                </label>
-
-                <input
-                  type="text"
-                  name="category"
-                  value={packageData.category}
-                  onChange={handlePackageChange}
-                  placeholder="Health Package"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
-
-              </div>
-
-              <div>
-
-                <label className="font-semibold">
                   Price
+
                 </label>
 
                 <input
@@ -853,15 +1007,17 @@ const AdminDashboard = () => {
                   value={packageData.price}
                   onChange={handlePackageChange}
                   placeholder="1999"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
+                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
                 />
 
               </div>
 
               <div>
 
-                <label className="font-semibold">
+                <label className="font-semibold text-sm md:text-base">
+
                   Tests Included
+
                 </label>
 
                 <input
@@ -869,131 +1025,143 @@ const AdminDashboard = () => {
                   name="testsIncluded"
                   value={packageData.testsIncluded}
                   onChange={handlePackageChange}
-                  placeholder="CBC, Thyroid, Sugar"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
+                  placeholder="CBC, Thyroid"
+                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
                 />
 
               </div>
 
-              <div>
+            </div>
 
-                <label className="font-semibold">
-                  Description
-                </label>
+            <div>
 
-                <textarea
-                  rows="4"
-                  name="description"
-                  value={packageData.description}
-                  onChange={handlePackageChange}
-                  placeholder="Complete health package"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
+              <label className="font-semibold text-sm md:text-base">
 
-              </div>
+                Description
 
-              <div>
+              </label>
 
-                <label className="font-semibold">
-                  Image URL
-                </label>
+              <textarea
+                rows="4"
+                name="description"
+                value={packageData.description}
+                onChange={handlePackageChange}
+                placeholder="Complete health package"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
 
-                <input
-                  type="text"
-                  name="image"
-                  value={packageData.image}
-                  onChange={handlePackageChange}
-                  placeholder="https://image-url.com"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
+            </div>
 
-              </div>
+            <div>
 
-              <button className="bg-purple-600 hover:bg-purple-700 transition text-white w-full py-4 rounded-2xl font-semibold text-lg">
+              <label className="font-semibold text-sm md:text-base">
 
-                Create Package
+                Image URL
 
-              </button>
+              </label>
 
-            </form>
-          )
-        }
+              <input
+                type="text"
+                name="image"
+                value={packageData.image}
+                onChange={handlePackageChange}
+                placeholder="https://image-url.com"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
 
-        {/* LAB ASSISTANT FORM */}
+            </div>
 
-        {
-          activePanel === 'assistant' && (
+            <button className="bg-purple-600 hover:bg-purple-700 transition text-white w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg">
 
-            <form
-              onSubmit={handleCreateAssistant}
-              className="mt-10 space-y-6"
-            >
+              Create Package
 
-              <div>
+            </button>
 
-                <label className="font-semibold">
-                  Full Name
-                </label>
+          </form>
+        )
+      }
 
-                <input
-                  type="text"
-                  name="name"
-                  value={assistantData.name}
-                  onChange={handleAssistantChange}
-                  placeholder="John Doe"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
+      {/* ASSISTANT FORM */}
 
-              </div>
+      {
+        activePanel === 'assistant' && (
 
-              <div>
+          <form
+            onSubmit={handleCreateAssistant}
+            className="mt-6 md:mt-10 space-y-5 md:space-y-6"
+          >
 
-                <label className="font-semibold">
-                  Email
-                </label>
+            <div>
 
-                <input
-                  type="email"
-                  name="email"
-                  value={assistantData.email}
-                  onChange={handleAssistantChange}
-                  placeholder="assistant@gmail.com"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
+              <label className="font-semibold text-sm md:text-base">
 
-              </div>
+                Full Name
 
-              <div>
+              </label>
 
-                <label className="font-semibold">
-                  Password
-                </label>
+              <input
+                type="text"
+                name="name"
+                value={assistantData.name}
+                onChange={handleAssistantChange}
+                placeholder="John Doe"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
 
-                <input
-                  type="password"
-                  name="password"
-                  value={assistantData.password}
-                  onChange={handleAssistantChange}
-                  placeholder="Enter Password"
-                  className="w-full border mt-2 rounded-2xl px-5 py-4 outline-none"
-                />
+            </div>
 
-              </div>
+            <div>
 
-              <button className="bg-green-600 hover:bg-green-700 transition text-white w-full py-4 rounded-2xl font-semibold text-lg">
+              <label className="font-semibold text-sm md:text-base">
 
-                Create Lab Assistant
+                Email
 
-              </button>
+              </label>
 
-            </form>
-          )
-        }
+              <input
+                type="email"
+                name="email"
+                value={assistantData.email}
+                onChange={handleAssistantChange}
+                placeholder="assistant@gmail.com"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
 
-      </div>
+            </div>
+
+            <div>
+
+              <label className="font-semibold text-sm md:text-base">
+
+                Password
+
+              </label>
+
+              <input
+                type="password"
+                name="password"
+                value={assistantData.password}
+                onChange={handleAssistantChange}
+                placeholder="Enter Password"
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
+              />
+
+            </div>
+
+            <button className="bg-green-600 hover:bg-green-700 transition text-white w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg">
+
+              Create Lab Assistant
+
+            </button>
+
+          </form>
+        )
+      }
 
     </div>
-  )
+
+  </div>
+)
 }
 
     </div>

@@ -1,21 +1,39 @@
 import React, {
   useEffect,
-  useState
+  useState,
+  useContext
 } from 'react'
+
+import {
+  toast
+} from 'react-toastify'
 
 import {
   FaHeartbeat
 } from 'react-icons/fa'
 
-import { Link } from 'react-router-dom'
+import {
+  useNavigate
+} from 'react-router-dom'
 
 import API from '../services/api'
 
+import {
+  AuthContext
+} from '../context/AuthContext'
+
 const Packages = () => {
 
-  const [packages, setPackages] = useState([])
+  const navigate = useNavigate()
 
-  const [loading, setLoading] = useState(true)
+  const { user } =
+    useContext(AuthContext)
+
+  const [packages, setPackages] =
+    useState([])
+
+  const [loading, setLoading] =
+    useState(true)
 
   useEffect(() => {
 
@@ -30,7 +48,6 @@ const Packages = () => {
       const { data } = await API.get(
         '/packages'
       )
-      console.log(data)
 
       setPackages(data)
 
@@ -44,23 +61,38 @@ const Packages = () => {
     }
   }
 
+const handleBooking = () => {
+
+  if (!user) {
+
+    toast.info(
+      'Please Signup or Login First'
+    )
+
+    navigate('/signup')
+
+    return
+  }
+
+  navigate('/booking')
+}
   return (
 
-    <section className="py-20 bg-[#f4f8ff]">
+    <section className="py-12 md:py-20 bg-[#f4f8ff]">
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Heading */}
 
-        <div className="text-center mb-14">
+        <div className="text-center mb-10 md:mb-14">
 
-          <h2 className="text-4xl font-bold text-blue-950">
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-950">
 
             Explore Health Packages
 
           </h2>
 
-          <div className="w-28 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
+          <div className="w-24 md:w-28 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
 
         </div>
 
@@ -69,20 +101,22 @@ const Packages = () => {
         {
           loading ? (
 
-            <div className="text-center text-2xl">
+            <div className="text-center text-xl md:text-2xl font-semibold">
+
               Loading...
+
             </div>
 
           ) : (
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
 
               {
                 packages.map((item) => (
 
                   <div
                     key={item._id}
-                    className="bg-white rounded-[35px] overflow-hidden shadow-sm hover:shadow-2xl transition duration-300"
+                    className="bg-white rounded-2xl md:rounded-[35px] overflow-hidden shadow-sm hover:shadow-2xl transition duration-300 border border-gray-100"
                   >
 
                     {/* Image */}
@@ -90,26 +124,26 @@ const Packages = () => {
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-56 object-cover"
+                      className="w-full h-48 md:h-56 object-cover"
                     />
 
                     {/* Content */}
 
-                    <div className="p-8">
+                    <div className="p-5 md:p-8">
 
-                      <div className="bg-blue-100 text-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl">
+                      <div className="bg-blue-100 text-blue-600 w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl">
 
                         <FaHeartbeat />
 
                       </div>
 
-                      <h3 className="text-2xl font-bold text-blue-950 mt-6">
+                      <h3 className="text-xl md:text-2xl font-bold text-blue-950 mt-5 md:mt-6">
 
                         {item.title}
 
                       </h3>
 
-                      <p className="text-gray-500 mt-4 leading-7">
+                      <p className="text-gray-500 mt-3 md:mt-4 leading-7 text-sm md:text-base">
 
                         {item.description}
 
@@ -117,9 +151,9 @@ const Packages = () => {
 
                       {/* Tests */}
 
-                      <div className="mt-6">
+                      <div className="mt-5 md:mt-6">
 
-                        <h4 className="font-bold text-lg mb-3">
+                        <h4 className="font-bold text-base md:text-lg mb-3">
 
                           Included Tests
 
@@ -133,7 +167,7 @@ const Packages = () => {
 
                                 <span
                                   key={index}
-                                  className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
+                                  className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs md:text-sm"
                                 >
 
                                   {test}
@@ -148,15 +182,17 @@ const Packages = () => {
 
                       {/* Price */}
 
-                      <div className="flex items-center justify-between mt-8">
+                      <div className="flex items-center justify-between gap-4 mt-6 md:mt-8">
 
                         <div>
 
-                          <p className="text-gray-500">
+                          <p className="text-gray-500 text-sm">
+
                             Starting From
+
                           </p>
 
-                          <h2 className="text-3xl font-bold text-blue-600">
+                          <h2 className="text-2xl md:text-3xl font-bold text-blue-600 mt-1">
 
                             ₹{item.price}
 
@@ -164,15 +200,14 @@ const Packages = () => {
 
                         </div>
 
-                        <Link to="/booking">
+                       <button
+  onClick={handleBooking}
+  className="bg-blue-600 hover:bg-blue-700 transition text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-base font-medium whitespace-nowrap"
+>
 
-                          <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-3 rounded-2xl">
+  Book Now
 
-                            Book Now
-
-                          </button>
-
-                        </Link>
+</button>
 
                       </div>
 

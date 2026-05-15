@@ -125,15 +125,9 @@ const AppRoutes = () => {
       <Route
         path="/booking"
         element={
-          <ProtectedRoute
-            roles={[
-              'patient',
-              'receptionist',
-              'admin'
-            ]}
-          >
+          
             <Booking />
-          </ProtectedRoute>
+          
         }
       />
 
