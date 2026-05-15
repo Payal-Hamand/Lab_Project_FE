@@ -333,10 +333,15 @@ const VerifyReport = () => {
                     <div className="mt-10 text-center">
 
                       <a
-                        href={`https://lab-project-be.vercel.app/${reportData.report}`}
+                        // href={`https://lab-project-be.vercel.app/${reportData.report}`}
+
+                         href={`${import.meta.env.VITE_API_URL}/${reportData.report}`}
+
                         target="_blank"
                         rel="noreferrer"
                       >
+
+                      
 
                         <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-10 py-4 rounded-2xl text-lg font-semibold inline-flex items-center gap-3">
 
