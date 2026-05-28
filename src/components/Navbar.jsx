@@ -1,386 +1,3 @@
-// import React, { useContext, useState } from 'react'
-// import { useEffect } from 'react'
-// import { Link, useNavigate } from 'react-router-dom'
-
-// import {
-//   FaFlask,
-//   FaBars,
-//   FaTimes,
-//   FaUserCircle,
-//   FaSignOutAlt
-// } from 'react-icons/fa'
-
-// import { AuthContext } from '../context/AuthContext'
-// useEffect(() => {
-
-//   if (menuOpen) {
-
-//     document.body.style.overflow = 'hidden'
-
-//   } else {
-
-//     document.body.style.overflow = 'auto'
-//   }
-
-// }, [menuOpen])
-
-// const Navbar = () => {
-
-//   const {
-//     user,
-//     logout
-//   } = useContext(AuthContext)
-
-//   const navigate = useNavigate()
-
-//   const [menuOpen, setMenuOpen] = useState(false)
-
-//   const handleLogout = () => {
-
-//     logout()
-//      localStorage.removeItem('user')
-
-//     navigate('/login')
-//   }
-
-//   return (
-
-//     <div className="w-full sticky top-0 z-50 bg-white shadow-sm">
-
-//       {/* Top Bar */}
-
-//       <div className="bg-blue-950 text-white text-sm">
-
-//         <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-
-//           <p className="hidden md:block">
-//             Trusted Diagnostic Lab Platform
-//           </p>
-
-//           <div className="flex items-center gap-6">
-
-//             <p>
-//               📞 1800-123-4567
-//             </p>
-
-//             <p className="hidden md:block">
-//               ✉ support@medilab.com
-//             </p>
-
-//           </div>
-
-//         </div>
-
-//       </div>
-
-//       {/* Main Navbar */}
-
-//       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
-//         {/* Logo */}
-
-//         <Link
-//           to="/"
-//           className="flex items-center gap-3"
-//         >
-
-//           <div className="bg-blue-600 text-white p-3 rounded-2xl text-2xl">
-//             <FaFlask />
-//           </div>
-
-//           <div>
-
-//             <h1 className="text-3xl font-bold text-blue-950">
-//               MediLab
-//             </h1>
-
-//             <p className="text-gray-500 text-sm">
-//               Health First
-//             </p>
-
-//           </div>
-
-//         </Link>
-
-//         {/* Desktop Menu */}
-
-//         <div className="hidden lg:flex items-center gap-8 font-medium text-gray-700">
-
-//           <Link
-//             to="/"
-//             className="hover:text-blue-600 transition"
-//           >
-//             Home
-//           </Link>
-
-//           <Link
-//             to="/tests"
-//             className="hover:text-blue-600 transition"
-//           >
-//             Tests
-//           </Link>
-
-//           <Link
-//             to="/packages"
-//             className="hover:text-blue-600 transition"
-//           >
-//             Packages
-//           </Link>
-
-//           <Link
-//             to="/booking"
-//             className="hover:text-blue-600 transition"
-//           >
-//             Book Test
-//           </Link>
-
-//           <Link
-//             to="/verify-report"
-//             className="hover:text-blue-600 transition"
-//           >
-//             Verify Report
-//           </Link>
-
-//         </div>
-
-//         {/* Right Side */}
-
-//         <div className="hidden lg:flex items-center gap-4">
-
-//           {
-//             !user ? (
-
-//               <>
-//                 <Link to="/login">
-
-//                   <button className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition px-5 py-2 rounded-xl">
-//                     Login
-//                   </button>
-
-//                 </Link>
-
-//                 <Link to="/signup">
-
-//                   <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-xl">
-//                     Signup
-//                   </button>
-
-//                 </Link>
-//               </>
-
-//             ) : (
-
-//               <div className="flex items-center gap-4">
-
-//                 {/* Role Buttons */}
-
-//                 {
-//                   user.role === 'admin' && (
-
-//                     <Link to="/admin">
-
-//                       <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl transition">
-//                         Admin Panel
-//                       </button>
-
-//                     </Link>
-//                   )
-//                 }
-
-//                 {
-//                   user.role === 'patient' && (
-
-//                     <Link to="/dashboard">
-
-//                       <button className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl transition">
-//                         Dashboard
-//                       </button>
-
-//                     </Link>
-//                   )
-//                 }
-
-//                 {
-//                   user.role === 'lab_assistant' && (
-
-//                     <Link to="/lab-assistant">
-
-//                       <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl transition">
-//                         Dashbord
-//                       </button>
-
-//                     </Link>
-//                   )
-//                 }
-
-//                 {
-//                   user.role === 'doctor' && (
-
-//                     <Link to="/doctor">
-
-//                       <button className="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded-xl transition">
-//                         Doctor
-//                       </button>
-
-//                     </Link>
-//                   )
-//                 }
-
-//                 {
-//                   user.role === 'receptionist' && (
-
-//                     <Link to="/receptionist">
-
-//                       <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-5 py-2 rounded-xl transition">
-//                         Reception
-//                       </button>
-
-//                     </Link>
-//                   )
-//                 }
-
-//                 {/* User */}
-
-//                 <div className="flex items-center gap-3 bg-gray-100 px-4 py-2 rounded-2xl">
-
-//                   <FaUserCircle className="text-2xl text-blue-600" />
-
-//                   <div>
-
-//                     <h3 className="font-semibold text-sm">
-//                       {user.name}
-//                     </h3>
-
-//                     <p className="text-xs text-gray-500 capitalize">
-//                       {user.role}
-//                     </p>
-
-//                   </div>
-
-//                 </div>
-
-//                 {/* Logout */}
-
-//                 <button
-//                   onClick={handleLogout}
-//                   className="bg-gray-200 hover:bg-red-500 hover:text-white transition p-3 rounded-xl"
-//                 >
-//                   <FaSignOutAlt />
-//                 </button>
-
-//               </div>
-//             )
-//           }
-
-//         </div>
-
-//         {/* Mobile Menu Button */}
-
-//         <button
-//           onClick={() => setMenuOpen(!menuOpen)}
-//           className="lg:hidden text-3xl text-blue-950"
-//         >
-
-//           {
-//             menuOpen
-//               ? <FaTimes />
-//               : <FaBars />
-//           }
-
-//         </button>
-
-//       </div>
-
-//       {/* Mobile Menu */}
-
-//       {
-//         menuOpen && (
-
-//           <div className="lg:hidden bg-white border-t">
-
-//             <div className="flex flex-col p-6 gap-5 text-gray-700 font-medium">
-
-//               <Link to="/">
-//                 Home
-//               </Link>
-
-//               <Link to="/tests">
-//                 Tests
-//               </Link>
-
-//               <Link to="/packages">
-//                 Packages
-//               </Link>
-
-//               <Link to="/booking">
-//                 Book Test
-//               </Link>
-
-//               <Link to="/verify-report">
-//                 Verify Report
-//               </Link>
-
-//               {
-//                 !user ? (
-
-//                   <>
-//                     <Link to="/login">
-
-//                       <button className="border border-blue-600 text-blue-600 px-5 py-3 rounded-xl w-full">
-//                         Login
-//                       </button>
-
-//                     </Link>
-
-//                     <Link to="/signup">
-
-//                       <button className="bg-blue-600 text-white px-5 py-3 rounded-xl w-full">
-//                         Signup
-//                       </button>
-
-//                     </Link>
-//                   </>
-
-//                 ) : (
-
-//                   <>
-//                     <div className="bg-gray-100 rounded-2xl p-4">
-
-//                       <h3 className="font-bold">
-//                         {user.name}
-//                       </h3>
-
-//                       <p className="text-sm text-gray-500 capitalize">
-//                         {user.role}
-//                       </p>
-
-//                     </div>
-
-//                     <button
-//                       onClick={handleLogout}
-//                       className="bg-red-500 text-white py-3 rounded-xl"
-//                     >
-//                       Logout
-//                     </button>
-//                   </>
-//                 )
-//               }
-
-//             </div>
-
-//           </div>
-//         )
-//       }
-
-//     </div>
-//   )
-// }
-
-// export default Navbar
-
-
-
-
 import React, {
   useContext,
   useState,
@@ -432,16 +49,14 @@ const Navbar = () => {
 
   }, [menuOpen])
 
-  const handleLogout = () => {
+ const handleLogout = () => {
 
-    logout()
+  logout()
 
-    localStorage.removeItem('user')
+  navigate('/login')
 
-    navigate('/login')
-
-    setMenuOpen(false)
-  }
+  setMenuOpen(false)
+}
 
   return (
 
@@ -479,30 +94,39 @@ const Navbar = () => {
 
         {/* Logo */}
 
-        <Link
-          to="/"
-          className="flex items-center gap-3"
-        >
+       <Link to="/" className="flex items-center gap-3">
+  {/* Icon */}
+  <div className="relative flex-shrink-0">
+    <div className="w-[58px] h-[58px] bg-blue-700 rounded-2xl flex items-center justify-center">
+      <div className="w-[48px] h-[48px] bg-blue-600 rounded-xl flex items-center justify-center relative overflow-hidden">
+        {/* Cross bg */}
+        <div className="absolute w-[10px] h-full bg-white opacity-15 rounded" />
+        <div className="absolute h-[10px] w-full bg-white opacity-15 rounded" />
+        {/* Checkmark */}
+        <svg viewBox="0 0 58 58" className="absolute w-full h-full">
+          <polyline
+            points="15,30 25,41 44,18"
+            fill="none"
+            stroke="white"
+            strokeWidth="6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+    </div>
+    {/* Accent dot */}
+    <div className="absolute top-1 right-1 w-3 h-3 bg-blue-400 rounded-full" />
+  </div>
 
-          <div className="bg-blue-600 text-white p-3 rounded-2xl text-2xl">
-
-            <FaFlask />
-
-          </div>
-
-          <div>
-
-            <h1 className="text-3xl font-bold text-blue-950">
-              MediLab
-            </h1>
-
-            <p className="text-gray-500 text-sm">
-              Health First
-            </p>
-
-          </div>
-
-        </Link>
+  {/* Text */}
+  <div>
+    <h1 className="text-3xl font-bold text-blue-950 leading-none tracking-tight">
+      Checked Up
+    </h1>
+    <p className="text-gray-500 text-sm mt-1">Health First</p>
+  </div>
+</Link>
 
         {/* Desktop Menu */}
 

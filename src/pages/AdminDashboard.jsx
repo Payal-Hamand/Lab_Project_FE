@@ -1,7 +1,11 @@
 import React, {
   useEffect,
-  useState
+  useState,
+  useRef
 } from 'react'
+import {
+  useNavigate
+} from 'react-router-dom'
 
 import Navbar from '../components/Navbar'
 
@@ -11,64 +15,290 @@ import {
   FaUsers,
   FaFlask,
   FaClipboardList,
-  FaUserPlus,
   FaVial,
   FaBoxOpen
 } from 'react-icons/fa'
 
-const AdminDashboard = () => {
+import {
 
-  // States
+  DashboardStatsCard,
+
+  DashboardSectionHeader,
+
+  DashboardSidePanel,
+  LoadingSpinner,
+  BookingsTable,
+
+  EmptyState
+
+} from '../components/dashboard'
+
+
+
+const AdminDashboard = () => {
 
   const [bookings, setBookings] =
     useState([])
+    const [activePanel,
+  setActivePanel
+] = useState('')
+const navigate = useNavigate()
+const [activeSection,setActiveSection] = useState('all')
+  const [tests, setTests] = useState([])
+const [allTests,
+  setAllTests
+] = useState([])
+  const [loading, setLoading] =
+    useState(true)
+    const tableRef = useRef(null)
+    const [testData, setTestData] =
+  useState({
 
-  const [tests, setTests] =
-    useState([])
+    title: '',
 
-  const [activePanel, setActivePanel] =
-    useState('')
+    category: '',
 
-  // Test Data
+    price: '',
 
-  const [testData, setTestData] =
-    useState({
+    reportTime: '',
 
-      title: '',
-      category: '',
-      price: '',
-      reportTime: '',
-      description: '',
-      image: ''
+    description: '',
+
+    image: ''
+
+  })
+  const [packageData,
+  setPackageData
+] = useState({
+
+  title: '',
+
+  category: '',
+
+  price: '',
+
+  testsIncluded: [],
+
+  description: '',
+
+  image: ''
+
+})
+const selectedTestsPrice =
+
+  allTests
+
+    .filter(test =>
+
+      packageData.testsIncluded.includes(
+        test._id
+      )
+    )
+
+    .reduce(
+
+      (acc, item) =>
+
+        acc + item.price,
+
+      0
+    )
+
+const expectedPrice =
+
+  selectedTestsPrice +
+
+  Number(
+    packageData.price || 0
+  )
+
+
+
+const [labOwnerData,
+  setLabOwnerData
+] = useState({
+
+  name: '',
+
+  email: '',
+
+  password: '',
+
+  servicePincodes: ''
+
+})
+const handleTestChange = (
+  e
+) => {
+
+  setTestData({
+
+    ...testData,
+
+    [e.target.name]:
+      e.target.value
+
+  })
+}
+const handlePackageChange = (
+  e
+) => {
+
+  setPackageData({
+
+    ...packageData,
+
+    [e.target.name]:
+      e.target.value
+
+  })
+}
+const handleLabOwnerChange =
+  (e) => {
+
+    setLabOwnerData({
+
+      ...labOwnerData,
+
+      [e.target.name]:
+        e.target.value
 
     })
+  }
+  const handleCreateTest =
+  async (e) => {
 
-  // Package Data
+    e.preventDefault()
 
-  const [packageData, setPackageData] =
-    useState({
+    try {
 
-      title: '',
-      description: '',
-      price: '',
-      testsIncluded: '',
-      image: '',
-      category: ''
+      await API.post(
 
-    })
+        '/tests',
 
-  // Assistant Data
+        testData
+      )
 
-  const [assistantData, setAssistantData] =
-    useState({
+      fetchTests()
 
-      name: '',
-      email: '',
-      password: ''
+      setActivePanel('')
 
-    })
+      setTestData({
 
-  // Fetch Data
+        title: '',
+
+        category: '',
+
+        price: '',
+
+        reportTime: '',
+
+        description: '',
+
+        image: ''
+
+      })
+
+    } catch (error) {
+
+      console.log(error)
+    }
+  }
+  const handleCreatePackage =
+  async (e) => {
+
+    e.preventDefault()
+
+    try {
+
+      await API.post(
+
+        '/packages',
+
+        {
+
+          ...packageData,
+
+          testsIncluded:
+            packageData.testsIncluded
+              
+
+              .map(item =>
+                item.trim()
+              )
+
+        }
+      )
+
+      setActivePanel('')
+
+      setPackageData({
+
+        title: '',
+
+        category: '',
+
+        price: '',
+
+        testsIncluded: [],
+
+        description: '',
+
+        image: ''
+
+      })
+
+    } catch (error) {
+
+      console.log(error)
+    }
+  }
+  const handleCreateLabOwner =
+  async (e) => {
+
+    e.preventDefault()
+
+    try {
+
+      await API.post(
+
+        '/admin/create-lab-owner',
+
+        {
+
+          ...labOwnerData,
+
+          servicePincodes:
+            labOwnerData.servicePincodes
+
+              .split(',')
+
+              .map(item =>
+                item.trim()
+              )
+
+        }
+      )
+
+      setActivePanel('')
+
+      setLabOwnerData({
+
+        name: '',
+
+        email: '',
+
+        password: '',
+
+        servicePincodes: ''
+
+      })
+
+    } catch (error) {
+
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
 
@@ -91,6 +321,10 @@ const AdminDashboard = () => {
     } catch (error) {
 
       console.log(error)
+
+    } finally {
+
+      setLoading(false)
     }
   }
 
@@ -103,141 +337,47 @@ const AdminDashboard = () => {
       )
 
       setTests(data)
+      setAllTests(data)
 
     } catch (error) {
 
       console.log(error)
     }
   }
+  const scrollToTable = () => {
 
-  // Handlers
+  setTimeout(() => {
 
-  const handleTestChange = (e) => {
+    tableRef.current
+      ?.scrollIntoView({
 
-    setTestData({
+        behavior: 'smooth'
 
-      ...testData,
+      })
 
-      [e.target.name]:
-        e.target.value
+  }, 100)
+}
+  const filteredBookings =
 
-    })
-  }
+  activeSection ===
+  'pending'
 
-  const handlePackageChange = (e) => {
-
-    setPackageData({
-
-      ...packageData,
-
-      [e.target.name]:
-        e.target.value
-
-    })
-  }
-
-  const handleAssistantChange = (e) => {
-
-    setAssistantData({
-
-      ...assistantData,
-
-      [e.target.name]:
-        e.target.value
-
-    })
-  }
-
-  // Create Test
-
-  const handleCreateTest = async (
-    e
-  ) => {
-
-    e.preventDefault()
-
-    try {
-
-      await API.post(
-        '/tests',
-        testData
+    ? bookings.filter(
+        item =>
+          item.status ===
+          'Pending'
       )
 
-      alert('Test Created')
+    : activeSection ===
+      'completed'
 
-      setActivePanel('')
-
-      fetchTests()
-
-    } catch (error) {
-
-      alert(
-        error.response?.data?.message
+    ? bookings.filter(
+        item =>
+          item.status ===
+          'Completed'
       )
-    }
-  }
 
-  // Create Package
-
-  const handleCreatePackage =
-    async (e) => {
-
-      e.preventDefault()
-
-      try {
-
-        await API.post(
-          '/packages',
-          {
-
-            ...packageData,
-
-            testsIncluded:
-              packageData.testsIncluded
-                .split(',')
-
-          }
-        )
-
-        alert('Package Created')
-
-        setActivePanel('')
-
-      } catch (error) {
-
-        alert(
-          error.response?.data?.message
-        )
-      }
-    }
-
-  // Create Assistant
-
-  const handleCreateAssistant =
-    async (e) => {
-
-      e.preventDefault()
-
-      try {
-
-        await API.post(
-          '/admin/create-lab-assistant',
-          assistantData
-        )
-
-        alert(
-          'Lab Assistant Created'
-        )
-
-        setActivePanel('')
-
-      } catch (error) {
-
-        alert(
-          error.response?.data?.message
-        )
-      }
-    }
+    : bookings
 
   return (
 
@@ -245,924 +385,689 @@ const AdminDashboard = () => {
 
       <Navbar />
 
-      {/* Header */}
-      {/* Header */}
+      {/* Hero */}
 
-<div className="bg-blue-950 pt-6 pb-10 md:pt-10 md:pb-14">
+      <div className="bg-blue-950">
 
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-14 text-white">
 
-    {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-2 rounded-full text-xs sm:text-sm">
 
-    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-2 rounded-full text-xs sm:text-sm">
+            <div className="w-2 h-2 rounded-full bg-green-400"></div>
 
-      <div className="w-2 h-2 rounded-full bg-green-400"></div>
+            Admin Management Portal
 
-      Admin Management Portal
+          </div>
 
-    </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-5">
 
-    {/* Heading */}
+            Admin Dashboard
 
-    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-5 leading-tight">
+          </h1>
 
-      Admin Dashboard
+          <p className="text-blue-100 mt-4 max-w-2xl leading-7">
 
-    </h1>
-
-    {/* Subtitle */}
-
-    <p className="text-sm sm:text-base lg:text-lg text-blue-100 mt-4 leading-7 max-w-2xl">
-
-      Manage tests, packages, staff,
-      bookings and laboratory operations.
-
-    </p>
-
-  </div>
-
-</div>
-
-{/* Main */}
-
-<div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-10">
-
-        {/* Stats */}
-
-<div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
-
-  {/* Total Bookings */}
-
-  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
-
-    <div className="flex items-center justify-between">
-
-      <div>
-
-        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
-
-          Bookings
-
-        </p>
-
-        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-blue-950">
-
-          {bookings.length}
-
-        </h2>
-
-      </div>
-
-      <div className="bg-blue-100 text-blue-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
-
-        <FaClipboardList />
-
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* Tests */}
-
-  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
-
-    <div className="flex items-center justify-between">
-
-      <div>
-
-        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
-
-          Tests
-
-        </p>
-
-        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-green-600">
-
-          {tests.length}
-
-        </h2>
-
-      </div>
-
-      <div className="bg-green-100 text-green-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
-
-        <FaFlask />
-
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* Pending */}
-
-  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
-
-    <div className="flex items-center justify-between">
-
-      <div>
-
-        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
-
-          Pending
-
-        </p>
-
-        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-yellow-600">
-
-          {
-            bookings.filter(
-              item =>
-                item.status ===
-                'Pending'
-            ).length
-          }
-
-        </h2>
-
-      </div>
-
-      <div className="bg-yellow-100 text-yellow-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
-
-        <FaVial />
-
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* Completed */}
-
-  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
-
-    <div className="flex items-center justify-between">
-
-      <div>
-
-        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
-
-          Completed
-
-        </p>
-
-        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-purple-600">
-
-          {
-            bookings.filter(
-              item =>
-                item.status ===
-                'Completed'
-            ).length
-          }
-
-        </h2>
-
-      </div>
-
-      <div className="bg-purple-100 text-purple-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
-
-        <FaBoxOpen />
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-10">
-
-  {/* Create Test */}
-
-  <button
-    onClick={() =>
-      setActivePanel('test')
-    }
-    className="bg-white hover:bg-blue-600 hover:text-white transition rounded-2xl md:rounded-[30px] p-4 md:p-7 shadow-sm text-left group border border-gray-100 hover:shadow-xl"
-  >
-
-    <div className="flex items-start justify-between">
-
-      <div>
-
-        <h2 className="text-lg md:text-2xl font-bold text-blue-950 group-hover:text-white transition">
-
-          Create Test
-
-        </h2>
-
-        <p className="mt-2 text-xs md:text-sm opacity-80 leading-6">
-
-          Add new laboratory tests
-
-        </p>
-
-      </div>
-
-      <div className="bg-blue-100 group-hover:bg-white/20 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl text-blue-600 group-hover:text-white transition shrink-0">
-
-        <FaFlask />
-
-      </div>
-
-    </div>
-
-  </button>
-
-  {/* Create Package */}
-
-  <button
-    onClick={() =>
-      setActivePanel('package')
-    }
-    className="bg-white hover:bg-purple-600 hover:text-white transition rounded-2xl md:rounded-[30px] p-4 md:p-7 shadow-sm text-left group border border-gray-100 hover:shadow-xl"
-  >
-
-    <div className="flex items-start justify-between">
-
-      <div>
-
-        <h2 className="text-lg md:text-2xl font-bold text-blue-950 group-hover:text-white transition">
-
-          Create Package
-
-        </h2>
-
-        <p className="mt-2 text-xs md:text-sm opacity-80 leading-6">
-
-          Add health packages
-
-        </p>
-
-      </div>
-
-      <div className="bg-purple-100 group-hover:bg-white/20 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl text-purple-600 group-hover:text-white transition shrink-0">
-
-        <FaBoxOpen />
-
-      </div>
-
-    </div>
-
-  </button>
-
-  {/* Create Assistant */}
-
-  <button
-    onClick={() =>
-      setActivePanel('assistant')
-    }
-    className="bg-white hover:bg-green-600 hover:text-white transition rounded-2xl md:rounded-[30px] p-4 md:p-7 shadow-sm text-left group border border-gray-100 hover:shadow-xl"
-  >
-
-    <div className="flex items-start justify-between">
-
-      <div>
-
-        <h2 className="text-lg md:text-2xl font-bold text-blue-950 group-hover:text-white transition">
-
-          Create Assistant
-
-        </h2>
-
-        <p className="mt-2 text-xs md:text-sm opacity-80 leading-6">
-
-          Add laboratory staff
-
-        </p>
-
-      </div>
-
-      <div className="bg-green-100 group-hover:bg-white/20 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl text-green-600 group-hover:text-white transition shrink-0">
-
-        <FaUserPlus />
-
-      </div>
-
-    </div>
-
-  </button>
-
-</div>
-
-
-        {/* Bookings */}
-
-<div className="bg-white rounded-2xl md:rounded-[35px] shadow-sm mt-8 md:mt-12 p-4 md:p-8">
-
-  {/* Top */}
-
-  <div className="flex items-center justify-between mb-6">
-
-    <div>
-
-      <h2 className="text-2xl md:text-3xl font-bold text-blue-950">
-
-        Recent Bookings
-
-      </h2>
-
-      <p className="text-gray-500 text-sm mt-1">
-
-        Latest patient booking activity
-
-      </p>
-
-    </div>
-
-  </div>
-
-  {/* Table */}
-
-  <div className="overflow-x-auto rounded-2xl border border-gray-100">
-
-    <table className="w-full min-w-[850px]">
-
-      <thead className="bg-blue-50">
-
-        <tr>
-
-          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
-
-            Patient
-
-          </th>
-
-          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
-
-            Test
-
-          </th>
-
-          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
-
-            Date
-
-          </th>
-
-          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
-
-            Status
-
-          </th>
-
-          <th className="text-left px-6 py-4 text-sm font-semibold text-blue-950">
-
-            Lab Assistant
-
-          </th>
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        {
-          bookings.map((item) => (
-
-            <tr
-              key={item._id}
-              className="border-b border-gray-100 hover:bg-gray-50 transition"
-            >
-
-              {/* Patient */}
-
-              <td className="px-6 py-5">
-
-                <div>
-
-                  <h3 className="font-semibold text-blue-950">
-
-                    {item.patientName}
-
-                  </h3>
-
-                  <p className="text-sm text-gray-500 mt-1">
-
-                    {item.phone}
-
-                  </p>
-
-                </div>
-
-              </td>
-
-              {/* Test */}
-
-              <td className="px-6 py-5">
-
-                <div className="font-medium text-gray-700">
-
-                  {item?.test?.title}
-
-                </div>
-
-              </td>
-
-              {/* Date */}
-
-              <td className="px-6 py-5">
-
-                <div className="text-gray-600 text-sm">
-
-                  {item.bookingDate}
-
-                </div>
-
-              </td>
-
-              {/* Status */}
-
-              <td className="px-6 py-5">
-
-                <span
-                  className={`px-4 py-2 rounded-full text-xs font-semibold
-                  
-                  ${
-                    item.status ===
-                    'Completed'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }
-                  
-                  `}
-                >
-
-                  {item.status}
-
-                </span>
-
-              </td>
-
-              {/* Assistant */}
-
-              <td className="px-6 py-5">
-
-                {
-                  item.assignedLabAssistant
-                    ? (
-
-                      <div>
-
-                        <p className="font-medium text-gray-800">
-
-                          {
-                            item
-                              .assignedLabAssistant
-                              .name
-                          }
-
-                        </p>
-
-                        <p className="text-sm text-gray-500 mt-1">
-
-                          {
-                            item
-                              .assignedLabAssistant
-                              .email
-                          }
-
-                        </p>
-
-                      </div>
-                    )
-                    : (
-
-                      <span className="text-gray-400 text-sm">
-
-                        Not Assigned
-
-                      </span>
-                    )
-                }
-
-              </td>
-
-            </tr>
-          ))
-        }
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-</div>
-
-      </div>
-
-      {/* Sliding Panel */}
-
-{
- activePanel && (
-
-  <div className="fixed inset-0 bg-black/40 z-50 flex justify-end">
-
-    <div className="bg-white w-full sm:w-[90%] md:max-w-2xl h-screen overflow-y-auto p-4 sm:p-6 md:p-10">
-
-      {/* Top */}
-
-      <div className="flex items-start justify-between border-b pb-4 md:pb-5">
-
-        <div>
-
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-950 leading-tight">
-
-            {
-              activePanel === 'test'
-                ? 'Create Test'
-                : activePanel === 'package'
-                ? 'Create Package'
-                : 'Create Lab Assistant'
-            }
-
-          </h2>
-
-          <p className="text-gray-500 mt-2 text-sm md:text-base">
-
-            Fill all required details
+            Manage tests, packages, bookings,
+            lab owners and laboratory operations.
 
           </p>
 
         </div>
 
-        <button
-          onClick={() =>
-            setActivePanel('')
-          }
-          className="text-3xl md:text-4xl leading-none text-gray-500 hover:text-red-500 transition shrink-0"
-        >
+      </div>
 
-          ×
+      {/* Main */}
 
-        </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+        {/* Stats */}
+
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+
+  <DashboardStatsCard
+    title="Bookings"
+    value={bookings.length}
+    icon={<FaClipboardList />}
+    color="blue"
+    bgColor="bg-blue-100 text-blue-600"
+    active={
+      activeSection === 'all'
+    }
+    onClick={() =>{
+      setActiveSection('all')
+
+  scrollToTable()
+  }
+    }
+  />
+
+  <DashboardStatsCard
+    title="Tests"
+    value={tests.length}
+    icon={<FaFlask />}
+    color="green"
+    bgColor="bg-green-100 text-green-600"
+    onClick={() =>
+    navigate('/tests')
+  }
+  />
+
+  <DashboardStatsCard
+    title="Pending"
+    value={
+      bookings.filter(
+        item =>
+          item.status === 'Pending'
+      ).length
+    }
+    icon={<FaVial />}
+    color="yellow"
+    bgColor="bg-yellow-100 text-yellow-600"
+    active={
+      activeSection ===
+      'pending'
+    }
+    onClick={() =>{
+      setActiveSection(
+        'pending'
+      )
+      scrollToTable()
+      }
+    }
+  />
+
+  <DashboardStatsCard
+    title="Completed"
+    value={
+      bookings.filter(
+        item =>
+          item.status === 'Completed'
+      ).length
+    }
+    icon={<FaBoxOpen />}
+    color="purple"
+    bgColor="bg-purple-100 text-purple-600"
+    active={
+      activeSection ===
+      'completed'
+    }
+    onClick={() =>{
+      setActiveSection(
+        'completed'
+      )
+      scrollToTable()
+      }
+    }
+  />
+
+</div>
+
+{/* ACTION CARDS */}
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mt-10">
+
+  {/* CREATE TEST */}
+
+  <button  onClick={() =>
+    setActivePanel('test')
+  }
+    className="bg-white hover:bg-blue-600 hover:text-white transition rounded-3xl p-5 md:p-7 shadow-sm text-left group"
+  >
+
+    <div className="bg-blue-100 group-hover:bg-white/20 w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-blue-600 group-hover:text-white transition">
+
+      <FaFlask />
+
+    </div>
+
+    <h2 className="text-xl md:text-2xl font-bold mt-5 md:mt-6">
+
+      Create Test
+
+    </h2>
+
+    <p className="mt-2 md:mt-3 opacity-80 text-sm md:text-base">
+
+      Add new laboratory tests
+
+    </p>
+
+  </button>
+
+  {/* CREATE PACKAGE */}
+
+  <button  onClick={() =>
+    setActivePanel('package')
+  }
+    className="bg-white hover:bg-purple-600 hover:text-white transition rounded-3xl p-5 md:p-7 shadow-sm text-left group"
+  >
+
+    <div className="bg-purple-100 group-hover:bg-white/20 w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-purple-600 group-hover:text-white transition">
+
+      <FaBoxOpen />
+
+    </div>
+
+    <h2 className="text-xl md:text-2xl font-bold mt-5 md:mt-6">
+
+      Create Package
+
+    </h2>
+
+    <p className="mt-2 md:mt-3 opacity-80 text-sm md:text-base">
+
+      Add healthcare packages
+
+    </p>
+
+  </button>
+
+  {/* CREATE LAB OWNER */}
+
+  <button  onClick={() =>
+    setActivePanel('lab-owner')
+  }
+    className="bg-white hover:bg-green-600 hover:text-white transition rounded-3xl p-5 md:p-7 shadow-sm text-left group"
+  >
+
+    <div className="bg-green-100 group-hover:bg-white/20 w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-green-600 group-hover:text-white transition">
+
+      <FaUsers />
+
+    </div>
+
+    <h2 className="text-xl md:text-2xl font-bold mt-5 md:mt-6">
+
+      Create Lab Owner
+
+    </h2>
+
+    <p className="mt-2 md:mt-3 opacity-80 text-sm md:text-base">
+
+      Add and manage lab owners
+
+    </p>
+
+  </button>
+</div>
+<DashboardSidePanel
+  open={activePanel === 'test'}
+  title="Create Test"
+  subtitle="Fill all required details"
+  onClose={() =>
+    setActivePanel('')
+  }
+>
+
+  <form
+    onSubmit={handleCreateTest}
+    className="space-y-5"
+  >
+
+    <input
+      type="text"
+      name="title"
+      placeholder="Test Title"
+      value={testData.title}
+      onChange={handleTestChange}
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <input
+      type="text"
+      name="category"
+      placeholder="Category"
+      value={testData.category}
+      onChange={handleTestChange}
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <div className="grid md:grid-cols-2 gap-5">
+
+      <input
+        type="number"
+        name="price"
+        placeholder="Price"
+        value={testData.price}
+        onChange={handleTestChange}
+        className="w-full border rounded-2xl px-5 py-4 outline-none"
+      />
+
+      <input
+        type="text"
+        name="reportTime"
+        placeholder="Report Time"
+        value={testData.reportTime}
+        onChange={handleTestChange}
+        className="w-full border rounded-2xl px-5 py-4 outline-none"
+      />
+
+    </div>
+
+    <textarea
+      rows="4"
+      name="description"
+      placeholder="Description"
+      value={testData.description}
+      onChange={handleTestChange}
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <input
+      type="text"
+      name="image"
+      placeholder="Image URL"
+      value={testData.image}
+      onChange={handleTestChange}
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <button className="bg-blue-600 hover:bg-blue-700 text-white w-full py-4 rounded-2xl font-semibold">
+
+      Create Test
+
+    </button>
+
+  </form>
+
+</DashboardSidePanel>
+
+{/* PACKAGE PANEL */}
+
+<DashboardSidePanel
+  open={activePanel === 'package'}
+  title="Create Package"
+  subtitle="Add healthcare package"
+  onClose={() =>
+    setActivePanel('')
+  }
+>
+
+ <form
+  onSubmit={handleCreatePackage}
+  className="space-y-8"
+>
+
+  {/* TITLE + CATEGORY */}
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+
+    <div>
+
+      <label className="text-sm font-semibold text-gray-700 block mb-2">
+
+        Package Title
+
+      </label>
+
+      <input
+        type="text"
+        name="title"
+        placeholder="Enter package title"
+        value={packageData.title}
+        onChange={handlePackageChange}
+        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
+      />
+
+    </div>
+
+    <div>
+
+      <label className="text-sm font-semibold text-gray-700 block mb-2">
+
+        Category
+
+      </label>
+
+      <input
+        type="text"
+        name="category"
+        placeholder="Enter category"
+        value={packageData.category}
+        onChange={handlePackageChange}
+        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
+      />
+
+    </div>
+
+  </div>
+
+  {/* TEST SELECTION */}
+
+  <div className="bg-white border border-gray-100 rounded-[30px] p-5 md:p-7 shadow-sm">
+
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+      <div>
+
+        <h3 className="text-sm font-semibold text-gray-700 ">
+
+          Select Tests
+
+        </h3>
+
+        <p className="text-xs text-gray-300 mt-1">
+
+          Choose tests to include in package
+
+        </p>
 
       </div>
 
-      {/* TEST FORM */}
+      <div className="bg-purple-100 text-purple-700 px-5 py-2 rounded-2xl text-sm font-semibold w-fit">
+
+        {
+          packageData.testsIncluded.length
+        } Tests Selected
+
+      </div>
+
+    </div>
+
+    {/* DROPDOWN */}
+
+    <select
+      className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
+      onChange={(e) => {
+
+        const selectedId =
+          e.target.value
+
+        if (
+          selectedId &&
+          !packageData.testsIncluded.includes(
+            selectedId
+          )
+        ) {
+
+          setPackageData({
+
+            ...packageData,
+
+            testsIncluded: [
+
+              ...packageData.testsIncluded,
+
+              selectedId
+
+            ]
+          })
+        }
+      }}
+    >
+
+      <option value="">
+
+        Select Test
+
+      </option>
 
       {
-        activePanel === 'test' && (
+        allTests.map(test => (
 
-          <form
-            onSubmit={handleCreateTest}
-            className="mt-6 md:mt-10 space-y-5 md:space-y-6"
+          <option
+            key={test._id}
+            value={test._id}
           >
 
-            <div>
+            {test.title} — ₹{test.price}
 
-              <label className="font-semibold text-sm md:text-base">
-
-                Test Title
-
-              </label>
-
-              <input
-                type="text"
-                name="title"
-                value={testData.title}
-                onChange={handleTestChange}
-                placeholder="CBC Test"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Category
-
-              </label>
-
-              <input
-                type="text"
-                name="category"
-                value={testData.category}
-                onChange={handleTestChange}
-                placeholder="Blood Test"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-              <div>
-
-                <label className="font-semibold text-sm md:text-base">
-
-                  Price
-
-                </label>
-
-                <input
-                  type="number"
-                  name="price"
-                  value={testData.price}
-                  onChange={handleTestChange}
-                  placeholder="499"
-                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-                />
-
-              </div>
-
-              <div>
-
-                <label className="font-semibold text-sm md:text-base">
-
-                  Report Time
-
-                </label>
-
-                <input
-                  type="text"
-                  name="reportTime"
-                  value={testData.reportTime}
-                  onChange={handleTestChange}
-                  placeholder="12 Hours"
-                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-                />
-
-              </div>
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Description
-
-              </label>
-
-              <textarea
-                rows="4"
-                name="description"
-                value={testData.description}
-                onChange={handleTestChange}
-                placeholder="Complete Blood Count Test"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Image URL
-
-              </label>
-
-              <input
-                type="text"
-                name="image"
-                value={testData.image}
-                onChange={handleTestChange}
-                placeholder="https://image-url.com"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <button className="bg-blue-600 hover:bg-blue-700 transition text-white w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg">
-
-              Create Test
-
-            </button>
-
-          </form>
-        )
+          </option>
+        ))
       }
 
-      {/* PACKAGE FORM */}
+    </select>
+
+    {/* SELECTED TESTS */}
+
+    <div className="flex flex-wrap gap-3 mt-6 pt-2">
 
       {
-        activePanel === 'package' && (
+        packageData.testsIncluded.map(
+          id => {
 
-          <form
-            onSubmit={handleCreatePackage}
-            className="mt-6 md:mt-10 space-y-5 md:space-y-6"
-          >
+            const test =
+              allTests.find(
+                item =>
+                  item._id === id
+              )
 
-            <div>
+            if (!test) return null
 
-              <label className="font-semibold text-sm md:text-base">
+            return (
 
-                Package Title
+              <div
+                key={id}
+               className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-2xl px-4 py-3 flex items-center justify-between gap-4 min-w-[170px] shadow-sm"
+              >
 
-              </label>
+                <div>
 
-              <input
-                type="text"
-                name="title"
-                value={packageData.title}
-                onChange={handlePackageChange}
-                placeholder="Full Body Checkup"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
+                  <h4 className="font-semibold text-blue-950 text-sm">
 
-            </div>
+                    {test.title}
 
-            <div>
+                  </h4>
 
-              <label className="font-semibold text-sm md:text-base">
+                  <p className="text-xs text-gray-500 mt-1">
 
-                Category
+                    ₹{test.price}
 
-              </label>
+                  </p>
 
-              <input
-                type="text"
-                name="category"
-                value={packageData.category}
-                onChange={handlePackageChange}
-                placeholder="Health Package"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
+                </div>
 
-            </div>
+                <button
+                  type="button"
+                  onClick={() => {
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    setPackageData({
 
-              <div>
+                      ...packageData,
 
-                <label className="font-semibold text-sm md:text-base">
+                      testsIncluded:
 
-                  Price
+                        packageData.testsIncluded.filter(
 
-                </label>
+                          item =>
+                            item !== id
+                        )
+                    })
+                  }}
+                  className="text-red-500 hover:text-red-700 text-xl"
+                >
 
-                <input
-                  type="number"
-                  name="price"
-                  value={packageData.price}
-                  onChange={handlePackageChange}
-                  placeholder="1999"
-                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-                />
+                  ×
+
+                </button>
 
               </div>
-
-              <div>
-
-                <label className="font-semibold text-sm md:text-base">
-
-                  Tests Included
-
-                </label>
-
-                <input
-                  type="text"
-                  name="testsIncluded"
-                  value={packageData.testsIncluded}
-                  onChange={handlePackageChange}
-                  placeholder="CBC, Thyroid"
-                  className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-                />
-
-              </div>
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Description
-
-              </label>
-
-              <textarea
-                rows="4"
-                name="description"
-                value={packageData.description}
-                onChange={handlePackageChange}
-                placeholder="Complete health package"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Image URL
-
-              </label>
-
-              <input
-                type="text"
-                name="image"
-                value={packageData.image}
-                onChange={handlePackageChange}
-                placeholder="https://image-url.com"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <button className="bg-purple-600 hover:bg-purple-700 transition text-white w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg">
-
-              Create Package
-
-            </button>
-
-          </form>
-        )
-      }
-
-      {/* ASSISTANT FORM */}
-
-      {
-        activePanel === 'assistant' && (
-
-          <form
-            onSubmit={handleCreateAssistant}
-            className="mt-6 md:mt-10 space-y-5 md:space-y-6"
-          >
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Full Name
-
-              </label>
-
-              <input
-                type="text"
-                name="name"
-                value={assistantData.name}
-                onChange={handleAssistantChange}
-                placeholder="John Doe"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Email
-
-              </label>
-
-              <input
-                type="email"
-                name="email"
-                value={assistantData.email}
-                onChange={handleAssistantChange}
-                placeholder="assistant@gmail.com"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-sm md:text-base">
-
-                Password
-
-              </label>
-
-              <input
-                type="password"
-                name="password"
-                value={assistantData.password}
-                onChange={handleAssistantChange}
-                placeholder="Enter Password"
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none text-sm md:text-base"
-              />
-
-            </div>
-
-            <button className="bg-green-600 hover:bg-green-700 transition text-white w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg">
-
-              Create Lab Assistant
-
-            </button>
-
-          </form>
+            )
+          }
         )
       }
 
     </div>
 
   </div>
-)
-}
+
+  <div >
+
+    {/* PRICE */}
+
+    
+
+       <label className="text-sm font-semibold text-gray-700 block mb-2">
+
+        Package Price
+
+      </label>
+
+      <input
+        type="number"
+        name="price"
+        placeholder="Enter package price"
+        value={packageData.price}
+        onChange={handlePackageChange}
+        className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-purple-500"
+      />
+
+    </div>
+
+ 
+
+  {/* DESCRIPTION */}
+
+  <div>
+
+    <label className="text-sm font-semibold text-gray-700 block mb-2">
+
+      Description
+
+    </label>
+
+    <textarea
+      rows="5"
+      name="description"
+      placeholder="Write package description"
+      value={packageData.description}
+      onChange={handlePackageChange}
+      className="w-full border border-gray-200 rounded-[30px] px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition resize-none"
+    />
+
+  </div>
+
+  {/* IMAGE */}
+
+  <div>
+
+    <label className="text-sm font-semibold text-gray-700 block mb-2">
+
+      Image URL
+
+    </label>
+
+    <input
+      type="text"
+      name="image"
+      placeholder="Enter image URL"
+      value={packageData.image}
+      onChange={handlePackageChange}
+      className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-purple-500"
+    />
+
+  </div>
+
+  {/* BUTTON */}
+
+  <button className="bg-purple-600 hover:bg-purple-700 active:scale-[0.99] transition-all text-white w-full py-4 rounded-2xl font-semibold text-base md:text-lg shadow-lg shadow-purple-200">
+
+    Create Package
+
+  </button>
+
+</form>
+
+</DashboardSidePanel>
+
+{/* LAB OWNER PANEL */}
+
+<DashboardSidePanel
+  open={activePanel === 'lab-owner'}
+  title="Create Lab Owner"
+  subtitle="Add new laboratory owner"
+  onClose={() =>
+    setActivePanel('')
+  }
+>
+
+  <form
+    onSubmit={handleCreateLabOwner}
+    className="space-y-5"
+  >
+
+    <input
+      type="text"
+      name="name"
+      placeholder="Full Name"
+      value={labOwnerData.name}
+      onChange={handleLabOwnerChange}
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <input
+      type="email"
+      name="email"
+      placeholder="Email"
+      value={labOwnerData.email}
+      onChange={handleLabOwnerChange}
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <input
+      type="password"
+      name="password"
+      placeholder="Password"
+      value={labOwnerData.password}
+      onChange={handleLabOwnerChange}
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <input
+      type="text"
+      name="servicePincodes"
+      placeholder="411033, 411044"
+      value={
+        labOwnerData.servicePincodes
+      }
+      onChange={
+        handleLabOwnerChange
+      }
+      className="w-full border rounded-2xl px-5 py-4 outline-none"
+    />
+
+    <button className="bg-green-600 hover:bg-green-700 text-white w-full py-4 rounded-2xl font-semibold">
+
+      Create Lab Owner
+
+    </button>
+
+  </form>
+
+</DashboardSidePanel>
+
+        {/* Recent Bookings */}
+
+       <div
+  ref={tableRef}
+  className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8"
+>
+
+  <DashboardSectionHeader
+    title="Recent Bookings"
+    subtitle="Latest patient booking activity"
+  />
+
+  {
+    loading ? (
+
+      <LoadingSpinner />
+
+    ) : filteredBookings.length === 0 ? (
+
+      <EmptyState text="No Bookings Found" />
+
+    ) : (
+
+      <BookingsTable
+        bookings={filteredBookings}
+      />
+    )
+  }
+
+</div>
+
+      </div>
 
     </div>
   )

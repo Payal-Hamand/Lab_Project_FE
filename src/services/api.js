@@ -15,7 +15,7 @@ API.interceptors.request.use(
 
   (config) => {
 
-    const userInfo = localStorage.getItem('user')
+    const userInfo = sessionStorage.getItem('user')
 
     if (userInfo) {
 
