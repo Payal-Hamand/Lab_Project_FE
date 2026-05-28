@@ -2,7 +2,9 @@ import React, {
   useContext,
   useState
 } from 'react'
-
+import {
+  useLocation
+} from 'react-router-dom'
 import {
   Link,
   useNavigate
@@ -25,6 +27,8 @@ import API from '../services/api'
 const Login = () => {
 
   const navigate = useNavigate()
+  const location =
+  useLocation()
 
   const { login } =
     useContext(AuthContext)
@@ -73,28 +77,59 @@ const Login = () => {
         'Login Successful'
       )
 
-      if (
-        data.role === 'admin'
-      ) {
+   if (
+  location.state
+    ?.redirectTo
+) {
 
-        navigate('/admin')
+  navigate(
 
-      } else if (
+    location.state
+      .redirectTo,
 
-        data.role ===
-        'lab_assistant'
+    {
 
-      ) {
+      state: {
 
-        navigate(
-          '/lab-assistant'
-        )
+        selectedItem:
 
-      } else {
+          location.state
+            ?.selectedItem,
 
-        navigate('/dashboard')
+        bookingType:
+
+          location.state
+            ?.bookingType
       }
+    }
+  )
 
+} else if (
+  data.role === 'admin'
+) {
+
+  navigate('/admin')
+
+} else if (
+  data.role ===
+  'lab_assistant'
+) {
+
+  navigate(
+    '/lab-assistant'
+  )
+
+} else if (
+  data.role ===
+  'lab_owner'
+) {
+
+  navigate('/lab-owner')
+
+} else {
+
+  navigate('/dashboard')
+}
     } catch (error) {
 
       toast.error(

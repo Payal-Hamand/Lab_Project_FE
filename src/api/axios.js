@@ -1,23 +1,36 @@
 import axios from 'axios'
 
 // const API = axios.create({
-//   baseURL: 'https://lab-project-be.vercel.app/api',
+//   baseURL: 'https://lab-project-be.vercel.app/api'
 // })
 
 const API = axios.create({
+
     baseURL:
-    import.meta.env.VITE_API_URL/api
+    import.meta.env.VITE_API_URL
 
 })
 
-API.interceptors.request.use((req) => {
-  const user = JSON.parse(localStorage.getItem('user'))
+API.interceptors.request.use(
 
-  if (user?.token) {
-    req.headers.Authorization = `Bearer ${user.token}`
+  (config) => {
+
+    const userInfo = sessionStorage.getItem('user')
+
+    if (userInfo) {
+
+      const token = JSON.parse(userInfo).token
+
+      config.headers.Authorization = `Bearer ${token}`
+    }
+
+    return config
+  },
+
+  (error) => {
+
+    return Promise.reject(error)
   }
-
-  return req
-})
+)
 
 export default API

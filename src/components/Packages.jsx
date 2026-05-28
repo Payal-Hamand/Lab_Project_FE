@@ -25,6 +25,7 @@ import {
 const Packages = () => {
 
   const navigate = useNavigate()
+  
 
   const { user } =
     useContext(AuthContext)
@@ -40,6 +41,7 @@ const Packages = () => {
     fetchPackages()
 
   }, [])
+
 
   const fetchPackages = async () => {
 
@@ -60,6 +62,56 @@ const Packages = () => {
       setLoading(false)
     }
   }
+
+  const handleBookNow = (
+  item,
+  type = 'package'
+) => {
+
+  const userData =
+    sessionStorage.getItem(
+      'user'
+    )
+
+  const user = userData
+
+    ? JSON.parse(userData)
+
+    : null
+
+  if (!user?.token) {
+
+    navigate('/login', {
+
+      state: {
+
+        message:
+          'Please login to continue booking',
+
+        redirectTo:
+          '/booking',
+
+        selectedItem: item,
+
+        bookingType: type
+
+      }
+    })
+
+  } else {
+
+    navigate('/booking', {
+
+      state: {
+
+        selectedItem: item,
+
+        bookingType: type
+
+      }
+    })
+  }
+}
 
 const handleBooking = () => {
 
@@ -148,37 +200,55 @@ const handleBooking = () => {
                         {item.description}
 
                       </p>
+                       {/* Tests */}
 
-                      {/* Tests */}
+<div className="mt-5 md:mt-6">
 
-                      <div className="mt-5 md:mt-6">
+  <h4 className="font-bold text-base md:text-lg mb-3">
 
-                        <h4 className="font-bold text-base md:text-lg mb-3">
+    Included Tests
 
-                          Included Tests
+  </h4>
 
-                        </h4>
+  <div className="flex flex-wrap gap-2">
 
-                        <div className="flex flex-wrap gap-2">
+    {
+      item.testsIncluded?.length > 0
 
-                          {
-                            item.testsIncluded.map(
-                              (test, index) => (
+        ? (
 
-                                <span
-                                  key={index}
-                                  className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs md:text-sm"
-                                >
+          item.testsIncluded.map(
+            (test, index) => (
 
-                                  {test}
+              <span
+                key={index}
+                className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs md:text-sm"
+              >
 
-                                </span>
-                              ))
-                          }
+                {
+                  test?.title ||
+                  'Test'
+                }
 
-                        </div>
+              </span>
+            )
+          )
 
-                      </div>
+        ) : (
+
+          <p className="text-sm text-gray-400">
+
+            No Tests Available
+
+          </p>
+        )
+    }
+
+  </div>
+
+</div>
+
+                      
 
                       {/* Price */}
 
@@ -201,14 +271,18 @@ const handleBooking = () => {
                         </div>
 
                        <button
-  onClick={handleBooking}
-  className="bg-blue-600 hover:bg-blue-700 transition text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-base font-medium whitespace-nowrap"
+  onClick={() =>
+    handleBookNow(
+      item,
+      'package'
+    )
+  }
+  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-semibold"
 >
 
   Book Now
 
 </button>
-
                       </div>
 
                     </div>

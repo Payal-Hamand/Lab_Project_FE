@@ -1,240 +1,383 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { FaSearch, FaTimes, FaFlask } from 'react-icons/fa'
+import API from '../services/api'
+import { createPortal } from 'react-dom'
 
 const LandingPage = () => {
   const navigate = useNavigate()
+  const [tests, setTests] = useState([])
+  const [packages, setPackages] = useState([])
+  const [search, setSearch] = useState('')
+  const [showSearchPanel, setShowSearchPanel] = useState(false)
+  const searchRef = useRef(null)
+  const [dropdownStyle, setDropdownStyle] = useState({})
 
-  const tests = [
-    {
-      id: 1,
-      title: 'Full Body Checkup',
-      tests: '68 Tests',
-      price: '₹599',
-    },
-    {
-      id: 2,
-      title: 'Diabetes Care Package',
-      tests: '45 Tests',
-      price: '₹799',
-    },
-    {
-      id: 3,
-      title: 'Heart Health Package',
-      tests: '72 Tests',
-      price: '₹999',
-    },
-  ]
+  const handleBookNow = (item, type = 'test') => {
+    const userData = sessionStorage.getItem('user')
+    const user = userData ? JSON.parse(userData) : null
 
-  const handleBookNow = () => {
-    const token = localStorage.getItem('token')
-
-    if (!token) {
-      navigate('/')
+    if (!user?.token) {
+      navigate('/login', {
+        state: {
+          message: 'Please login to continue booking',
+          redirectTo: '/booking',
+          selectedItem: item,
+          bookingType: type,
+        },
+      })
     } else {
-      navigate('/tests')
+      navigate('/booking', {
+        state: {
+          selectedItem: item,
+          bookingType: type,
+        },
+      })
     }
   }
 
+  const fetchData = async () => {
+    try {
+      const [testsRes, packagesRes] = await Promise.all([
+        API.get('/tests'),
+        API.get('/packages'),
+      ])
+      setTests(testsRes.data)
+      setPackages(packagesRes.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+
+  // Close panel on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearchPanel(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+  useEffect(() => {
+
+  const handleScroll = () => {
+
+    setShowSearchPanel(
+      false
+    )
+  }
+
+
+const openDropdown = () => {
+
+  if (searchRef.current) {
+
+    const rect =
+      searchRef.current.getBoundingClientRect()
+
+    setDropdownStyle({
+
+      position: 'fixed',
+
+      top: rect.bottom + 10,
+
+      left: rect.left,
+
+      width: rect.width,
+
+      zIndex: 99999
+    })
+  }
+
+  setShowSearchPanel(true)
+}
+  return () => {
+
+    window.removeEventListener(
+      'scroll',
+      handleScroll
+    )
+  }
+
+}, [])
+useEffect(() => {
+
+  const closeDropdown = () => {
+
+    setShowSearchPanel(
+      false
+    )
+  }
+
+  window.addEventListener(
+    'scroll',
+    closeDropdown
+  )
+
+  window.addEventListener(
+    'resize',
+    closeDropdown
+  )
+
+  return () => {
+
+    window.removeEventListener(
+      'scroll',
+      closeDropdown
+    )
+
+    window.removeEventListener(
+      'resize',
+      closeDropdown
+    )
+  }
+
+}, [])
+
+  const allItems = [
+    ...tests.map((item) => ({ ...item, type: 'test' })),
+    ...packages.map((item) => ({ ...item, type: 'package' })),
+  ]
+
+  const displayedItems =
+    search.trim() === ''
+      ? allItems
+      : allItems.filter((item) =>
+          item.title?.toLowerCase().includes(search.toLowerCase())
+        )
+
+  const handleSelectTest = (item) => {
+    setShowSearchPanel(false)
+    setSearch('')
+    handleBookNow(item, item.type)
+  }
+
   return (
-    <div className='min-h-screen bg-gray-100'>
-      
+    <div className="min-h-screen bg-gray-100">
+    {
+  showSearchPanel &&
+  createPortal(
+
+    <div
+      style={dropdownStyle}
+      className="bg-white rounded-[30px] shadow-2xl border border-blue-100 overflow-hidden"
+    >
+
+      {/* HEADER */}
+
+      <div className="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-white">
+
+        <div>
+
+          <h3 className="text-sm font-bold tracking-widest uppercase text-blue-950">
+
+            All Tests & Packages
+
+          </h3>
+
+          <p className="text-xs text-gray-500 mt-1">
+
+            {displayedItems.length} Results Found
+
+          </p>
+
+        </div>
+
+        <button
+          onClick={() =>
+            setShowSearchPanel(false)
+          }
+          className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-red-100"
+        >
+
+          <FaTimes />
+
+        </button>
+
+      </div>
+
+      {/* LIST */}
+
+      <div className="max-h-[420px] overflow-y-auto">
+
+        {
+          displayedItems.map(item => (
+
+            <button
+              key={item._id}
+              onClick={() =>
+                handleSelectTest(item)
+              }
+              className="w-full flex items-center gap-4 px-6 py-5 hover:bg-blue-50 transition border-b border-gray-100"
+            >
+
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
+
+                <FaFlask />
+
+              </div>
+
+              <div className="flex-1 text-left">
+
+                <h2 className="font-bold text-lg text-blue-950">
+
+                  {item.title}
+
+                </h2>
+
+                <p className="text-sm text-gray-500">
+
+                  {item.category}
+
+                </p>
+
+              </div>
+
+              <h3 className="text-2xl font-bold text-pink-600">
+
+                ₹{item.price}
+
+              </h3>
+
+            </button>
+          ))
+        }
+
+      </div>
+
+    </div>,
+
+    document.body
+  )
+}
+
       {/* Navbar */}
-      <div className='bg-white shadow-md px-10 py-4 flex justify-between items-center'>
-        <h1 className='text-3xl font-bold text-blue-600'>
-          Checked Up
-        </h1>
+      <div className="bg-white shadow-md px-10 py-4 flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-blue-600">Checked Up</h1>
+        <div className="flex gap-4 items-center">
+          {!JSON.parse(sessionStorage.getItem('user')) ? (
+            <>
+              <Link
+                to="/login"
+                className="border border-blue-600 text-blue-600 px-5 py-2 rounded-xl font-semibold hover:bg-blue-50"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-blue-600 text-white px-5 py-2 rounded-xl font-semibold hover:bg-blue-700"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="bg-blue-600 text-white px-5 py-2 rounded-xl font-semibold hover:bg-blue-700"
+            >
+              Dashboard
+            </button>
+          )}
+        </div>
+      </div>
 
-        <div className='flex gap-4'>
-         
-         <Link to ='/login'>
-          <button
-            onClick={() => navigate('/')}
-            className='border border-blue-600 text-blue-600 px-5 py-2 rounded-xl font-semibold hover:bg-blue-50'
-          >
-          
-            Login
-           
-          </button>
-           </Link>
+      {/* ── Search Bar (full width, below navbar) ── */}
+      <div className="max-w-3xl mx-auto px-6 pt-10 pb-2" ref={searchRef}>
+        <p className="text-gray-500 text-sm font-semibold uppercase tracking-widest mb-3">
+          Search &amp; Book a Test
+        </p>
 
-          <button
-            onClick={() => navigate('/signup')}
-            className='bg-blue-600 text-white px-5 py-2 rounded-xl font-semibold hover:bg-blue-700'
-          >
-            Sign Up
-          </button>
+        {/* Wrapper: relative so the absolute dropdown anchors here */}
+        <div className="relative">
+
+          {/* Input */}
+          <div className="flex items-center bg-white border-2 border-blue-200 focus-within:border-blue-500 rounded-2xl shadow-md transition px-4 py-3 gap-3">
+            <FaSearch className="text-blue-400 text-lg flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search tests or packages..."
+              value={search}
+              onChange={(e) => {
+
+  setSearch(e.target.value)
+
+  openDropdown()
+}}
+              onFocus={openDropdown}
+              className="flex-1 outline-none text-gray-700 text-lg bg-transparent"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+              >
+                <FaTimes />
+              </button>
+            )}
+          </div>
+
+          {/* ── Dropdown (absolutely positioned) ── */}
+          {/* ── SEARCH DROPDOWN ── */}
+
+
         </div>
       </div>
 
       {/* Hero Section */}
-      <div className='max-w-7xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-12'>
-        
-        {/* Left Side */}
-        <div className='bg-white rounded-3xl shadow-xl overflow-hidden'>
-          <div className='p-10'>
-            <h1 className='text-5xl font-bold text-blue-700 leading-tight mb-4'>
+      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-8">
+        <div className="bg-white rounded-3xl shadow-xl">
+          <div className="p-10">
+            <h1 className="text-5xl font-bold text-blue-700 leading-tight mb-4">
               Full Body Checkup
             </h1>
-
-            <h2 className='text-2xl text-pink-600 font-semibold mb-6'>
+            <h2 className="text-2xl text-pink-600 font-semibold mb-6">
               Starting at ₹9 Per Test
             </h2>
-
-            <div className='bg-blue-700 text-white rounded-2xl w-fit px-8 py-5 mb-6'>
-              <h2 className='text-4xl font-bold'>68 Tests</h2>
-              <p className='text-xl'>At Just ₹599/-</p>
+            <div className="bg-blue-700 text-white rounded-2xl w-fit px-8 py-5 mb-6">
+              <h2 className="text-4xl font-bold">68 Tests</h2>
+              <p className="text-xl">At Just ₹599/-</p>
             </div>
-
-            <p className='text-gray-600 text-lg mb-8'>
+            <p className="text-gray-600 text-lg mb-8">
               Get accurate health reports with home sample collection.
             </p>
-            <Link to ='/book-slot'>
             <button
-              onClick={handleBookNow}
-              className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold'
+              onClick={() => handleBookNow(tests[0], 'test')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold"
             >
-              Book A Test
+              Book Test
             </button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Right Side Form */}
-        <div className='bg-white rounded-3xl shadow-xl p-8'>
-          <Link to ='/book-slot'>
-          <h1 className='text-4xl font-bold text-blue-700 mb-8'>
-            Book Your Test Today
-          </h1>
-          </Link>
-
-          <div className='bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-center justify-between mb-6'>
-            <div>
-              <h2 className='font-bold text-lg'>
-                Free Diet Consultation
-              </h2>
-
-              <p className='text-gray-600'>
-                With your booking
-              </p>
-            </div>
-
-            <h2 className='text-3xl font-bold text-green-500'>
-              FREE
-            </h2>
-          </div>
-
-          <input
-            type='text'
-            placeholder='Enter Name'
-            className='w-full border border-gray-300 rounded-xl px-4 py-4 mb-4 outline-none focus:border-blue-500'
-          />
-
-          <input
-            type='text'
-            placeholder='Enter Phone Number'
-            className='w-full border border-gray-300 rounded-xl px-4 py-4 mb-4 outline-none focus:border-blue-500'
-          />
-
-          <input
-            type='text'
-            placeholder='Enter City'
-            className='w-full border border-gray-300 rounded-xl px-4 py-4 mb-4 outline-none focus:border-blue-500'
-          />
-
-          <button
-            onClick={handleBookNow}
-            className='w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl text-lg font-bold'
-          >
-            SUBMIT
-          </button>
-
-          <p className='text-gray-500 text-sm mt-4 text-center'>
-            Prices may vary according to city.
-          </p>
-        </div>
-      </div>
-
-      {/* Why Choose Section */}
-      <div className='max-w-7xl mx-auto px-6 py-10'>
-        <h1 className='text-4xl font-bold text-center mb-12'>
-          Why Choose Checked Up?
-        </h1>
-
-        <div className='grid md:grid-cols-4 gap-6'>
-          <div className='bg-white p-6 rounded-2xl shadow text-center'>
-            <h2 className='text-xl font-bold mb-2'>
-              Honest Pricing
-            </h2>
-
-            <p className='text-gray-600'>
-              Affordable health packages.
-            </p>
-          </div>
-
-          <div className='bg-white p-6 rounded-2xl shadow text-center'>
-            <h2 className='text-xl font-bold mb-2'>
-              Home Collection
-            </h2>
-
-            <p className='text-gray-600'>
-              Sample collection at your home.
-            </p>
-          </div>
-
-          <div className='bg-white p-6 rounded-2xl shadow text-center'>
-            <h2 className='text-xl font-bold mb-2'>
-              Accurate Reports
-            </h2>
-
-            <p className='text-gray-600'>
-              Trusted and verified reports.
-            </p>
-          </div>
-
-          <div className='bg-white p-6 rounded-2xl shadow text-center'>
-            <h2 className='text-xl font-bold mb-2'>
-              Trusted By Patients
-            </h2>
-
-            <p className='text-gray-600'>
-              Thousands of happy customers.
-            </p>
           </div>
         </div>
       </div>
 
       {/* Popular Tests */}
-      <div className='max-w-7xl mx-auto px-6 py-10'>
-        <h1 className='text-4xl font-bold mb-10'>
-          Popular Health Tests
-        </h1>
-
-        <div className='grid md:grid-cols-3 gap-8'>
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        <h1 className="text-4xl font-bold mb-10">Popular Health Tests</h1>
+        <div className="grid md:grid-cols-3 gap-8">
           {tests.map((test) => (
             <div
-              key={test.id}
-              className='bg-white rounded-3xl shadow-lg p-6 hover:shadow-2xl transition'
+              key={test._id}
+              className="bg-white rounded-3xl shadow-lg p-6 hover:shadow-2xl transition"
             >
-              <h2 className='text-2xl font-bold text-blue-700 mb-3'>
+              <h2 className="text-2xl font-bold text-blue-700 mb-3">
                 {test.title}
               </h2>
-
-              <p className='text-gray-600 mb-4'>
-                Includes {test.tests}
-              </p>
-
-              <div className='flex justify-between items-center'>
-                <h1 className='text-4xl font-bold text-pink-600'>
+              <p className="text-gray-600 mb-4">{test.category}</p>
+              <div className="flex justify-between items-center">
+                <h1 className="text-4xl font-bold text-pink-600">
                   {test.price}
                 </h1>
-
                 <button
-                  onClick={handleBookNow}
-                  className='bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold'
+                  onClick={() => handleBookNow(test, 'test')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold"
                 >
-                <Link to ='/book-slot'>
                   Book Test
-                </Link>
                 </button>
               </div>
             </div>

@@ -69,6 +69,7 @@ import TestsPage from '../pages/TestsPage'
 import VerifyReport from '../pages/VerifyReport'
 import AdminDashboard from '../pages/AdminDashboard'
 import LabAssistantDashboard from '../pages/LabAssistantDashboard'
+import LabOwnerDashboard from '../pages/LabOwnerDashboard'
 
 const AppRoutes = () => {
 
@@ -84,6 +85,10 @@ const AppRoutes = () => {
         path="/login"
         element={<Login />}
       />
+      <Route
+  path='/lab-owner'
+  element={<LabOwnerDashboard />}
+/>
 
       <Route
         path="/signup"

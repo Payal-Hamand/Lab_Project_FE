@@ -4,10 +4,15 @@ import React, {
 } from 'react'
 
 import Navbar from '../components/Navbar'
-
+import {
+  toast
+} from 'react-toastify'
 import API from '../services/api'
-
+import {
+  useLocation
+} from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import BookingDateTime from '../components/BookingDateTime'
 
 import {
   FaCalendarAlt,
@@ -21,20 +26,52 @@ import {
 const Booking = () => {
 
   const navigate = useNavigate()
+  const location =
+  useLocation()
 
   // Dynamic Tests
 
   const [tests, setTests] = useState([])
+  const [packages,
+  setPackages
+] = useState([])
 
   // Loading
 
   const [loading, setLoading] = useState(false)
 
   // Form
+const selectedItem =
+  location.state
+    ?.selectedItem
 
-  const [formData, setFormData] = useState({
+const bookingType =
+  location.state
+    ?.bookingType
+useEffect(() => {
 
-    test: '',
+  if (
+    selectedItem?._id
+  ) {
+
+    setFormData(prev => ({
+
+      ...prev,
+
+      test:
+        selectedItem._id
+    }))
+  }
+
+}, [
+  selectedItem,
+  tests,
+  packages
+])
+ 
+ const [formData, setFormData] =
+  useState({
+test: '',
 
     patientName: '',
 
@@ -44,6 +81,14 @@ const Booking = () => {
 
     phone: '',
 
+    flatNo: '',
+
+    landmark: '',
+
+    city: '',
+
+    pincode: '',
+
     address: '',
 
     bookingDate: '',
@@ -51,91 +96,206 @@ const Booking = () => {
     bookingTime: ''
 
   })
+ // Fetch Tests and Packages
+   const fetchTests = async () => {
 
-  // Time Slots
+  try {
 
-  const timeSlots = [
+    const [
+      testsRes,
+      packagesRes
+    ] = await Promise.all([
 
-    '08:00 AM',
-    '09:00 AM',
-    '10:00 AM',
-    '11:00 AM',
-    '12:00 PM',
-    '02:00 PM',
-    '03:00 PM',
-    '04:00 PM'
+      API.get('/tests'),
 
-  ]
+      API.get('/packages')
 
-  // Fetch Tests
+    ])
 
-  useEffect(() => {
+    setTests(
+      testsRes.data
+    )
 
-    fetchTests()
+    setPackages(
+      packagesRes.data
+    )
 
-  }, [])
+  } catch (error) {
 
-  const fetchTests = async () => {
-
-    try {
-
-      const { data } = await API.get('/tests')
-
-      setTests(data)
-
-    } catch (error) {
-
-      console.log(error)
-    }
+    console.log(error)
   }
+}
+useEffect(() => {
 
+  fetchTests()
+
+}, [])
   // Handle Change
 
   const handleChange = (e) => {
 
-    setFormData({
+  const { name, value } =
+    e.target
 
-      ...formData,
+  // Numbers Only
 
-      [e.target.name]: e.target.value
-    })
+  if (
+
+    (name === 'phone' ||
+
+      name === 'pincode') &&
+
+    value &&
+    !/^\d*$/.test(value)
+
+  ) {
+
+    return
   }
+
+  setFormData({
+
+    ...formData,
+
+    [name]: value
+  })
+}
 
   // Submit Booking
+const handleSubmit = async (e) => {
 
-  const handleSubmit = async (e) => {
+  e.preventDefault()
 
-    e.preventDefault()
+  // Empty Validation
 
-    try {
+  if (
 
-      setLoading(true)
+    !formData.test ||
 
-      await API.post(
-        '/bookings',
-        formData
-      )
+    !formData.patientName ||
 
-      alert('Booking Created Successfully')
+    !formData.age ||
 
-      navigate('/dashboard')
+    !formData.gender ||
 
-    } catch (error) {
+    !formData.phone ||
 
-      alert(
-        error.response?.data?.message ||
-        'Booking Failed'
-      )
+    !formData.flatNo ||
+    !formData.city ||
+    !formData.pincode ||
 
-    } finally {
+    !formData.address ||
 
-      setLoading(false)
-    }
+    !formData.bookingDate ||
+
+    !formData.bookingTime
+
+  ) {
+
+    toast.error(
+      'Please Fill All Fields'
+    )
+
+    return
   }
 
-  const today = new Date()
-  .toISOString()
-  .split('T')[0]
+  // Name Validation
+
+  if (
+    formData.patientName.length < 3
+  ) {
+
+    toast.error(
+      'Patient Name Must Be At Least 3 Characters'
+    )
+
+    return
+  }
+
+  // Age Validation
+
+  if (
+
+    formData.age < 1 ||
+
+    formData.age > 99
+
+  ) {
+
+    toast.error(
+      'Age Must Be Between 1 and 99'
+    )
+
+    return
+  }
+
+  // Phone Validation
+
+  const phoneRegex =
+    /^[6-9]\d{9}$/
+
+  if (
+    !phoneRegex.test(
+      formData.phone
+    )
+  ) {
+
+    toast.error(
+      'Enter Valid 10 Digit Phone Number'
+    )
+
+    return
+  }
+
+  // Pincode Validation
+
+  const pincodeRegex =
+    /^[1-9][0-9]{5}$/
+
+  if (
+    !pincodeRegex.test(
+      formData.pincode
+    )
+  ) {
+
+    toast.error(
+      'Enter Valid 6 Digit Pincode'
+    )
+
+    return
+  }
+
+  try {
+
+    setLoading(true)
+
+    await API.post(
+      '/bookings',
+      formData
+    )
+
+    toast.success(
+      'Booking Created Successfully'
+    )
+
+    navigate('/dashboard')
+
+  } catch (error) {
+
+    toast.error(
+
+      error.response?.data
+        ?.message ||
+
+        'Booking Failed'
+    )
+
+  } finally {
+
+    setLoading(false)
+  }
+}
+
 
 
  return (
@@ -172,6 +332,7 @@ const Booking = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-12 grid lg:grid-cols-3 gap-6 md:gap-10">
 
       {/* Form */}
+     
 
       <div className="lg:col-span-2 bg-white rounded-2xl md:rounded-[35px] shadow-sm border border-gray-100 p-4 sm:p-6 md:p-10">
 
@@ -187,6 +348,7 @@ const Booking = () => {
 
         </p>
 
+
         <form
           onSubmit={handleSubmit}
           className="mt-6 md:mt-10 space-y-5 md:space-y-7"
@@ -200,37 +362,62 @@ const Booking = () => {
 
               <FaFlask />
 
-              Select Test
+              Select Test / Package
 
             </label>
+          <select
+  name="test"
+  value={formData.test}
+  onChange={handleChange}
+  required
+  className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+>
 
-            <select
-              name="test"
-              value={formData.test}
-              onChange={handleChange}
-              required
-              className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-            >
+  <option value="">
+    Choose Test or Package
+  </option>
 
-              <option value="">
-                Choose Lab Test
-              </option>
+  {/* TESTS */}
 
-              {
-                tests.map((item) => (
+  <optgroup label="Tests">
 
-                  <option
-                    key={item._id}
-                    value={item._id}
-                  >
+    {
+      tests.map((item) => (
 
-                    {item.title} - ₹{item.price}
+        <option
+          key={item._id}
+          value={item._id}
+        >
 
-                  </option>
-                ))
-              }
+          {item.title} — ₹{item.price}
 
-            </select>
+        </option>
+      ))
+    }
+
+  </optgroup>
+
+  {/* PACKAGES */}
+
+  <optgroup label="Packages">
+
+    {
+      packages.map((item) => (
+
+        <option
+          key={item._id}
+          value={item._id}
+        >
+
+          {item.title} — ₹{item.price}
+
+        </option>
+      ))
+    }
+
+  </optgroup>
+
+</select>
 
           </div>
 
@@ -348,95 +535,137 @@ const Booking = () => {
 
           {/* Address */}
 
-          <div>
+          {/* Address Details */}
 
-            <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
+<div className="space-y-5">
 
-              <FaMapMarkerAlt />
+  {/* Full Address */}
 
-              Address
+  <div>
 
-            </label>
+    <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
 
-            <textarea
-              rows="4"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-              placeholder="Enter address"
-              className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-            />
+      <FaMapMarkerAlt />
 
-          </div>
+      Full Address
+
+    </label>
+
+    <textarea
+      rows="3"
+      name="address"
+      value={formData.address}
+      onChange={handleChange}
+      required
+      placeholder="House No, Street, Area"
+      className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+    />
+
+  </div>
+
+  {/* Flat + Landmark */}
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+
+    <div>
+
+      <label className="font-semibold text-gray-700 text-sm md:text-base">
+
+        Flat / Apartment
+
+      </label>
+
+      <input
+        type="text"
+        name="flatNo"
+        value={formData.flatNo}
+        onChange={handleChange}
+        required
+        placeholder="Flat No / Building"
+        className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+      />
+
+    </div>
+
+    <div>
+
+      <label className="font-semibold text-gray-700 text-sm md:text-base">
+
+        Landmark
+
+      </label>
+
+      <input
+        type="text"
+        name="landmark"
+        value={formData.landmark}
+        onChange={handleChange}
+        required
+        placeholder="Near Mall / Hospital"
+        className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+      />
+
+    </div>
+
+  </div>
+
+  {/* City + State */}
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+
+    <div>
+
+      <label className="font-semibold text-gray-700 text-sm md:text-base">
+
+        City/State
+
+      </label>
+
+      <input
+        type="text"
+        name="city"
+        value={formData.city}
+        onChange={handleChange}
+        required
+        placeholder="Enter city/state"
+        className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+      />
+
+    </div>
+     {/* Pincode */}
+
+  <div>
+
+    <label className="font-semibold text-gray-700 text-sm md:text-base">
+
+      Pincode
+
+    </label>
+
+    <input
+      type="text"
+      name="pincode"
+      maxLength={6}
+      value={formData.pincode}
+      onChange={handleChange}
+      required
+      placeholder="Enter pincode"
+      className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+    />
+
+  </div>
+  </div>
+
+ 
+
+</div>
 
           {/* Date + Time */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-
-            <div>
-
-              <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-
-                <FaCalendarAlt />
-
-                Booking Date
-
-              </label>
-
-              <input
-                type="date"
-                name="bookingDate"
-                value={formData.bookingDate}
-                onChange={handleChange}
-                min={today}
-                required
-                className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-
-                <FaClock />
-
-                Booking Time
-
-              </label>
-
-              <select
-                name="bookingTime"
-                value={formData.bookingTime}
-                onChange={handleChange}
-                required
-                className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-              >
-
-                <option value="">
-                  Choose Time
-                </option>
-
-                {
-                  timeSlots.map((slot, index) => (
-
-                    <option
-                      key={index}
-                      value={slot}
-                    >
-
-                      {slot}
-
-                    </option>
-                  ))
-                }
-
-              </select>
-
-            </div>
-
-          </div>
+          <BookingDateTime
+  formData={formData}
+  handleChange={handleChange}
+/>
 
           {/* Submit */}
 
@@ -456,109 +685,12 @@ const Booking = () => {
 
         </form>
 
-      </div>
 
-      {/* Sidebar */}
-
-      <div className="space-y-5 md:space-y-8">
-
-        {/* Offer Card */}
-
-        <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl md:rounded-[35px] p-5 md:p-8 text-white shadow-xl">
-
-          <div className="bg-white/20 w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center text-2xl md:text-4xl">
-
-            %
-
-          </div>
-
-          <h2 className="text-2xl md:text-3xl font-bold mt-6">
-
-            Get 20% OFF
-
-          </h2>
-
-          <p className="mt-3 md:mt-4 text-sm md:text-base text-blue-100 leading-7">
-
-            Book your first test and get special
-            discount on health packages.
-
-          </p>
-
-          <div className="bg-white text-blue-700 rounded-xl md:rounded-2xl p-3 md:p-4 mt-5 md:mt-6 text-center font-bold text-lg md:text-xl">
-
-            MEDILAB20
-
-          </div>
-
-        </div>
-
-        {/* Info Card */}
-
-        <div className="bg-white rounded-2xl md:rounded-[35px] p-5 md:p-8 shadow-sm border border-gray-100">
-
-          <h3 className="text-2xl font-bold text-blue-950">
-
-            Why Choose Us?
-
-          </h3>
-
-          <div className="space-y-5 mt-6">
-
-            <div>
-
-              <h4 className="font-bold text-base md:text-lg">
-
-                Home Sample Collection
-
-              </h4>
-
-              <p className="text-gray-500 mt-2 text-sm md:text-base leading-7">
-
-                Safe and secure sample collection
-                from your home.
-
-              </p>
-
-            </div>
-
-            <div>
-
-              <h4 className="font-bold text-base md:text-lg">
-
-                NABL Certified Labs
-
-              </h4>
-
-              <p className="text-gray-500 mt-2 text-sm md:text-base leading-7">
-
-                Accurate reports with modern equipment.
-
-              </p>
-
-            </div>
-
-            <div>
-
-              <h4 className="font-bold text-base md:text-lg">
-
-                Fast Reports
-
-              </h4>
-
-              <p className="text-gray-500 mt-2 text-sm md:text-base leading-7">
-
-                Get reports online within 6-24 hours.
-
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
 
       </div>
+
+
+      
 
     </div>
 

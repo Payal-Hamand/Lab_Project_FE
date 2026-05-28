@@ -1,6 +1,7 @@
 import React, {
   useEffect,
-  useState
+  useState,
+  useRef
 } from 'react'
 
 import Navbar from '../components/Navbar'
@@ -8,26 +9,32 @@ import Navbar from '../components/Navbar'
 import API from '../services/api'
 
 import {
-  FaVial,
-  FaClipboardCheck,
-  FaUpload,
-  FaUserInjured,
-  FaCheckCircle,
   FaFlask,
   FaClipboardList,
-  
+  FaCheckCircle,
 } from 'react-icons/fa'
+
+import {
+
+  DashboardStatsCard,
+
+  LoadingSpinner,
+
+  EmptyState
+
+} from '../components/dashboard'
 
 const LabAssistantDashboard = () => {
 
-  const [bookings, setBookings] = useState([])
+  const [bookings, setBookings] =
+    useState([])
 
-  const [loading, setLoading] = useState(true)
-
-  const [selectedReport, setSelectedReport] =
-  useState({})
-
-  // Fetch Bookings
+  const [loading, setLoading] =
+    useState(true)
+    const [activeSection,
+  setActiveSection
+] = useState('all')
+    const tableRef = useRef(null)
 
   useEffect(() => {
 
@@ -40,7 +47,7 @@ const LabAssistantDashboard = () => {
     try {
 
       const { data } = await API.get(
-        '/bookings/all'
+        '/bookings/assigned'
       )
 
       setBookings(data)
@@ -55,617 +62,252 @@ const LabAssistantDashboard = () => {
     }
   }
 
-  // Upload Report
+  const scrollToTable = () => {
 
-  const handleUploadReport = async (
-    bookingId
-  ) => {
+  setTimeout(() => {
 
-    if (!selectedReport[bookingId]) {
+    tableRef.current
+      ?.scrollIntoView({
 
-      return alert(
-        'Please Select Report File'
+        behavior: 'smooth'
+
+      })
+
+  }, 100)
+}
+ const filteredBookings =
+
+  activeSection ===
+  'pending'
+
+    ? bookings.filter(
+        item =>
+          item.status ===
+          'Pending'
       )
-    }
 
-    try {
+    : activeSection ===
+      'completed'
 
-     const formData = new FormData()
-
-formData.append(
-  'report',
-  selectedReport[bookingId]
-)
-
-await API.put(
-
-  `/bookings/upload-report/${bookingId}`,
-
-  formData,
-
-  {
-    headers: {
-
-      'Content-Type':
-        'multipart/form-data'
-    }
-  }
-)
-        
-
-      alert('Report Uploaded')
-
-      fetchBookings()
-
-    } catch (error) {
-
-      alert(
-        error.response?.data?.message
+    ? bookings.filter(
+        item =>
+          item.status ===
+          'Completed'
       )
-    }
-  }
 
+    : bookings
   return (
 
     <div className="bg-[#f4f8ff] min-h-screen">
 
       <Navbar />
-      {/* Dashboard Hero */}
 
-<div className="bg-blue-950">
+      {/* Hero */}
 
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-14 lg:py-16 text-white">
+      <div className="bg-blue-950">
 
-    <div className="flex flex-col gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-14 text-white">
 
-      <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-2 rounded-full w-fit text-xs sm:text-sm">
+          <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full text-xs sm:text-sm">
 
-        <div className="w-2 h-2 rounded-full bg-green-400"></div>
+            <div className="w-2 h-2 rounded-full bg-green-400"></div>
 
-        Lab Management System
+            Lab Assistant Portal
+
+          </div>
+
+          <h1 className="text-3xl md:text-5xl font-bold mt-5">
+
+            Lab Assistant Dashboard
+
+          </h1>
+
+        </div>
 
       </div>
 
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+      {/* Main */}
 
-        Lab Assistant Dashboard
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
-      </h1>
+        {/* Stats */}
 
-      <p className="text-sm sm:text-base lg:text-lg text-blue-100 max-w-2xl leading-7">
+      <div className="grid grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
 
-        Manage patient reports, upload medical files,
-        track bookings and monitor laboratory operations
-        efficiently.
+  <DashboardStatsCard
+    title="Total Tests"
+    value={bookings.length}
+    icon={<FaFlask />}
+    color="blue"
+    bgColor="bg-blue-100 text-blue-600"
+    active={
+      activeSection === 'all'
+    }
+    onClick={() =>
+      setActiveSection('all')
+    }
+  />
 
-      </p>
+  <DashboardStatsCard
+    title="Pending Reports"
+    value={
+      bookings.filter(
+        item =>
+          item.status === 'Pending'
+      ).length
+    }
+    icon={<FaClipboardList />}
+    color="yellow"
+    bgColor="bg-yellow-100 text-yellow-600"
+    active={
+      activeSection ===
+      'pending'
+    }
+    onClick={() =>
+      setActiveSection(
+        'pending'
+      )
+    }
+  />
 
-    </div>
-
-  </div>
+  <DashboardStatsCard
+    title="Completed"
+    value={
+      bookings.filter(
+        item =>
+          item.status === 'Completed'
+      ).length
+    }
+    icon={<FaCheckCircle />}
+    color="green"
+    bgColor="bg-green-100 text-green-600"
+    active={
+      activeSection ===
+      'completed'
+    }
+    onClick={() =>
+      setActiveSection(
+        'completed'
+      )
+    }
+  />
 
 </div>
 
-{/* Main */}
+        {/* Table */}
 
-<div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
-
-
-{/* Stats Cards */}
-
-<div className="grid grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mt-8">
-
-  {/* Total Tests */}
-
-  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
-
-    <div className="flex items-center justify-between">
-
-      <div>
-
-        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
-
-          Total Tests
-
-        </p>
-
-        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-blue-950">
-
-          {bookings.length}
-
-        </h2>
-
-      </div>
-
-      <div className="bg-blue-100 text-blue-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
-
-        <FaFlask />
-
-      </div>
-
-    </div>
-  </div>
-
-  {/* Pending */}
-
-  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
-
-    <div className="flex items-center justify-between">
-
-      <div>
-
-        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
-
-          Pending Reports
-
-        </p>
-
-        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-yellow-600">
+        <div className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
 
           {
-            bookings.filter(
-              (item) =>
-                item.status === 'Pending'
-            ).length
-          }
+            loading ? (
 
-        </h2>
+              <LoadingSpinner />
 
-      </div>
+            ) : bookings.length === 0 ? (
 
-      <div className="bg-yellow-100 text-yellow-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
+              <EmptyState text="No Assigned Bookings" />
 
-        <FaClipboardList />
+            ) : (
 
-      </div>
+              <div className="overflow-x-auto">
 
-    </div>
-  </div>
+                <table className="w-full min-w-[850px]">
 
-  {/* Completed */}
+                  <thead className="bg-blue-50">
 
-  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-lg transition">
+                    <tr>
 
-    <div className="flex items-center justify-between">
+                      <th className="px-6 py-4 text-left">
 
-      <div>
+                        Patient
 
-        <p className="text-gray-500 text-[11px] md:text-sm font-medium">
+                      </th>
 
-          Completed
+                      <th className="px-6 py-4 text-left">
 
-        </p>
+                        Test
 
-        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-3 text-green-600">
+                      </th>
 
-          {
-            bookings.filter(
-              (item) =>
-                item.status === 'Completed'
-            ).length
-          }
+                      <th className="px-6 py-4 text-left">
 
-        </h2>
+                        Date
 
-      </div>
+                      </th>
 
-      <div className="bg-green-100 text-green-600 w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl">
+                      <th className="px-6 py-4 text-left">
 
-        <FaCheckCircle />
+                        Status
 
-      </div>
+                      </th>
 
-    </div>
-  </div>
+                    </tr>
 
-</div>
+                  </thead>
 
-        {/* Patient Booking Section */}
+                  <tbody>
 
-<div className="bg-white rounded-[35px] shadow-sm mt-12 p-4 md:p-8">
+                    {
+                      filteredBookings.map(item => (
 
-  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                        <tr
+                          key={item._id}
+                          className="border-b"
+                        >
 
-    <div>
-
-      <h2 className="text-2xl md:text-3xl font-bold text-blue-950">
-
-        Patient Bookings
-
-      </h2>
-
-      <p className="text-gray-500 mt-2">
-
-        Manage patient reports & uploads
-
-      </p>
-
-    </div>
-
-    <div className="bg-blue-50 text-blue-700 px-5 py-3 rounded-2xl font-semibold w-fit">
-
-      Total:
-      {' '}
-      {bookings.length}
-
-    </div>
-
-  </div>
-
-  {
-    loading ? (
-
-      <div className="text-center py-20 text-2xl md:text-3xl font-semibold text-blue-950">
-
-        Loading...
-
-      </div>
-
-    ) : (
-
-      <>
-
-        {/* Desktop Table */}
-
-        <div className="hidden lg:block overflow-x-auto">
-
-          <table className="w-full">
-
-            <thead>
-
-              <tr className="border-b text-gray-600">
-
-                <th className="text-left py-5">
-                  Patient
-                </th>
-
-                <th className="text-left py-5">
-                  Test
-                </th>
-
-                <th className="text-left py-5">
-                  Date
-                </th>
-
-                <th className="text-left py-5">
-                  Status
-                </th>
-
-                <th className="text-left py-5">
-                  Upload Report
-                </th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {
-                bookings.map((item) => (
-
-                  <tr
-                    key={item._id}
-                    className="border-b hover:bg-gray-50 transition"
-                  >
-
-                    {/* Patient */}
-
-                    <td className="py-6">
-
-                      <div className="flex items-center gap-4">
-
-                        <div className="bg-blue-100 text-blue-600 p-4 rounded-2xl text-xl">
-
-                          <FaUserInjured />
-
-                        </div>
-
-                        <div>
-
-                          <h3 className="font-bold text-lg">
+                          <td className="px-6 py-5">
 
                             {item.patientName}
 
-                          </h3>
+                          </td>
 
-                          <p className="text-sm text-gray-500">
+                          <td className="px-6 py-5">
 
-                            {item.gender},
-                            {' '}
-                            {item.age}
+                            {item?.test?.title}
 
-                          </p>
+                          </td>
 
-                        </div>
+                          <td className="px-6 py-5">
 
-                      </div>
+                            {item.bookingDate}
 
-                    </td>
+                          </td>
 
-                    {/* Test */}
+                          <td className="px-6 py-5">
 
-                    <td className="font-medium">
+                            <span
+                              className={`px-4 py-2 rounded-full text-xs font-semibold
 
-                      {item?.test?.title}
+                              ${
+                                item.status ===
+                                'Completed'
 
-                    </td>
+                                  ? 'bg-green-100 text-green-700'
 
-                    {/* Date */}
-
-                    <td>
-
-                      {item.bookingDate}
-
-                    </td>
-
-                    {/* Status */}
-
-                    <td>
-
-                      <span
-                        className={`px-4 py-2 rounded-full text-sm font-medium
-
-                        ${
-                          item.status ===
-                          'Completed'
-                            ? 'bg-green-100 text-green-600'
-                            : 'bg-yellow-100 text-yellow-600'
-                        }
-                        `}
-                      >
-
-                        {item.status}
-
-                      </span>
-
-                    </td>
-
-                    {/* Upload */}
-
-                    <td>
-
-                      {
-                        item.report ? (
-
-                          <a
-                            href={item.report}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-
-                            <button className="bg-green-500 hover:bg-green-600 transition text-white px-6 py-3 rounded-2xl">
-
-                              View Report
-
-                            </button>
-
-                          </a>
-
-                        ) : (
-
-                          <div className="flex items-center gap-3">
-
-                            <input
-                              type="file"
-                              onChange={(e) =>
-                                setSelectedReport({
-
-                                  ...selectedReport,
-
-                                  [item._id]:
-                                    e.target.files[0]
-
-                                })
+                                  : 'bg-yellow-100 text-yellow-700'
                               }
-                              className="border rounded-xl p-2"
-                            />
-
-                            <button
-                              onClick={() =>
-                                handleUploadReport(
-                                  item._id
-                                )
-                              }
-                              className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 py-3 rounded-2xl flex items-center gap-2"
+                              `}
                             >
 
-                              <FaUpload />
+                              {item.status}
 
-                              Upload
+                            </span>
 
-                            </button>
+                          </td>
 
-                          </div>
+                        </tr>
+                      ))
+                    }
 
-                        )
-                      }
+                  </tbody>
 
-                    </td>
-
-                  </tr>
-                ))
-              }
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-        {/* Mobile Cards */}
-
-        <div className="lg:hidden space-y-5">
-
-          {
-            bookings.map((item) => (
-
-              <div
-                key={item._id}
-                className="border rounded-3xl p-5 bg-[#f8fbff] shadow-sm"
-              >
-
-                {/* Top */}
-
-                <div className="flex items-center gap-4">
-
-                  <div className="bg-blue-100 text-blue-600 p-4 rounded-2xl text-xl">
-
-                    <FaUserInjured />
-
-                  </div>
-
-                  <div>
-
-                    <h3 className="font-bold text-lg">
-
-                      {item.patientName}
-
-                    </h3>
-
-                    <p className="text-sm text-gray-500">
-
-                      {item.gender},
-                      {' '}
-                      {item.age}
-
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* Details */}
-
-                <div className="mt-5 space-y-4">
-
-                  <div className="flex justify-between items-center">
-
-                    <span className="text-gray-500">
-                      Test
-                    </span>
-
-                    <span className="font-semibold text-right">
-
-                      {item?.test?.title}
-
-                    </span>
-
-                  </div>
-
-                  <div className="flex justify-between items-center">
-
-                    <span className="text-gray-500">
-                      Date
-                    </span>
-
-                    <span className="font-medium">
-
-                      {item.bookingDate}
-
-                    </span>
-
-                  </div>
-
-                  <div className="flex justify-between items-center">
-
-                    <span className="text-gray-500">
-                      Status
-                    </span>
-
-                    <span
-                      className={`px-4 py-1 rounded-full text-sm font-medium
-
-                      ${
-                        item.status ===
-                        'Completed'
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-yellow-100 text-yellow-600'
-                      }
-                      `}
-                    >
-
-                      {item.status}
-
-                    </span>
-
-                  </div>
-
-                </div>
-
-                {/* Upload Section */}
-
-                <div className="mt-6">
-
-                  {
-                    item.report ? (
-
-                      <a
-                        href={item.report}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-
-                        <button className="w-full bg-green-500 hover:bg-green-600 transition text-white py-3 rounded-2xl font-medium">
-
-                          View Report
-
-                        </button>
-
-                      </a>
-
-                    ) : (
-
-                      <div className="space-y-4">
-
-                        <input
-                          type="file"
-                          onChange={(e) =>
-                            setSelectedReport({
-
-                              ...selectedReport,
-
-                              [item._id]:
-                                e.target.files[0]
-
-                            })
-                          }
-                          className="w-full border rounded-xl p-3 bg-white"
-                        />
-
-                        <button
-                          onClick={() =>
-                            handleUploadReport(
-                              item._id
-                            )
-                          }
-                          className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-2xl flex items-center justify-center gap-2 font-medium"
-                        >
-
-                          <FaUpload />
-
-                          Upload Report
-
-                        </button>
-
-                      </div>
-
-                    )
-                  }
-
-                </div>
+                </table>
 
               </div>
-            ))
+            )
           }
 
         </div>
-
-      </>
-    )
-  }
-
-</div>
 
       </div>
 
