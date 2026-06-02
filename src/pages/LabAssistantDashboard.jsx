@@ -22,7 +22,7 @@ import {
 
   EmptyState
 
-} from '../components/dashboard'
+} from '../components/Dashboard'
 
 const LabAssistantDashboard = () => {
 
@@ -34,6 +34,28 @@ const LabAssistantDashboard = () => {
     const [activeSection,
   setActiveSection
 ] = useState('all')
+const [selectedBooking,
+setSelectedBooking] =
+useState(null)
+
+const [sampleImages,
+setSampleImages] =
+useState([])
+
+
+
+const [paymentBooking,
+setPaymentBooking] =
+useState(null)
+
+const [assistantNotes,
+setAssistantNotes] =
+useState('')
+
+const [showSampleModal,
+setShowSampleModal] =
+useState(false)
+
     const tableRef = useRef(null)
 
   useEffect(() => {
@@ -75,6 +97,142 @@ const LabAssistantDashboard = () => {
 
   }, 100)
 }
+
+
+const handleReached =
+async (bookingId) => {
+
+  try {
+
+    await API.put(
+      `/bookings/reached/${bookingId}`
+    )
+
+    fetchBookings()
+
+  } catch (error) {
+
+    console.log(error)
+  }
+}
+const openPaymentModal =
+(booking) => {
+
+  setPaymentBooking(
+    booking
+  )
+
+  setShowPaymentModal(
+    true
+  )
+}
+
+const openSampleModal =
+(booking) => {
+
+  setSelectedBooking(
+    booking
+  )
+
+  setShowSampleModal(
+    true
+  )
+}
+const handleSampleUpload =
+async () => {
+
+  try {
+
+    const formData =
+      new FormData()
+sampleImages.forEach(
+  image => {
+
+    formData.append(
+      'sampleImages',
+      image
+    )
+  }
+)
+
+    formData.append(
+      'assistantNotes',
+      assistantNotes
+    )
+
+    await API.put(
+
+      `/bookings/sample/${selectedBooking._id}`,
+
+      formData,
+
+      {
+        headers: {
+          'Content-Type':
+            'multipart/form-data'
+        }
+      }
+    )
+
+    setShowSampleModal(
+      false
+    )
+
+    setSampleImages([])
+
+    setAssistantNotes('')
+
+    fetchBookings()
+    setShowPaymentModal(true)
+
+setPaymentBooking(
+  selectedBooking
+)
+
+  } catch (error) {
+
+    console.log(error)
+  }
+}
+const handlePayment =
+  async (booking) => {
+
+    try {
+
+      const { data } =
+        await API.post(
+
+          "/payment/create",
+
+          {
+            bookingId:
+              booking._id,
+
+            patientName:
+              booking.patientName,
+
+            amount:
+              booking?.test?.price,
+
+            mobileNumber:
+              booking.mobileNumber ||
+              "9999999999",
+          }
+        );
+
+      if (data.success) {
+
+        window.location.href =
+          data.url;
+      }
+
+    } catch (error) {
+
+      console.log(error);
+    }
+  };
+
+  console.log(bookings)
  const filteredBookings =
 
   activeSection ===
@@ -96,6 +254,9 @@ const LabAssistantDashboard = () => {
       )
 
     : bookings
+
+
+
   return (
 
     <div className="bg-[#f4f8ff] min-h-screen">
@@ -240,6 +401,12 @@ const LabAssistantDashboard = () => {
                         Status
 
                       </th>
+                       <th className="px-6 py-4 text-left">
+
+                        Payment Status
+
+                      </th>
+                      <th>Actions</th>
 
                     </tr>
 
@@ -294,6 +461,135 @@ const LabAssistantDashboard = () => {
                             </span>
 
                           </td>
+                           <td className="px-6 py-5">
+
+                            <span
+                              className={`px-4 py-2 rounded-full text-xs font-semibold
+
+                              ${
+                                item.status ===
+                                'Completed'
+
+                                  ? 'bg-green-100 text-green-700'
+
+                                  : 'bg-yellow-100 text-yellow-700'
+                              }
+                              `}
+                            >
+
+                              {item.paymentStatus}
+
+                            </span>
+
+                          </td>
+                         <td className="px-6 py-5">
+
+  <div className="flex gap-2 flex-wrap">
+
+    {/* REACHED */}
+
+    <button
+
+      disabled={
+        item.status !==
+        'Assigned'
+      }
+
+      onClick={() =>
+        handleReached(item._id)
+      }
+
+      className={`px-4 py-2 rounded-xl text-sm text-white
+
+      ${
+        item.status ===
+        'Assigned'
+
+          ? 'bg-blue-600 hover:bg-blue-700'
+
+          : 'bg-gray-300 cursor-not-allowed'
+      }`}
+    >
+
+      {
+        item.status ===
+        'Reached'
+
+          ? 'Reached'
+
+          : 'Mark Reached'
+      }
+
+    </button>
+
+    {/* SAMPLE */}
+
+    <button
+
+      disabled={
+        item.status !==
+        'Reached'
+      }
+
+      onClick={() =>
+        openSampleModal(item)
+      }
+
+      className={`px-4 py-2 rounded-xl text-sm text-white
+
+      ${
+        item.status ===
+        'Reached'
+
+          ? 'bg-pink-600 hover:bg-pink-700'
+
+          : 'bg-gray-300 cursor-not-allowed'
+      }`}
+    >
+
+      Upload Sample
+
+    </button>
+
+    {/* PAYMENT */}
+
+    <button
+
+      disabled={
+        item.paymentStatus ===
+        'Paid'
+      }
+
+     onClick={() => {
+  setPaymentBooking(item)
+  handlePayment(item)
+}}
+      className={`px-4 py-2 rounded-xl text-sm text-white
+
+      ${
+        item.paymentStatus ===
+        'Paid'
+
+          ? 'bg-gray-300 cursor-not-allowed'
+
+          : 'bg-green-600 hover:bg-green-700'
+      }`}
+    >
+
+      {
+        item.paymentStatus ===
+        'Paid'
+
+          ? 'Payment Done'
+
+          : 'Take Payment'
+      }
+
+    </button>
+
+  </div>
+
+</td>
 
                         </tr>
                       ))
@@ -310,6 +606,116 @@ const LabAssistantDashboard = () => {
         </div>
 
       </div>
+      {
+  showSampleModal && (
+
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+
+      <div className="bg-white rounded-[35px] w-full max-w-lg p-8">
+
+        <h2 className="text-3xl font-bold text-blue-950">
+
+          Upload Sample
+
+        </h2>
+
+        <p className="text-gray-500 mt-2">
+
+          Upload blood sample tube image
+
+        </p>
+
+        <div className="mt-6 space-y-5">
+
+       <input
+  type="file"
+  multiple
+  accept="image/*"
+  capture="environment"
+  onChange={(e) =>
+    setSampleImages(
+      [...e.target.files]
+    )
+  }
+  className="w-full border rounded-2xl p-4"
+/>
+       {
+  sampleImages.length > 0 && (
+
+    <div className="grid grid-cols-3 gap-3">
+
+      {
+        sampleImages.map(
+          (image, index) => (
+
+            <div
+              key={index}
+              className="relative"
+            >
+
+              <img
+                src={URL.createObjectURL(image)}
+                alt=""
+                className="w-full h-24 object-cover rounded-2xl border"
+              />
+
+            </div>
+          )
+        )
+      }
+
+    </div>
+  )
+}
+
+          <textarea
+            rows="4"
+            placeholder="Assistant Notes"
+            value={assistantNotes}
+            onChange={(e) =>
+              setAssistantNotes(
+                e.target.value
+              )
+            }
+            className="w-full border rounded-2xl p-4 outline-none"
+          />
+
+          <div className="flex gap-4">
+
+            <button
+              onClick={
+                handleSampleUpload
+              }
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-semibold"
+            >
+
+              Upload Sample
+
+            </button>
+
+            <button
+              onClick={() =>
+                setShowSampleModal(
+                  false
+                )
+              }
+              className="flex-1 bg-gray-100 hover:bg-gray-200 py-4 rounded-2xl font-semibold"
+            >
+
+              Cancel
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  )
+}
+
 
     </div>
   )

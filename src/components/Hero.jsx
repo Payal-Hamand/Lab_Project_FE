@@ -71,8 +71,13 @@ const Hero = () => {
 
   // Close on scroll
 useEffect(() => {
-  const handleScroll = () => setShowDropdown(false)
-  window.addEventListener('scroll', handleScroll, true) // true = capture phase catches all scroll events
+  const handleScroll = (e) => {
+    const dropdown = document.getElementById('hero-search-dropdown')
+    // If the scroll happened inside the dropdown, don't close it
+    if (dropdown && dropdown.contains(e.target)) return
+    setShowDropdown(false)
+  }
+  window.addEventListener('scroll', handleScroll, true)
   return () => window.removeEventListener('scroll', handleScroll, true)
 }, [])
 

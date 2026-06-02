@@ -160,12 +160,7 @@ const Navbar = () => {
             Book Test
           </Link>
 
-          <Link
-            to="/verify-report"
-            className="hover:text-blue-600 transition"
-          >
-            Verify Report
-          </Link>
+         
 
         </div>
 

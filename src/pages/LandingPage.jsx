@@ -107,37 +107,18 @@ const openDropdown = () => {
 
 }, [])
 useEffect(() => {
-
-  const closeDropdown = () => {
-
-    setShowSearchPanel(
-      false
-    )
+  const closeDropdown = (e) => {
+    // Find the portal dropdown by querying the body-level div
+    const dropdown = document.querySelector('[style*="z-index: 99999"]')
+    if (dropdown && dropdown.contains(e.target)) return
+    setShowSearchPanel(false)
   }
-
-  window.addEventListener(
-    'scroll',
-    closeDropdown
-  )
-
-  window.addEventListener(
-    'resize',
-    closeDropdown
-  )
-
+  window.addEventListener('scroll', closeDropdown, true)
+  window.addEventListener('resize', closeDropdown)
   return () => {
-
-    window.removeEventListener(
-      'scroll',
-      closeDropdown
-    )
-
-    window.removeEventListener(
-      'resize',
-      closeDropdown
-    )
+    window.removeEventListener('scroll', closeDropdown, true)
+    window.removeEventListener('resize', closeDropdown)
   }
-
 }, [])
 
   const allItems = [
