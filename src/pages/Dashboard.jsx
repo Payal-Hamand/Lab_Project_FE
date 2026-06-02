@@ -250,7 +250,7 @@ const Dashboard = () => {
     </div>
     <button
       onClick={()=>{
-           navigate('/')
+           navigate('/booking')
       }}
       className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 md:px-6 py-3 rounded-2xl text-sm md:text-base font-medium text-center"
     >

@@ -342,7 +342,7 @@ const Navbar = () => {
 
                   <h2 className="text-3xl font-bold text-blue-950">
 
-                    MediLab
+                    Checked Up
 
                   </h2>
 
@@ -407,14 +407,7 @@ const Navbar = () => {
                   Book Test
                 </Link>
 
-                <Link
-                  to="/verify-report"
-                  onClick={() =>
-                    setMenuOpen(false)
-                  }
-                >
-                  Verify Report
-                </Link>
+                
 
               </div>
 
