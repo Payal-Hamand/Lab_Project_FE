@@ -28,7 +28,7 @@ import {
 
   EmptyState
 
-} from '../components/dashboard'
+} from '../components/Dashboard'
 
 const LabOwnerDashboard = () => {
 
