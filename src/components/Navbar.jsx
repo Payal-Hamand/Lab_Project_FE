@@ -228,6 +228,20 @@ const Navbar = () => {
                     </Link>
                   )
                 }
+                 {
+                  user.role === 'lab_owner' && (
+
+                    <Link to="/lab-owner">
+
+                      <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl transition">
+
+                        Lab Owner Dashboard
+
+                      </button>
+
+                    </Link>
+                  )
+                }
 
                 {
                   user.role === 'lab_assistant' && (
@@ -480,6 +494,26 @@ const Navbar = () => {
                       <button className="w-full bg-yellow-500 text-white py-3 rounded-xl">
 
                         Lab Dashboard
+
+                      </button>
+
+                    </Link>
+                  )
+                }
+
+ {
+                  user?.role === 'lab_owner' && (
+
+                    <Link
+                      to="/lab-owner"
+                      onClick={() =>
+                        setMenuOpen(false)
+                      }
+                    >
+
+                      <button className="w-full bg-yellow-500 text-white py-3 rounded-xl">
+
+                        Lab Owner Dashboard
 
                       </button>
 

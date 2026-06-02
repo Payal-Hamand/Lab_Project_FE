@@ -64,8 +64,7 @@ const LabOwnerDashboard = () => {
     email: '',
 
     password: '',
-
-    phone: '',
+    mobile : '',
 
     document: ''
 
@@ -154,7 +153,7 @@ const LabOwnerDashboard = () => {
 
           password: '',
 
-          phone: '',
+          mobile: '',
 
           document: ''
 
@@ -671,10 +670,10 @@ const LabOwnerDashboard = () => {
 
               <input
                 type="text"
-                name="phone"
+                name="mobile"
                 placeholder="Enter mobile number"
                 value={
-                  assistantData.phone
+                  assistantData.mobile
                 }
                 onChange={
                   handleChange
