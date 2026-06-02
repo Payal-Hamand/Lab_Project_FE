@@ -21,45 +21,29 @@ import {
 
 import {
 
-  DashboardStatsCard,
+  DashboardStatsCard,LoadingSpinner,BookingsTable,EmptyState
 
-  LoadingSpinner,
-    BookingsTable,
-
-  EmptyState
-
-} from '../components/dashboard'
-import { Link, Navigate } from 'react-router-dom'
+} from '../components/Dashboard'
+import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
 
-  const { user } =
-    useContext(AuthContext)
-
-  const [bookings, setBookings] =
-    useState([])
-    const [activeSection,
-  setActiveSection
-] = useState('all')
-
-  const [loading, setLoading] =
-    useState(true)
-    const tableRef = useRef(null)
+  const { user } =useContext(AuthContext)
+  const [bookings, setBookings] = useState([])
+  const [activeSection,setActiveSection] = useState('all')
+  const [loading, setLoading] = useState(true)
+  const tableRef = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
-
     fetchBookings()
-
   }, [])
 
   const fetchBookings = async () => {
-
     try {
-
       const { data } = await API.get(
         '/bookings/my-bookings'
       )
-
       setBookings(data)
 
     } catch (error) {
@@ -266,7 +250,7 @@ const Dashboard = () => {
     </div>
     <button
       onClick={()=>{
-        Navigate('/')
+           navigate('/')
       }}
       className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 md:px-6 py-3 rounded-2xl text-sm md:text-base font-medium text-center"
     >
