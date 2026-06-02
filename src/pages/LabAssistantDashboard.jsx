@@ -3,15 +3,23 @@ import React, {
   useState,
   useRef
 } from 'react'
+import {
+  toast
+} from 'react-toastify'
 
 import Navbar from '../components/Navbar'
 
 import API from '../services/api'
 
 import {
+  FaVial,
+  FaClipboardCheck,
+  FaUpload,
+  FaUserInjured,
+  FaCheckCircle,
   FaFlask,
   FaClipboardList,
-  FaCheckCircle,
+  
 } from 'react-icons/fa'
 
 import {
@@ -28,6 +36,8 @@ const LabAssistantDashboard = () => {
 
   const [bookings, setBookings] =
     useState([])
+    const [selectedReport, setSelectedReport] =
+  useState({})
 
   const [loading, setLoading] =
     useState(true)
@@ -197,28 +207,42 @@ setPaymentBooking(
 const handlePayment =
   async (booking) => {
 
+    console.log({
+
+  bookingId:
+    booking._id,
+
+  patientName:
+    booking.patientName,
+
+  amount:
+    booking?.test?.price,
+
+  mobileNumber:
+    booking.phone,
+});
+
     try {
 
       const { data } =
-        await API.post(
+  await API.post(
 
-          "/payment/create",
+    "/payment/create",
 
-          {
-            bookingId:
-              booking._id,
+    {
+      bookingId:
+        booking._id,
 
-            patientName:
-              booking.patientName,
+      patientName:
+        booking.patientName,
 
-            amount:
-              booking?.test?.price,
+      amount:
+       booking?.test?.price || 1,
 
-            mobileNumber:
-              booking.mobileNumber ||
-              "9999999999",
-          }
-        );
+      mobileNumber:
+        booking.phone,
+    }
+  );
 
       if (data.success) {
 
@@ -232,7 +256,54 @@ const handlePayment =
     }
   };
 
-  console.log(bookings)
+  const handleUploadReport = async (
+    bookingId
+  ) => {
+
+    if (!selectedReport[bookingId]) {
+
+      return alert(
+        'Please Select Report File'
+      )
+    }
+
+    try {
+
+     const formData = new FormData()
+
+formData.append(
+  'report',
+  selectedReport[bookingId]
+)
+
+await API.put(
+
+  `/bookings/upload-report/${bookingId}`,
+
+  formData,
+
+  {
+    headers: {
+
+      'Content-Type':
+        'multipart/form-data'
+    }
+  }
+)
+        
+
+      toast.success('Report Uploaded')
+
+      fetchBookings()
+
+    } catch (error) {
+
+      toast.error(
+        error.response?.data?.message
+      )
+    }
+  } 
+
  const filteredBookings =
 
   activeSection ===
@@ -406,7 +477,12 @@ const handlePayment =
                         Payment Status
 
                       </th>
-                      <th>Actions</th>
+                      <th className="px-6 py-4 text-left">
+                      Report
+                      </th>
+                      <th className="px-6 py-4 text-left">
+                        Actions
+                      </th>
 
                     </tr>
 
@@ -589,6 +665,69 @@ const handlePayment =
 
   </div>
 
+</td>
+<td className="px-6 py-5">
+  {/* Upload Section */}
+
+                <div className="mt-6">
+
+                  {
+                    item.report ? (
+
+                      <a
+                        href={item.report}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+
+                        <button className="w-full bg-green-500 hover:bg-green-600 transition text-white py-3 rounded-2xl font-medium">
+
+                          View Report
+
+                        </button>
+
+                      </a>
+
+                    ) : (
+
+                      <div className="space-y-4">
+
+                        <input
+                          type="file"
+                          onChange={(e) =>
+                            setSelectedReport({
+
+                              ...selectedReport,
+
+                              [item._id]:
+                                e.target.files[0]
+
+                            })
+                          }
+                          className="w-full border rounded-xl p-3 bg-white"
+                        />
+
+                        <button
+                          onClick={() =>
+                            handleUploadReport(
+                              item._id
+                            )
+                          }
+                          className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-2xl flex items-center justify-center gap-2 font-medium"
+                        >
+
+                          <FaUpload />
+
+                          Upload Report
+
+                        </button>
+
+                      </div>
+
+                    )
+                  }
+
+                </div>
 </td>
 
                         </tr>
