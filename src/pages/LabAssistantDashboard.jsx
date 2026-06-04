@@ -591,39 +591,71 @@ Take Payment
 
 </td>
 
-<td className="px-4 py-5 text-center">
+<td className="px-4 py-5">
 
 {item.report ? (
 
-<a
-href={item.report}
-target="_blank"
-rel="noreferrer"
-className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl"
->
-
-<FaFileMedical />
-
-View Report
-
-</a>
+  <a
+    href={item.report}
+    target="_blank"
+    rel="noreferrer"
+    className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-xl"
+  >
+    <FaFileMedical />
+    View Report
+  </a>
 
 ) : (
 
-<div className="flex flex-col gap-2">
+  <div className="space-y-2">
 
-<input
-type="file"
-className="text-xs"
-/>
+    <input
+      type="file"
+      accept=".pdf"
+      hidden
+      id={`report-${item._id}`}
+      onChange={(e) =>
+        setSelectedReport(prev => ({
+          ...prev,
+          [item._id]: e.target.files[0]
+        }))
+      }
+    />
 
-<button
-className="bg-blue-600 text-white px-4 py-2 rounded-xl"
->
-<FaFileMedical />
-</button>
+    <label
+      htmlFor={`report-${item._id}`}
+      className="block cursor-pointer bg-slate-100 hover:bg-slate-200 rounded-xl px-4 py-3 text-center"
+    >
+      📄 Choose Report
+    </label>
 
-</div>
+    {selectedReport[item._id] && (
+      <div className="text-xs text-green-600 text-center truncate">
+        {selectedReport[item._id].name}
+      </div>
+    )}
+
+    <button
+      onClick={() =>
+        handleUploadReport(item._id)
+      }
+      disabled={
+        !selectedReport[item._id] ||
+        uploadingReport[item._id]
+      }
+      className={`w-full rounded-xl px-4 py-3 text-white font-medium
+      ${
+        !selectedReport[item._id]
+          ? "bg-gray-300 cursor-not-allowed"
+          : "bg-blue-600 hover:bg-blue-700"
+      }`}
+    >
+      {uploadingReport[item._id]
+        ? "Uploading..."
+        : "Upload Report"}
+    </button>
+
+  </div>
 
 )}
 
