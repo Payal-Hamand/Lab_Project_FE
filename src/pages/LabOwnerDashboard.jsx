@@ -6,6 +6,8 @@ import React, {
 
 import Navbar from '../components/Navbar'
 
+import { toast } from 'react-toastify'
+
 import API from '../services/api'
 
 import {
@@ -36,6 +38,7 @@ const LabOwnerDashboard = () => {
 
   const [bookings, setBookings] =
     useState([])
+    const [creatingAssistant, setCreatingAssistant] = useState(false);
 
   const [assistants, setAssistants] =
     useState([])
@@ -79,25 +82,21 @@ const LabOwnerDashboard = () => {
   }, [])
 
   const fetchBookings = async () => {
+  try {
+    const { data } = await API.get(
+      "/bookings/lab-owner"
+    );
 
-    try {
-
-      const { data } =
-        await API.get(
-          '/bookings/lab-owner'
-        )
-
-      setBookings(data)
-
-    } catch (error) {
-
-      console.log(error)
-
-    } finally {
-
-      setLoading(false)
-    }
+    setBookings(data);
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message ||
+      "Failed to fetch bookings"
+    );
+  } finally {
+    setLoading(false);
   }
+};
 
   const fetchAssistants =
     async () => {
@@ -108,6 +107,7 @@ const LabOwnerDashboard = () => {
           await API.get(
             '/users/my-assistants'
           )
+          
 
         setAssistants(data)
 
@@ -129,72 +129,103 @@ const LabOwnerDashboard = () => {
     })
   }
 
-  const handleCreateAssistant =
-    async (e) => {
+  const handleCreateAssistant = async (e) => {
+  e.preventDefault();
+  if (creatingAssistant) return;
 
-      e.preventDefault()
+  const { name, email, mobile, password } = assistantData;
 
-      try {
+  if (!name.trim()) {
+    return toast.error("Full Name is required");
+  }
 
-        await API.post(
+  if (!email.trim()) {
+    return toast.error("Email is required");
+  }
 
-          '/admin/create-lab-assistant',
+  if (!mobile.trim()) {
+    return toast.error("Mobile Number is required");
+  }
 
-          assistantData
-        )
+  if (!/^[6-9]\d{9}$/.test(mobile)) {
+    return toast.error("Enter a valid 10-digit mobile number");
+  }
 
-        fetchAssistants()
+  if (!password.trim()) {
+    return toast.error("Password is required");
+  }
 
-        setAssistantData({
+  if (password.length < 6) {
+    return toast.error(
+      "Password must be at least 6 characters"
+    );
+  }
 
-          name: '',
+  try {
+    setCreatingAssistant(true);
+    const { data } = await API.post(
+      "/admin/create-lab-assistant",
+      assistantData
+    );
 
-          email: '',
+    toast.success(
+      data?.message || "Assistant created successfully"
+    );
 
-          password: '',
+    fetchAssistants();
 
-          mobile: '',
+    setAssistantData({
+      name: "",
+      email: "",
+      password: "",
+      mobile: "",
+      document: "",
+    });
 
-          document: ''
+    setShowAssistantForm(false);
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message ||
+      "Failed to create assistant"
+    );
+  }
+  finally {
+    setCreatingAssistant(false);
+  }
+};
 
-        })
+ const handleAssignAssistant = async (
+  bookingId,
+  assistantId
+) => {
+  if (!assistantId) {
+    return toast.error(
+      "Please select an assistant"
+    );
+  }
 
-        setShowAssistantForm(false)
-
-      } catch (error) {
-
-        console.log(error)
+  try {
+    const { data } = await API.put(
+      "/bookings/assign-assistant",
+      {
+        bookingId,
+        assistantId,
       }
-    }
+    );
 
-  const handleAssignAssistant =
-    async (
-      bookingId,
-      assistantId
-    ) => {
+    toast.success(
+      data?.message ||
+      "Assistant assigned successfully"
+    );
 
-      try {
-
-        await API.put(
-
-          '/bookings/assign-assistant',
-
-          {
-
-            bookingId,
-
-            assistantId
-
-          }
-        )
-
-        fetchBookings()
-
-      } catch (error) {
-
-        console.log(error)
-      }
-    }
+    fetchBookings();
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message ||
+      "Failed to assign assistant"
+    );
+  }
+};
 
   const scrollToTable = () => {
 

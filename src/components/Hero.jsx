@@ -210,7 +210,7 @@ useEffect(() => {
             className="rounded-[40px] shadow-2xl"
           />
           {/* Offer Card */}
-          <div className="absolute top-10 -right-4 bg-white shadow-2xl rounded-3xl p-6 w-[280px] hidden lg:block">
+          {/* <div className="absolute top-10 -right-4 bg-white shadow-2xl rounded-3xl p-6 w-[280px] hidden lg:block">
             <div className="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl">%</div>
             <h3 className="text-center text-2xl font-bold mt-6 text-blue-950">Get 20% OFF</h3>
             <p className="text-center text-gray-500 mt-2">on all lab tests</p>
@@ -223,7 +223,7 @@ useEffect(() => {
             >
               Book Now
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 

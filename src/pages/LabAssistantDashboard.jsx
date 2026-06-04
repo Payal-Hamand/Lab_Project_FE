@@ -12,16 +12,19 @@ import Navbar from '../components/Navbar'
 import API from '../services/api'
 
 import {
-  FaVial,
-  FaClipboardCheck,
-  FaUpload,
-  FaUserInjured,
-  FaCheckCircle,
+  FaMapMarkedAlt,
+  FaMicroscope,
+  FaMoneyCheckAlt,
+  FaFileMedical,
+  FaUserCircle,
   FaFlask,
   FaClipboardList,
-  
-} from 'react-icons/fa'
-
+  FaCheckCircle,
+  FaVial,
+  FaMoneyBillWave,
+  FaFileUpload,
+  FaMapMarkerAlt
+} from "react-icons/fa";
 import {
 
   DashboardStatsCard,
@@ -38,7 +41,10 @@ const LabAssistantDashboard = () => {
     useState([])
     const [selectedReport, setSelectedReport] =
   useState({})
+  const [uploadingReport, setUploadingReport] = useState({});
 
+  const [uploadingSample, setUploadingSample] = useState(false);
+const [creatingAssistant, setCreatingAssistant] = useState(false);
   const [loading, setLoading] =
     useState(true)
     const [activeSection,
@@ -148,81 +154,60 @@ const openSampleModal =
     true
   )
 }
-const handleSampleUpload =
-async () => {
-
+const handleSampleUpload = async () => {
   try {
+    setUploadingSample(true);
 
-    const formData =
-      new FormData()
-sampleImages.forEach(
-  image => {
+    const formData = new FormData();
 
-    formData.append(
-      'sampleImages',
-      image
-    )
-  }
-)
+    sampleImages.forEach((image) => {
+      formData.append(
+        "sampleImages",
+        image
+      );
+    });
 
     formData.append(
-      'assistantNotes',
+      "assistantNotes",
       assistantNotes
-    )
+    );
 
     await API.put(
-
       `/bookings/sample/${selectedBooking._id}`,
-
       formData,
-
       {
         headers: {
-          'Content-Type':
-            'multipart/form-data'
-        }
+          "Content-Type":
+            "multipart/form-data",
+        },
       }
-    )
+    );
 
-    setShowSampleModal(
-      false
-    )
+    toast.success(
+      "Sample uploaded successfully"
+    );
 
-    setSampleImages([])
+    setShowSampleModal(false);
+    setSampleImages([]);
+    setAssistantNotes("");
 
-    setAssistantNotes('')
-
-    fetchBookings()
-    setShowPaymentModal(true)
-
-setPaymentBooking(
-  selectedBooking
-)
+    fetchBookings();
 
   } catch (error) {
-
-    console.log(error)
+    toast.error(
+      error?.response?.data?.message ||
+      "Upload failed"
+    );
+  } finally {
+    setUploadingSample(false);
   }
-}
+};
+
+
+
 const handlePayment =
   async (booking) => {
-
-    console.log({
-
-  bookingId:
-    booking._id,
-
-  patientName:
-    booking.patientName,
-
-  amount:
-    booking?.test?.price,
-
-  mobileNumber:
-    booking.phone,
-});
-
-    try {
+try {
 
       const { data } =
   await API.post(
@@ -237,7 +222,8 @@ const handlePayment =
         booking.patientName,
 
       amount:
-       booking?.test?.price || 1,
+  booking?.test?.price ||
+  booking?.package?.price,
 
       mobileNumber:
         booking.phone,
@@ -256,53 +242,50 @@ const handlePayment =
     }
   };
 
-  const handleUploadReport = async (
-    bookingId
-  ) => {
-
-    if (!selectedReport[bookingId]) {
-
-      return alert(
-        'Please Select Report File'
-      )
-    }
-
-    try {
-
-     const formData = new FormData()
-
-formData.append(
-  'report',
-  selectedReport[bookingId]
-)
-
-await API.put(
-
-  `/bookings/upload-report/${bookingId}`,
-
-  formData,
-
-  {
-    headers: {
-
-      'Content-Type':
-        'multipart/form-data'
-    }
+const handleUploadReport = async (bookingId) => {
+  if (!selectedReport[bookingId]) {
+    return toast.error("Please select report file");
   }
-)
-        
 
-      toast.success('Report Uploaded')
+  try {
+    setUploadingReport((prev) => ({
+      ...prev,
+      [bookingId]: true,
+    }));
 
-      fetchBookings()
+    const formData = new FormData();
 
-    } catch (error) {
+    formData.append(
+      "report",
+      selectedReport[bookingId]
+    );
 
-      toast.error(
-        error.response?.data?.message
-      )
-    }
-  } 
+    await API.put(
+      `/bookings/upload-report/${bookingId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data",
+        },
+      }
+    );
+
+    toast.success("Report Uploaded");
+    fetchBookings();
+
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message ||
+      "Upload failed"
+    );
+  } finally {
+    setUploadingReport((prev) => ({
+      ...prev,
+      [bookingId]: false,
+    }));
+  }
+};
 
  const filteredBookings =
 
@@ -445,48 +428,17 @@ await API.put(
 
                 <table className="w-full min-w-[850px]">
 
-                  <thead className="bg-blue-50">
-
-                    <tr>
-
-                      <th className="px-6 py-4 text-left">
-
-                        Patient
-
-                      </th>
-
-                      <th className="px-6 py-4 text-left">
-
-                        Test
-
-                      </th>
-
-                      <th className="px-6 py-4 text-left">
-
-                        Date
-
-                      </th>
-
-                      <th className="px-6 py-4 text-left">
-
-                        Status
-
-                      </th>
-                       <th className="px-6 py-4 text-left">
-
-                        Payment Status
-
-                      </th>
-                      <th className="px-6 py-4 text-left">
-                      Report
-                      </th>
-                      <th className="px-6 py-4 text-left">
-                        Actions
-                      </th>
-
-                    </tr>
-
-                  </thead>
+                  <thead className="bg-slate-100">
+  <tr>
+    <th className="px-4 py-4">Patient</th>
+    <th className="px-4 py-4">Test / Package</th>
+    <th className="px-4 py-4">Date & Time</th>
+    <th className="px-4 py-4">Status</th>
+    <th className="px-4 py-4">Payment</th>
+    <th className="px-4 py-4 text-center">Actions</th>
+    <th className="px-4 py-4 text-center">Report</th>
+  </tr>
+</thead>
 
                   <tbody>
 
@@ -498,236 +450,183 @@ await API.put(
                           className="border-b"
                         >
 
-                          <td className="px-6 py-5">
+                         <td className="px-4 py-5">
+  <div className="flex items-center gap-3">
+    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+      <FaUserCircle className="text-blue-600" />
+    </div>
 
-                            {item.patientName}
+    <div>
+      <h3 className="font-semibold">
+        {item.patientName}
+      </h3>
 
-                          </td>
-
-                          <td className="px-6 py-5">
-
-                            {item?.test?.title}
-
-                          </td>
-
-                          <td className="px-6 py-5">
-
-                            {item.bookingDate}
-
-                          </td>
-
-                          <td className="px-6 py-5">
-
-                            <span
-                              className={`px-4 py-2 rounded-full text-xs font-semibold
-
-                              ${
-                                item.status ===
-                                'Completed'
-
-                                  ? 'bg-green-100 text-green-700'
-
-                                  : 'bg-yellow-100 text-yellow-700'
-                              }
-                              `}
-                            >
-
-                              {item.status}
-
-                            </span>
-
-                          </td>
-                           <td className="px-6 py-5">
-
-                            <span
-                              className={`px-4 py-2 rounded-full text-xs font-semibold
-
-                              ${
-                                item.status ===
-                                'Completed'
-
-                                  ? 'bg-green-100 text-green-700'
-
-                                  : 'bg-yellow-100 text-yellow-700'
-                              }
-                              `}
-                            >
-
-                              {item.paymentStatus}
-
-                            </span>
-
-                          </td>
-                         <td className="px-6 py-5">
-
-  <div className="flex gap-2 flex-wrap">
-
-    {/* REACHED */}
-
-    <button
-
-      disabled={
-        item.status !==
-        'Assigned'
-      }
-
-      onClick={() =>
-        handleReached(item._id)
-      }
-
-      className={`px-4 py-2 rounded-xl text-sm text-white
-
-      ${
-        item.status ===
-        'Assigned'
-
-          ? 'bg-blue-600 hover:bg-blue-700'
-
-          : 'bg-gray-300 cursor-not-allowed'
-      }`}
-    >
-
-      {
-        item.status ===
-        'Reached'
-
-          ? 'Reached'
-
-          : 'Mark Reached'
-      }
-
-    </button>
-
-    {/* SAMPLE */}
-
-    <button
-
-      disabled={
-        item.status !==
-        'Reached'
-      }
-
-      onClick={() =>
-        openSampleModal(item)
-      }
-
-      className={`px-4 py-2 rounded-xl text-sm text-white
-
-      ${
-        item.status ===
-        'Reached'
-
-          ? 'bg-pink-600 hover:bg-pink-700'
-
-          : 'bg-gray-300 cursor-not-allowed'
-      }`}
-    >
-
-      Upload Sample
-
-    </button>
-
-    {/* PAYMENT */}
-
-    <button
-
-      disabled={
-        item.paymentStatus ===
-        'Paid'
-      }
-
-     onClick={() => {
-  setPaymentBooking(item)
-  handlePayment(item)
-}}
-      className={`px-4 py-2 rounded-xl text-sm text-white
-
-      ${
-        item.paymentStatus ===
-        'Paid'
-
-          ? 'bg-gray-300 cursor-not-allowed'
-
-          : 'bg-green-600 hover:bg-green-700'
-      }`}
-    >
-
-      {
-        item.paymentStatus ===
-        'Paid'
-
-          ? 'Payment Done'
-
-          : 'Take Payment'
-      }
-
-    </button>
-
+      <p className="text-xs text-gray-500">
+        {item.phone}
+      </p>
+    </div>
   </div>
+</td>
+
+                          <td className="px-6 py-5">
+
+                            {item?.test?.title || item?.package?.title}
+
+                          </td>
+<td className="px-4 py-5">
+
+<div className="flex flex-col">
+
+<span className="font-semibold text-slate-800">
+{new Date(item.bookingDate)
+.toLocaleDateString(
+"en-IN",
+{
+weekday: "short",
+day: "2-digit",
+month: "short",
+year: "numeric"
+}
+)}
+</span>
+
+<span className="text-xs text-blue-600 font-medium mt-1">
+🕒 {item.bookingTime}
+</span>
+
+</div>
 
 </td>
-<td className="px-6 py-5">
-  {/* Upload Section */}
+                         <td className="px-4 py-5">
 
-                <div className="mt-6">
+<span
+className={`px-3 py-1 rounded-full text-xs font-semibold
 
-                  {
-                    item.report ? (
+${item.status === "Completed"
+? "bg-green-100 text-green-700"
+: item.status === "Reached"
+? "bg-blue-100 text-blue-700"
+: item.status === "Assigned"
+? "bg-yellow-100 text-yellow-700"
+: "bg-gray-100 text-gray-700"
+}`}
+>
+{item.status}
+</span>
 
-                      <a
-                        href={item.report}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
+</td>
+                           <td className="px-4 py-5">
 
-                        <button className="w-full bg-green-500 hover:bg-green-600 transition text-white py-3 rounded-2xl font-medium">
+<span
+className={`px-3 py-1 rounded-full text-xs font-semibold
 
-                          View Report
+${item.paymentStatus === "Paid"
+? "bg-green-100 text-green-700"
+: "bg-red-100 text-red-700"
+}`}
+>
+{item.paymentStatus}
+</span>
 
-                        </button>
+</td>
+<td className="px-4 py-5">
 
-                      </a>
+<div className="flex items-center justify-center gap-3">
 
-                    ) : (
+{/* Reached */}
 
-                      <div className="space-y-4">
+<div className="relative group">
 
-                        <input
-                          type="file"
-                          onChange={(e) =>
-                            setSelectedReport({
+<button
+onClick={() => handleReached(item._id)}
+disabled={item.status !== "Assigned"}
+className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition"
+>
+<FaMapMarkedAlt />
+</button>
 
-                              ...selectedReport,
+<span className="tooltip">
+Reached
+</span>
 
-                              [item._id]:
-                                e.target.files[0]
+</div>
 
-                            })
-                          }
-                          className="w-full border rounded-xl p-3 bg-white"
-                        />
+{/* Sample */}
 
-                        <button
-                          onClick={() =>
-                            handleUploadReport(
-                              item._id
-                            )
-                          }
-                          className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-2xl flex items-center justify-center gap-2 font-medium"
-                        >
+<div className="relative group">
 
-                          <FaUpload />
+<button
+onClick={() => openSampleModal(item)}
+disabled={item.status !== "Reached"}
+className="w-11 h-11 rounded-xl bg-purple-600 text-white flex items-center justify-center hover:scale-110 transition"
+>
+<FaMicroscope />
+</button>
 
-                          Upload Report
+<span className="tooltip">
+Upload Sample
+</span>
 
-                        </button>
+</div>
 
-                      </div>
+{/* Payment */}
 
-                    )
-                  }
+<div className="relative group">
 
-                </div>
+<button
+onClick={() => handlePayment(item)}
+disabled={item.paymentStatus === "Paid"}
+className="w-11 h-11 rounded-xl bg-green-600 text-white flex items-center justify-center hover:scale-110 transition"
+>
+<FaMoneyCheckAlt />
+</button>
+
+<span className="tooltip">
+Take Payment
+</span>
+
+</div>
+
+</div>
+
+</td>
+
+<td className="px-4 py-5 text-center">
+
+{item.report ? (
+
+<a
+href={item.report}
+target="_blank"
+rel="noreferrer"
+className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl"
+>
+
+<FaFileMedical />
+
+View Report
+
+</a>
+
+) : (
+
+<div className="flex flex-col gap-2">
+
+<input
+type="file"
+className="text-xs"
+/>
+
+<button
+className="bg-blue-600 text-white px-4 py-2 rounded-xl"
+>
+<FaFileMedical />
+</button>
+
+</div>
+
+)}
+
 </td>
 
                         </tr>
@@ -750,8 +649,7 @@ await API.put(
 
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
 
-      <div className="bg-white rounded-[35px] w-full max-w-lg p-8">
-
+      <div className="bg-white rounded-[40px] w-full max-w-3xl p-8 md:p-10 shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
         <h2 className="text-3xl font-bold text-blue-950">
 
           Upload Sample
@@ -764,98 +662,263 @@ await API.put(
 
         </p>
 
-        <div className="mt-6 space-y-5">
+       <div className="mt-8">
 
-       <input
-  type="file"
-  multiple
-  accept="image/*"
-  capture="environment"
-  onChange={(e) =>
-    setSampleImages(
-      [...e.target.files]
-    )
-  }
-  className="w-full border rounded-2xl p-4"
-/>
-       {
-  sampleImages.length > 0 && (
+  {/* UPLOAD CARDS */}
 
-    <div className="grid grid-cols-3 gap-3">
+  <div className="grid md:grid-cols-2 gap-5">
 
-      {
-        sampleImages.map(
-          (image, index) => (
+    {/* CAMERA */}
 
-            <div
-              key={index}
-              className="relative"
-            >
+    <label className="group border-2 border-dashed border-blue-200 hover:border-blue-500 rounded-[30px] p-8 flex flex-col items-center justify-center cursor-pointer transition bg-blue-50/40 hover:bg-blue-50">
 
-              <img
-                src={URL.createObjectURL(image)}
-                alt=""
-                className="w-full h-24 object-cover rounded-2xl border"
-              />
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+        onChange={(e) => {
 
-            </div>
-          )
-        )
-      }
+          if (e.target.files[0]) {
 
-    </div>
-  )
-}
+            setSampleImages(prev => [
 
-          <textarea
-            rows="4"
-            placeholder="Assistant Notes"
-            value={assistantNotes}
-            onChange={(e) =>
-              setAssistantNotes(
-                e.target.value
-              )
-            }
-            className="w-full border rounded-2xl p-4 outline-none"
-          />
+              ...prev,
 
-          <div className="flex gap-4">
+              e.target.files[0]
+            ])
+          }
+        }}
+      />
 
-            <button
-              onClick={
-                handleSampleUpload
-              }
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-semibold"
-            >
+      <div className="w-20 h-20 rounded-[28px] bg-blue-100 group-hover:bg-blue-600 transition flex items-center justify-center text-4xl">
 
-              Upload Sample
+        📷
 
-            </button>
+      </div>
 
-            <button
-              onClick={() =>
-                setShowSampleModal(
-                  false
-                )
-              }
-              className="flex-1 bg-gray-100 hover:bg-gray-200 py-4 rounded-2xl font-semibold"
-            >
+      <h2 className="text-xl font-bold text-blue-950 mt-6">
 
-              Cancel
+        Capture Sample
 
-            </button>
+      </h2>
 
-          </div>
+      <p className="text-gray-500 text-center mt-2 text-sm leading-6">
+
+        Open mobile camera and capture blood tube image
+
+      </p>
+
+    </label>
+
+    {/* GALLERY */}
+
+    <label className="group border-2 border-dashed border-pink-200 hover:border-pink-500 rounded-[30px] p-8 flex flex-col items-center justify-center cursor-pointer transition bg-pink-50/40 hover:bg-pink-50">
+
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        hidden
+        onChange={(e) => {
+
+          setSampleImages(prev => [
+
+            ...prev,
+
+            ...Array.from(
+              e.target.files
+            )
+          ])
+        }}
+      />
+
+      <div className="w-20 h-20 rounded-[28px] bg-pink-100 group-hover:bg-pink-600 transition flex items-center justify-center text-4xl">
+
+        🖼️
+
+      </div>
+
+      <h2 className="text-xl font-bold text-blue-950 mt-6">
+
+        Upload Images
+
+      </h2>
+
+      <p className="text-gray-500 text-center mt-2 text-sm leading-6">
+
+        Select multiple sample images from gallery
+
+      </p>
+
+    </label>
+
+  </div>
+
+  {/* IMAGE PREVIEW */}
+
+  {
+    sampleImages.length > 0 && (
+
+      <div className="mt-8">
+
+        <div className="flex items-center justify-between mb-5">
+
+          <h3 className="text-xl font-bold text-blue-950">
+
+            Selected Images
+
+          </h3>
+
+          <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold">
+
+            {
+              sampleImages.length
+            } Images
+
+          </span>
 
         </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+          {
+            sampleImages.map(
+              (image, index) => (
+
+                <div
+                  key={index}
+                  className="relative group"
+                >
+
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt=""
+                    className="w-full h-32 object-cover rounded-[24px] border-2 border-white shadow-md"
+                  />
+
+                  {/* REMOVE */}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+
+                      setSampleImages(
+
+                        sampleImages.filter(
+
+                          (_, i) =>
+                            i !== index
+                        )
+                      )
+                    }}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition"
+                  >
+
+                    ×
+
+                  </button>
+
+                </div>
+              )
+            )
+          }
+
+        </div>
+
+      </div>
+    )
+  }
+
+  {/* NOTES */}
+
+  <div className="mt-8">
+
+    <label className="block text-sm font-semibold text-blue-950 mb-3">
+
+      Assistant Notes
+
+    </label>
+
+    <textarea
+      rows="4"
+      placeholder="Add sample notes..."
+      value={assistantNotes}
+      onChange={(e) =>
+        setAssistantNotes(
+          e.target.value
+        )
+      }
+      className="w-full border border-gray-200 rounded-[24px] p-5 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 resize-none"
+    />
+
+  </div>
+
+  {/* ACTIONS */}
+
+  <div className="flex gap-4 mt-8">
+<button
+  disabled={uploadingSample}
+  onClick={handleSampleUpload}
+  className={`flex-1 py-4 rounded-[24px] font-semibold text-lg text-white
+  ${
+    uploadingSample
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700"
+  }`}
+>
+  {uploadingSample ? (
+    <>
+      <svg
+        className="animate-spin h-5 w-5 inline mr-2"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+          opacity="0.25"
+          fill="none"
+        />
+        <path
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        />
+      </svg>
+
+      Uploading...
+    </>
+  ) : (
+    "Upload Sample"
+  )}
+</button>
+    <button
+      onClick={() => {
+
+        setShowSampleModal(
+          false
+        )
+
+        setSampleImages([])
+      }}
+      className="flex-1 bg-gray-100 hover:bg-gray-200 py-4 rounded-[24px] font-semibold text-lg transition"
+    >
+
+      Cancel
+
+    </button>
+
+  </div>
+
+</div>
 
       </div>
 
     </div>
   )
 }
-
-
     </div>
   )
 }

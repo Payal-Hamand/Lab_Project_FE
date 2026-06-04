@@ -6,6 +6,8 @@ import React, {
 import {
   useNavigate
 } from 'react-router-dom'
+import { toast }
+from 'react-toastify'
 
 import Navbar from '../components/Navbar'
 
@@ -39,6 +41,9 @@ const AdminDashboard = () => {
 
   const [bookings, setBookings] =
     useState([])
+
+    const [creatingAssistant, setCreatingAssistant] = useState(false);
+
     const [activePanel,
   setActivePanel
 ] = useState('')
@@ -48,9 +53,18 @@ const [activeSection,setActiveSection] = useState('all')
 const [allTests,
   setAllTests
 ] = useState([])
+const [packages,
+setPackages] =
+useState([])
+
+const [labOwners,
+setLabOwners] =
+useState([])
   const [loading, setLoading] =
     useState(true)
     const tableRef = useRef(null)
+    const labOwnersRef =
+  useRef(null)
     const [testData, setTestData] =
   useState({
 
@@ -165,146 +179,245 @@ const handleLabOwnerChange =
 
     })
   }
-  const handleCreateTest =
-  async (e) => {
+ const handleCreateTest =
+async (e) => {
 
-    e.preventDefault()
+  e.preventDefault()
+  if (creatingAssistant) return;
 
-    try {
+  if (
 
-      await API.post(
+    !testData.title ||
 
-        '/tests',
+    !testData.category ||
 
-        testData
-      )
+    !testData.price ||
 
-      fetchTests()
+    !testData.reportTime ||
 
-      setActivePanel('')
+    !testData.description ||
 
-      setTestData({
+    !testData.image
 
-        title: '',
+  ) {
 
-        category: '',
-
-        price: '',
-
-        reportTime: '',
-
-        description: '',
-
-        image: ''
-
-      })
-
-    } catch (error) {
-
-      console.log(error)
-    }
+    return toast.error(
+      'Please fill all required fields'
+    )
   }
-  const handleCreatePackage =
-  async (e) => {
 
-    e.preventDefault()
+  try {
+ setCreatingAssistant(true);
+    await API.post(
+      '/tests',
+      testData
+    )
 
-    try {
+    toast.success(
+      'Test Created Successfully'
+    )
 
-      await API.post(
+    fetchDashboardData()
 
-        '/packages',
+    setActivePanel('')
 
-        {
+    setTestData({
 
-          ...packageData,
+      title: '',
 
-          testsIncluded:
-            packageData.testsIncluded
-              
+      category: '',
 
-              .map(item =>
-                item.trim()
-              )
+      price: '',
 
-        }
-      )
+      reportTime: '',
 
-      setActivePanel('')
+      description: '',
 
-      setPackageData({
+      image: ''
 
-        title: '',
+    })
 
-        category: '',
+  } catch (error) {
 
-        price: '',
+    toast.error(
+      error.response?.data
+        ?.message ||
 
-        testsIncluded: [],
-
-        description: '',
-
-        image: ''
-
-      })
-
-    } catch (error) {
-
-      console.log(error)
-    }
+      'Something went wrong'
+    )
   }
-  const handleCreateLabOwner =
-  async (e) => {
-
-    e.preventDefault()
-
-    try {
-
-      await API.post(
-
-        '/admin/create-lab-owner',
-
-        {
-
-          ...labOwnerData,
-
-          servicePincodes:
-            labOwnerData.servicePincodes
-
-              .split(',')
-
-              .map(item =>
-                item.trim()
-              )
-
-        }
-      )
-
-      setActivePanel('')
-
-      setLabOwnerData({
-
-        name: '',
-
-        email: '',
-
-        password: '',
-
-        servicePincodes: ''
-
-      })
-
-    } catch (error) {
-
-      console.log(error)
-    }
+  finally {
+    setCreatingAssistant(false);
   }
+}
+  
+const handleCreatePackage =
+async (e) => {
+
+  e.preventDefault()
+  if (creatingAssistant) return;
+
+  if (
+
+    !packageData.title ||
+
+    !packageData.category ||
+
+    !packageData.price ||
+
+    !packageData.description ||
+
+    !packageData.image ||
+
+    packageData.testsIncluded
+      .length === 0
+
+  ) {
+
+    return toast.error(
+      'Please fill all required fields'
+    )
+  }
+
+  try {
+
+     setCreatingAssistant(true);
+    await API.post(
+
+      '/packages',
+
+      {
+
+        ...packageData,
+
+        testsIncluded:
+          packageData.testsIncluded
+      }
+    )
+
+    toast.success(
+      'Package Created Successfully'
+    )
+
+    fetchDashboardData()
+
+    setActivePanel('')
+
+    setPackageData({
+
+      title: '',
+
+      category: '',
+
+      price: '',
+
+      testsIncluded: [],
+
+      description: '',
+
+      image: ''
+
+    })
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data
+        ?.message ||
+
+      'Something went wrong'
+    )
+  }
+  finally {
+    setCreatingAssistant(false);
+  }
+}
+ const handleCreateLabOwner =
+async (e) => {
+
+  e.preventDefault()
+  if (creatingAssistant) return;
+
+  if (
+
+    !labOwnerData.name ||
+
+    !labOwnerData.email ||
+
+    !labOwnerData.password ||
+
+    !labOwnerData.servicePincodes
+
+  ) {
+
+    return toast.error(
+      'Please fill all required fields'
+    )
+  }
+
+  try {
+     setCreatingAssistant(true);
+
+    await API.post(
+
+      '/admin/create-lab-owner',
+
+      {
+
+        ...labOwnerData,
+
+        servicePincodes:
+
+          labOwnerData
+            .servicePincodes
+
+            .split(',')
+
+            .map(item =>
+              item.trim()
+            )
+      }
+    )
+
+    toast.success(
+      'Lab Owner Created Successfully'
+    )
+
+    fetchDashboardData()
+
+    setActivePanel('')
+
+    setLabOwnerData({
+
+      name: '',
+
+      email: '',
+
+      password: '',
+
+      servicePincodes: ''
+
+    })
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data
+        ?.message ||
+
+      'Something went wrong'
+    )
+  }
+  finally {
+    setCreatingAssistant(false);
+  }
+}
 
   useEffect(() => {
 
     fetchBookings()
 
-    fetchTests()
+    fetchDashboardData()
 
   }, [])
 
@@ -353,6 +466,68 @@ const handleLabOwnerChange =
 
         behavior: 'smooth'
 
+      })
+
+  }, 100)
+}
+
+
+const fetchDashboardData =
+async () => {
+
+  try {
+
+    const [
+
+      testsRes,
+
+      packagesRes,
+
+      labOwnersRes
+
+    ] = await Promise.all([
+
+      API.get('/tests'),
+
+      API.get('/packages'),
+
+      API.get('/admin/lab-owners')
+
+    ])
+
+    setTests(
+      testsRes.data
+    )
+
+    setAllTests(
+      testsRes.data
+    )
+
+    setPackages(
+      packagesRes.data
+    )
+
+    setLabOwners(
+      labOwnersRes.data
+    )
+
+  } catch (error) {
+
+    console.log(error)
+  }
+}
+
+const scrollToLabOwners =
+() => {
+
+  setTimeout(() => {
+
+    labOwnersRef.current
+      ?.scrollIntoView({
+
+        behavior: 'smooth',
+
+        block: 'start'
       })
 
   }, 100)
@@ -422,7 +597,8 @@ const handleLabOwnerChange =
 
         {/* Stats */}
 
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+        {/* <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6"> */}
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
 
   <DashboardStatsCard
     title="Bookings"
@@ -499,96 +675,135 @@ const handleLabOwnerChange =
       }
     }
   />
+  <DashboardStatsCard
+  title="Packages"
+  value={packages.length}
+  icon={<FaBoxOpen />}
+  color="purple"
+  bgColor="bg-purple-100 text-purple-600"
+  onClick={() =>
+    navigate('/packages')
+  }
+/>
+
+<DashboardStatsCard
+  title="Lab Owners"
+  value={labOwners.length}
+  icon={<FaUsers />}
+  color="green"
+  bgColor="bg-green-100 text-green-600"
+  onClick={
+    scrollToLabOwners
+  }
+/>
 
 </div>
 
 {/* ACTION CARDS */}
 
-<div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mt-10">
+{/* QUICK ACTIONS */}
+
+<div className="flex flex-wrap gap-4 mt-8">
 
   {/* CREATE TEST */}
 
-  <button  onClick={() =>
-    setActivePanel('test')
-  }
-    className="bg-white hover:bg-blue-600 hover:text-white transition rounded-3xl p-5 md:p-7 shadow-sm text-left group"
+  <button
+    onClick={() =>
+      setActivePanel('test')
+    }
+    className="group flex items-center gap-3 bg-white hover:bg-blue-600 border border-blue-100 hover:border-blue-600 px-5 py-4 rounded-2xl shadow-sm transition-all"
   >
 
-    <div className="bg-blue-100 group-hover:bg-white/20 w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-blue-600 group-hover:text-white transition">
+    <div className="w-11 h-11 rounded-xl bg-blue-100 group-hover:bg-white/20 flex items-center justify-center text-blue-600 group-hover:text-white transition">
 
-      <FaFlask />
+      <FaFlask className="text-lg" />
 
     </div>
 
-    <h2 className="text-xl md:text-2xl font-bold mt-5 md:mt-6">
+    <div className="text-left">
 
-      Create Test
+      <h3 className="font-bold text-blue-950 group-hover:text-white text-sm">
 
-    </h2>
+        Create Test
 
-    <p className="mt-2 md:mt-3 opacity-80 text-sm md:text-base">
+      </h3>
 
-      Add new laboratory tests
+      <p className="text-xs text-gray-500 group-hover:text-blue-100 mt-1">
 
-    </p>
+        Add lab tests
+
+      </p>
+
+    </div>
 
   </button>
 
   {/* CREATE PACKAGE */}
 
-  <button  onClick={() =>
-    setActivePanel('package')
-  }
-    className="bg-white hover:bg-purple-600 hover:text-white transition rounded-3xl p-5 md:p-7 shadow-sm text-left group"
+  <button
+    onClick={() =>
+      setActivePanel('package')
+    }
+    className="group flex items-center gap-3 bg-white hover:bg-purple-600 border border-purple-100 hover:border-purple-600 px-5 py-4 rounded-2xl shadow-sm transition-all"
   >
 
-    <div className="bg-purple-100 group-hover:bg-white/20 w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-purple-600 group-hover:text-white transition">
+    <div className="w-11 h-11 rounded-xl bg-purple-100 group-hover:bg-white/20 flex items-center justify-center text-purple-600 group-hover:text-white transition">
 
-      <FaBoxOpen />
+      <FaBoxOpen className="text-lg" />
 
     </div>
 
-    <h2 className="text-xl md:text-2xl font-bold mt-5 md:mt-6">
+    <div className="text-left">
 
-      Create Package
+      <h3 className="font-bold text-blue-950 group-hover:text-white text-sm">
 
-    </h2>
+        Create Package
 
-    <p className="mt-2 md:mt-3 opacity-80 text-sm md:text-base">
+      </h3>
 
-      Add healthcare packages
+      <p className="text-xs text-gray-500 group-hover:text-purple-100 mt-1">
 
-    </p>
+        Add health package
+
+      </p>
+
+    </div>
 
   </button>
 
   {/* CREATE LAB OWNER */}
 
-  <button  onClick={() =>
-    setActivePanel('lab-owner')
-  }
-    className="bg-white hover:bg-green-600 hover:text-white transition rounded-3xl p-5 md:p-7 shadow-sm text-left group"
+  <button
+    onClick={() =>
+      setActivePanel('lab-owner')
+    }
+    className="group flex items-center gap-3 bg-white hover:bg-green-600 border border-green-100 hover:border-green-600 px-5 py-4 rounded-2xl shadow-sm transition-all"
   >
 
-    <div className="bg-green-100 group-hover:bg-white/20 w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-green-600 group-hover:text-white transition">
+    <div className="w-11 h-11 rounded-xl bg-green-100 group-hover:bg-white/20 flex items-center justify-center text-green-600 group-hover:text-white transition">
 
-      <FaUsers />
+      <FaUsers className="text-lg" />
 
     </div>
 
-    <h2 className="text-xl md:text-2xl font-bold mt-5 md:mt-6">
+    <div className="text-left">
 
-      Create Lab Owner
+      <h3 className="font-bold text-blue-950 group-hover:text-white text-sm">
 
-    </h2>
+        Create Lab Owner
 
-    <p className="mt-2 md:mt-3 opacity-80 text-sm md:text-base">
+      </h3>
 
-      Add and manage lab owners
+      <p className="text-xs text-gray-500 group-hover:text-green-100 mt-1">
 
-    </p>
+        Add laboratory owner
+
+      </p>
+
+    </div>
 
   </button>
+
 </div>
 <DashboardSidePanel
   open={activePanel === 'test'}
@@ -605,6 +820,8 @@ const handleLabOwnerChange =
   >
 
     <input
+  
+    required
       type="text"
       name="title"
       placeholder="Test Title"
@@ -614,6 +831,7 @@ const handleLabOwnerChange =
     />
 
     <input
+    required
       type="text"
       name="category"
       placeholder="Category"
@@ -625,6 +843,8 @@ const handleLabOwnerChange =
     <div className="grid md:grid-cols-2 gap-5">
 
       <input
+     
+      required
         type="number"
         name="price"
         placeholder="Price"
@@ -634,6 +854,7 @@ const handleLabOwnerChange =
       />
 
       <input
+      required
         type="text"
         name="reportTime"
         placeholder="Report Time"
@@ -654,6 +875,7 @@ const handleLabOwnerChange =
     />
 
     <input
+    required
       type="text"
       name="image"
       placeholder="Image URL"
@@ -701,6 +923,7 @@ const handleLabOwnerChange =
       </label>
 
       <input
+      required
         type="text"
         name="title"
         placeholder="Enter package title"
@@ -720,6 +943,7 @@ const handleLabOwnerChange =
       </label>
 
       <input
+      required
         type="text"
         name="category"
         placeholder="Enter category"
@@ -904,6 +1128,7 @@ const handleLabOwnerChange =
       </label>
 
       <input
+      required
         type="number"
         name="price"
         placeholder="Enter package price"
@@ -948,6 +1173,7 @@ const handleLabOwnerChange =
     </label>
 
     <input
+    required
       type="text"
       name="image"
       placeholder="Enter image URL"
@@ -987,6 +1213,7 @@ const handleLabOwnerChange =
   >
 
     <input
+    required
       type="text"
       name="name"
       placeholder="Full Name"
@@ -996,6 +1223,7 @@ const handleLabOwnerChange =
     />
 
     <input
+    required
       type="email"
       name="email"
       placeholder="Email"
@@ -1005,6 +1233,7 @@ const handleLabOwnerChange =
     />
 
     <input
+    required
       type="password"
       name="password"
       placeholder="Password"
@@ -1014,6 +1243,7 @@ const handleLabOwnerChange =
     />
 
     <input
+    required
       type="text"
       name="servicePincodes"
       placeholder="411033, 411044"
@@ -1062,6 +1292,152 @@ const handleLabOwnerChange =
       <BookingsTable
         bookings={filteredBookings}
       />
+    )
+  }
+</div>
+{/* LAB OWNERS */}
+<div ref={labOwnersRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
+  <DashboardSectionHeader
+    title="Lab Owners"
+    subtitle="Manage all laboratory owners"
+  />
+  {
+    labOwners.length === 0 ? (
+      <EmptyState text="No Lab Owners Found" />
+    ) : (
+      <div className="overflow-x-auto mt-8">
+        <table className="w-full min-w-[900px]">
+          <thead className="bg-blue-50 text-m text-black text-ce4">
+            <tr className="border-b text-left text-black">
+              <th className="py-5 px-4  font-semibold">
+                Owner
+              </th>
+              <th className="py-5 px-4  font-semibold">
+                Email
+              </th>
+              <th className="py-5 px-4  font-semibold">
+                Role
+              </th>
+              <th className="py-5 px-4  font-semibold">
+                Service Areas
+              </th>
+              <th className="py-5 px-4  font-semibold">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              labOwners.map(
+                owner => (
+                  <tr
+                    key={owner._id}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    {/* NAME */}
+                    <td className="py-5 px-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center font-bold text-xl">
+
+                          {
+                            owner.name?.charAt(0)
+                          }
+
+                        </div>
+
+                        <div>
+
+                          <h3 className="font-bold text-blue-950">
+
+                            {owner.name}
+
+                          </h3>
+
+                          <p className="text-sm text-gray-500 mt-1">
+
+                            ID: {
+                              owner._id.slice(-6)
+                            }
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+                    {/* EMAIL */}
+
+                    <td className="py-5 px-4 text-gray-600">
+
+                      {owner.email}
+
+                    </td>
+
+                    {/* ROLE */}
+
+                    <td className="py-5 px-4">
+
+                      <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold capitalize">
+
+                        {owner.role}
+
+                      </span>
+
+                    </td>
+
+                    {/* PINCODES */}
+
+                    <td className="py-5 px-4">
+
+                      <div className="flex flex-wrap gap-2">
+
+                        {
+                          owner.servicePincodes?.map(
+
+                            (pin, index) => (
+
+                              <span
+                                key={index}
+                                className="bg-gray-100 px-3 py-1 rounded-full text-sm"
+                              >
+
+                                {pin}
+
+                              </span>
+                            )
+                          )
+                        }
+
+                      </div>
+
+                    </td>
+
+                    {/* STATUS */}
+
+                    <td className="py-5 px-4">
+
+                      <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">
+
+                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
+
+                        Active
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+                )
+              )
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
     )
   }
 
