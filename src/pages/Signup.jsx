@@ -14,16 +14,29 @@ import {
 } from 'react-toastify'
 
 import {
-  FaArrowLeft
+  FaArrowLeft,
+    FaEye,
+  FaEyeSlash
 } from 'react-icons/fa'
 
 import API from '../services/api'
+import {
+  useContext
+} from 'react'
+
+import {
+  AuthContext
+} from '../context/AuthContext'
 
 const Signup = () => {
 
   const location = useLocation()
 
   const navigate = useNavigate()
+  const { login } = useContext(AuthContext)
+  const [showPassword,
+setShowPassword] =
+useState(false)
 
   const [formData, setFormData] =
     useState({
@@ -75,16 +88,49 @@ const Signup = () => {
 
       setLoading(true)
 
-      await API.post(
-        '/auth/register',
-        formData
-      )
+    const { data } =
+  await API.post(
+    '/auth/register',
+    formData
+  )
 
-      toast.success(
-        'Account Created Successfully'
-      )
+login(data)
 
-      navigate('/login')
+toast.success(
+  'Account Created Successfully'
+)
+
+if (
+  location.state
+    ?.redirectTo
+) {
+
+  navigate(
+
+    location.state
+      .redirectTo,
+
+    {
+
+      state: {
+
+        selectedItem:
+
+          location.state
+            ?.selectedItem,
+
+        bookingType:
+
+          location.state
+            ?.bookingType
+      }
+    }
+  )
+
+} else {
+
+  navigate('/dashboard')
+}
 
     } catch (error) {
 
@@ -122,7 +168,7 @@ const Signup = () => {
 
             <div className="bg-white/10 border border-white/10 px-4 py-2 rounded-full text-sm w-fit mb-6">
 
-              MediLab Healthcare
+              Checked Up 
 
             </div>
 
@@ -134,7 +180,7 @@ const Signup = () => {
 
             <p className="mt-6 text-lg leading-8 text-gray-200">
 
-              Join MediLab today and book
+              Join Checked Up today and book
               lab tests online with secure
               reports and home collection.
 
@@ -251,14 +297,44 @@ const Signup = () => {
 
               </label>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Create password"
-                onChange={handleChange}
-                required
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-              />
+              <div className="relative mt-2">
+
+  <input
+    type={
+      showPassword
+
+        ? 'text'
+
+        : 'password'
+    }
+    name="password"
+    placeholder="Create password"
+    onChange={handleChange}
+    required
+    className="w-full border rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 pr-14 outline-none focus:border-blue-500 text-sm md:text-base"
+  />
+
+  <button
+    type="button"
+    onClick={() =>
+      setShowPassword(
+        !showPassword
+      )
+    }
+    className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition"
+  >
+
+    {
+      showPassword
+
+        ? <FaEyeSlash />
+
+        : <FaEye />
+    }
+
+  </button>
+
+</div>
 
             </div>
 

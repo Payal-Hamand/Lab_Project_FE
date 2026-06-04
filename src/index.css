@@ -36,3 +36,23 @@ body{
 
   background: transparent;
 }
+
+.tooltip {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111827;
+  color: white;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.group:hover .tooltip {
+  opacity: 1;
+}

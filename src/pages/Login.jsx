@@ -15,7 +15,9 @@ import {
 } from 'react-toastify'
 
 import {
-  FaArrowLeft
+  FaArrowLeft,
+    FaEye,
+  FaEyeSlash
 } from 'react-icons/fa'
 
 import {
@@ -32,6 +34,9 @@ const Login = () => {
 
   const { login } =
     useContext(AuthContext)
+    const [showPassword,
+setShowPassword] =
+useState(false)
 
   const [formData, setFormData] =
     useState({
@@ -274,14 +279,44 @@ const Login = () => {
 
               </label>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                onChange={handleChange}
-                required
-                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-              />
+              <div className="relative mt-2">
+
+  <input
+    type={
+      showPassword
+
+        ? 'text'
+
+        : 'password'
+    }
+    name="password"
+    placeholder="Enter your password"
+    onChange={handleChange}
+    required
+    className="w-full border rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 pr-14 outline-none focus:border-blue-500 text-sm md:text-base"
+  />
+
+  <button
+    type="button"
+    onClick={() =>
+      setShowPassword(
+        !showPassword
+      )
+    }
+    className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition"
+  >
+
+    {
+      showPassword
+
+        ? <FaEyeSlash />
+
+        : <FaEye />
+    }
+
+  </button>
+
+</div>
 
             </div>
 
