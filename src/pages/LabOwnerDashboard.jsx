@@ -63,12 +63,9 @@ const LabOwnerDashboard = () => {
   ] = useState({
 
     name: '',
-
     email: '',
-
     password: '',
     mobile : '',
-
     document: ''
 
   })

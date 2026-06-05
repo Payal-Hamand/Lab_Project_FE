@@ -34,6 +34,7 @@ import {
   EmptyState
 
 } from '../components/Dashboard'
+import LocationPicker from '../components/LocationPicker'
 
 
 
@@ -41,7 +42,8 @@ const AdminDashboard = () => {
 
   const [bookings, setBookings] =
     useState([])
-
+const [showLabMap, setShowLabMap] =
+  useState(false)
     const [creatingAssistant, setCreatingAssistant] = useState(false);
 
     const [activePanel,
@@ -137,8 +139,12 @@ const [labOwnerData,
   email: '',
 
   password: '',
+servicePincodes :'',
+  labAddress: '',
 
-  servicePincodes: ''
+  latitude: '',
+
+  longitude: ''
 
 })
 const handleTestChange = (
@@ -338,22 +344,28 @@ async (e) => {
   e.preventDefault()
   if (creatingAssistant) return;
 
-  if (
+ if (
 
-    !labOwnerData.name ||
+  !labOwnerData.name ||
 
-    !labOwnerData.email ||
+  !labOwnerData.email ||
 
-    !labOwnerData.password ||
+  !labOwnerData.password ||
 
-    !labOwnerData.servicePincodes
+  !labOwnerData.servicePincodes ||
 
-  ) {
+  !labOwnerData.labAddress ||
 
-    return toast.error(
-      'Please fill all required fields'
-    )
-  }
+  !labOwnerData.latitude ||
+
+  !labOwnerData.longitude
+
+)
+{
+  return toast.error(
+    'Please select lab location'
+  )
+} 
 
   try {
      setCreatingAssistant(true);
@@ -387,17 +399,23 @@ async (e) => {
 
     setActivePanel('')
 
-    setLabOwnerData({
+  setLabOwnerData({
 
-      name: '',
+  name: '',
 
-      email: '',
+  email: '',
 
-      password: '',
+  password: '',
 
-      servicePincodes: ''
+  servicePincodes: '',
 
-    })
+  labAddress: '',
+
+  latitude: '',
+
+  longitude: ''
+
+})
 
   } catch (error) {
 
@@ -532,6 +550,49 @@ const scrollToLabOwners =
 
   }, 100)
 }
+const getLabLocation = () => {
+
+  navigator.geolocation.getCurrentPosition(
+
+    async position => {
+
+      const lat =
+        position.coords.latitude
+
+      const lng =
+        position.coords.longitude
+
+      const response =
+        await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        )
+
+      const data =
+        await response.json()
+
+      setLabOwnerData(prev => ({
+
+        ...prev,
+
+        labAddress:
+          data.display_name,
+
+        latitude: lat,
+
+        longitude: lng
+
+      }))
+    },
+
+    () => {
+
+      toast.error(
+        'Location Permission Denied'
+      )
+    }
+  )
+}
+
   const filteredBookings =
 
   activeSection ===
@@ -701,8 +762,6 @@ const scrollToLabOwners =
 
 {/* ACTION CARDS */}
 
-{/* QUICK ACTIONS */}
-
 <div className="flex flex-wrap gap-4 mt-8">
 
   {/* CREATE TEST */}
@@ -766,7 +825,6 @@ const scrollToLabOwners =
         Add health package
 
       </p>
-
     </div>
 
   </button>
@@ -1256,6 +1314,124 @@ const scrollToLabOwners =
       className="w-full border rounded-2xl px-5 py-4 outline-none"
     />
 
+      <div>
+      {labOwnerData.labAddress && (
+
+  <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
+
+    <div className="font-semibold text-green-700">
+
+      📍 Lab Location Selected
+
+    </div>
+
+    <div className="text-sm text-gray-600 mt-2">
+
+      {labOwnerData.labAddress}
+
+    </div>
+
+  </div>
+
+)}
+    <button
+  type="button"
+  onClick={() =>
+    setShowLabMap(true)
+  }
+  className="w-full bg-blue-100 text-blue-700 py-4 rounded-2xl font-semibold"
+>
+  🗺️ Select Lab Location On Map
+</button>
+{showLabMap && (
+
+  <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+
+    <div className="bg-white w-full max-w-4xl rounded-3xl p-5">
+
+      <div className="flex justify-between items-center mb-4">
+
+        <h3 className="font-bold text-xl">
+
+          Select Lab Location
+
+        </h3>
+
+        <button
+          onClick={() =>
+            setShowLabMap(false)
+          }
+        >
+          ✕
+        </button>
+
+      </div>
+
+     <LocationPicker
+  location={{
+    lat:
+      Number(
+        labOwnerData.latitude
+      ) || 18.5204,
+
+    lng:
+      Number(
+        labOwnerData.longitude
+      ) || 73.8567
+  }}
+        setLocation={(loc) => {
+
+          setLabOwnerData(prev => ({
+            ...prev,
+            latitude: loc.lat,
+            longitude: loc.lng
+          }))
+        }}
+        onLocationSelect={
+          async (lat, lng) => {
+
+            const response =
+              await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+              )
+
+            const data =
+              await response.json()
+
+            setLabOwnerData(prev => ({
+
+              ...prev,
+
+              labAddress:
+                data.display_name,
+
+              latitude: lat,
+
+              longitude: lng
+
+            }))
+          }
+        }
+      />
+
+      <button
+        onClick={() =>
+          setShowLabMap(false)
+        }
+        className="w-full mt-5 bg-green-600 text-white py-4 rounded-2xl"
+      >
+
+        Confirm Location
+
+      </button>
+
+    </div>
+
+  </div>
+
+)}
+
+</div>
     <button className="bg-green-600 hover:bg-green-700 text-white w-full py-4 rounded-2xl font-semibold">
 
       Create Lab Owner
