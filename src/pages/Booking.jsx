@@ -2,7 +2,8 @@ import React, {
   useEffect,
   useState
 } from 'react'
-
+import LocationPicker
+from '../components/LocationPicker'
 import Navbar from '../components/Navbar'
 import {
   toast
@@ -83,8 +84,27 @@ const Muted = ({ children }) => (
 const Booking = () => {
 
   const navigate = useNavigate()
-  const location =
+  const pageLocation =
   useLocation()
+const [showLocationPanel,
+setShowLocationPanel] =
+useState(false)
+
+const [searchLocation,
+setSearchLocation] =
+useState('')
+
+const [suggestions,
+setSuggestions] =
+useState([])
+
+const [mapLocation,
+setMapLocation] =
+useState(null)
+
+const [showMap,
+setShowMap] =
+useState(false)
 
   // Dynamic Tests
 
@@ -92,6 +112,11 @@ const Booking = () => {
   const [packages,
   setPackages
 ] = useState([])
+const [gettingLocation,
+setGettingLocation] =
+useState(false)
+
+
 
   // Loading
 
@@ -99,12 +124,13 @@ const Booking = () => {
 
   // Form
 const selectedItem =
-  location.state
+  pageLocation.state
     ?.selectedItem
 
 const bookingType =
-  location.state
+  pageLocation.state
     ?.bookingType
+
 useEffect(() => {
 
   if (!selectedItem?._id) return
@@ -152,7 +178,9 @@ package: '',
 
     bookingDate: '',
 
-    bookingTime: ''
+    bookingTime: '',
+    latitude: '',
+longitude: '',
 
   })
   console.log(formData);
@@ -268,11 +296,11 @@ const handleSubmit = async (e) => {
   // Name Validation
 
   if (
-    formData.patientName.length < 3
+    formData.patientName.length < 2
   ) {
 
     toast.error(
-      'Patient Name Must Be At Least 3 Characters'
+      'Patient Name Must Be At Least 2 Characters'
     )
 
     return
@@ -312,7 +340,15 @@ const handleSubmit = async (e) => {
 
     return
   }
+//Location
+  if (!mapLocation) {
 
+  toast.error(
+    'Please select location'
+  )
+
+  return
+}
   // Pincode Validation
 
   const pincodeRegex =
@@ -334,10 +370,20 @@ const handleSubmit = async (e) => {
   try {
 
     setLoading(true)
+    const payload = {
+
+  ...formData,
+
+  latitude:
+    mapLocation?.lat,
+
+  longitude:
+    mapLocation?.lng
+}
 
     await API.post(
       '/bookings',
-      formData
+      payload
     )
 
     toast.success(
@@ -355,12 +401,6 @@ const handleSubmit = async (e) => {
 
         'Booking Failed'
     )
-
-    console.log(
-  "Payload",
-  formData
-);
-
   } finally {
 
     setLoading(false)
@@ -383,17 +423,248 @@ const handleTestPackageChange = (e) => {
     package: isPackage ? selectedId : ""
   }));
 }; 
-console.log(
-  "bookingType",
-  bookingType
-);
 
-console.log(
-  "selectedItem",
-  selectedItem
-);
+const getCurrentLocation =
+() => {
 
+  if (
+    !navigator.geolocation
+  ) {
 
+    toast.error(
+      'Location not supported'
+    )
+
+    return
+  }
+
+  setGettingLocation(true)
+
+navigator.geolocation.getCurrentPosition(
+  async position => {
+
+    const lat =
+      position.coords.latitude
+
+    const lng =
+      position.coords.longitude
+
+    setMapLocation({
+      lat,
+      lng
+    })
+
+    await reverseGeocode(
+      lat,
+      lng
+    )
+
+  },
+  error => {
+
+    toast.error(
+      'Location Permission Denied'
+    )
+
+  }
+)
+} 
+const searchPlaces =
+async value => {
+
+  setSearchLocation(
+    value
+  )
+
+  if (
+    value.length < 3
+  ) return
+
+  const response =
+    await fetch(
+
+      `https://nominatim.openstreetmap.org/search?q=${value}&format=json&limit=8`
+    )
+
+  const data =
+    await response.json()
+
+  setSuggestions(data)
+}
+const selectPlace = async (place) => {
+
+  const lat = Number(place.lat)
+  const lng = Number(place.lon)
+
+  setMapLocation({
+    lat,
+    lng
+  })
+
+  await reverseGeocode(
+    lat,
+    lng
+  )
+
+  setShowLocationPanel(false)
+}
+const updateLocationData =
+async (lat, lng) => {
+
+  const response =
+    await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    )
+
+  const data =
+    await response.json()
+
+  setFormData(prev => ({
+
+    ...prev,
+
+    address:
+      data.display_name || '',
+
+    city:
+      data.address?.city ||
+      data.address?.town ||
+      data.address?.village ||
+      '',
+
+    pincode:
+      data.address?.postcode ||
+      ''
+  }))
+}
+const openMap = () => {
+
+  if (
+    navigator.geolocation
+  ) {
+
+    navigator.geolocation.getCurrentPosition(
+
+      position => {
+
+        setMapLocation({
+
+          lat:
+            position.coords.latitude,
+
+          lng:
+            position.coords.longitude
+        })
+
+        setShowMap(true)
+      },
+
+      () => {
+
+        setShowMap(true)
+      }
+    )
+
+  } else {
+
+    setShowMap(true)
+  }
+}
+
+const reverseGeocode = async (lat, lng) => {
+
+  try {
+
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&lat=${lat}&lon=${lng}`
+    )
+
+    const data = await response.json()
+
+    const area =
+      data.address?.suburb ||
+      data.address?.neighbourhood ||
+      data.address?.residential ||
+      data.address?.quarter ||
+      ''
+
+    const society =
+      data.address?.hamlet ||
+      data.address?.allotments ||
+      ''
+
+    const road =
+      data.address?.road ||
+      ''
+
+    const city =
+      data.address?.city ||
+      data.address?.town ||
+      data.address?.village ||
+      ''
+
+    const state =
+      data.address?.state ||
+      ''
+
+    const pincode =
+      data.address?.postcode ||
+      ''
+
+    const fullAddress = [
+      area,
+      road,
+      society,
+      city,
+      state,
+      pincode
+    ]
+      .filter(Boolean)
+      .join(', ')
+
+    setFormData(prev => ({
+
+      ...prev,
+
+      address: fullAddress,
+
+      landmark: road,
+
+      city,
+
+      pincode,
+
+      latitude: lat,
+
+      longitude: lng
+
+    }))
+
+    setShowMap(false)
+
+    toast.success(
+      `Location Selected: ${area}`
+    )
+
+  } catch (error) {
+
+    toast.error(
+      'Unable to fetch address'
+    )
+  }
+}
+const searchPlacesByName = async (query) => {
+
+  if (query.length < 3) return
+
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
+  )
+
+  const data = await response.json()
+
+  setSuggestions(data)
+}
 
  return (
 
@@ -635,9 +906,8 @@ name="test"
 
           {/* Address */}
 
-          {/* Address Details */}
-
 <div className="space-y-5">
+
 
   {/* Full Address */}
 
@@ -651,17 +921,99 @@ name="test"
 
     </label>
 
-    <textarea
-      rows="3"
-      name="address"
-      value={formData.address}
-      onChange={handleChange}
-      required
-      placeholder="House No, Street, Area"
-      className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-    />
+   <textarea
+  rows="3"
+  name="address"
+  value={formData.address}
+  onChange={handleChange}
+  required
+  placeholder="House No, Street, Area"
+  className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+/>
+
 
   </div>
+ 
+  <div className="bg-gray-50 border rounded-3xl p-5">
+
+  <label className="font-semibold text-gray-700 flex items-center gap-2 mb-4">
+
+    <FaMapMarkerAlt />
+
+    Location
+
+  </label>
+
+  <div className="grid md:grid-cols-2 gap-3">
+
+    <button
+      type="button"
+      onClick={getCurrentLocation}
+      className="bg-blue-600 text-white py-3 rounded-2xl font-semibold"
+    >
+      📍 Use Current Location
+    </button>
+
+    <button
+      type="button"
+      onClick={openMap}
+      className="bg-green-600 text-white py-3 rounded-2xl font-semibold"
+    >
+      🗺️ Select On Map
+    </button>
+
+  </div>
+
+</div>
+<div>
+
+
+  <div className="mt-4">
+{showMap && (
+
+  <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+
+    <div className="bg-white w-full max-w-5xl rounded-3xl p-5">
+
+      <div className="flex justify-between items-center mb-4">
+
+        <h3 className="font-bold text-xl">
+          Select Patient Location
+        </h3>
+
+        <button
+          onClick={() => setShowMap(false)}
+          className="text-red-500 text-2xl"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <LocationPicker
+        location={mapLocation}
+        setLocation={setMapLocation}
+        onLocationSelect={reverseGeocode}
+      />
+
+      <button
+        type="button"
+        onClick={() => setShowMap(false)}
+        className="w-full mt-5 bg-green-600 text-white py-4 rounded-2xl font-semibold"
+      >
+        Confirm Location
+      </button>
+
+    </div>
+
+  </div>
+
+)}
+
+
+  </div>
+
+</div>
 
   {/* Flat + Landmark */}
 

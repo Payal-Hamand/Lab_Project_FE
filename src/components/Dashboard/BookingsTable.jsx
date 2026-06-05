@@ -64,6 +64,11 @@ const BookingsTable = ({
               Status
 
             </th>
+             <th className="text-left px-6 py-4">
+
+             Distance
+
+            </th>
 
             {
               showPayment && (
@@ -203,6 +208,14 @@ const BookingsTable = ({
                     </span>
 
                   </td>
+                  <td>
+  {
+    (
+      item.assignedDistance /
+      1000
+    ).toFixed(1)
+  } km
+</td>
 
                   {/* Payment */}
 
