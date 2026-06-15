@@ -57,6 +57,13 @@ const LabOwnerDashboard = () => {
   const [showAssistantForm,
     setShowAssistantForm
   ] = useState(false)
+const [showAssignModal, setShowAssignModal] = useState(false);
+const [selectedBooking, setSelectedBooking] = useState(null);
+
+
+  const [searchTerm,
+setSearchTerm] =
+useState("");
 
   const [assistantData,
     setAssistantData
@@ -224,6 +231,29 @@ const LabOwnerDashboard = () => {
   }
 };
 
+const searchBookings =
+async (value) => {
+
+  setSearchTerm(value);
+
+  try {
+
+    const { data } =
+      await API.get(
+
+        `/bookings/lab-owner/search?search=${value}`
+
+      );
+
+    setBookings(data);
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+};
   const scrollToTable = () => {
 
     setTimeout(() => {
@@ -237,6 +267,32 @@ const LabOwnerDashboard = () => {
 
     }, 100)
   }
+
+  useEffect(() => {
+
+  const timer =
+    setTimeout(() => {
+
+      if (
+        searchTerm.trim()
+      ) {
+
+        searchBookings(
+          searchTerm
+        );
+
+      } else {
+
+        fetchBookings();
+
+      }
+
+    }, 500);
+
+  return () =>
+    clearTimeout(timer);
+
+}, [searchTerm]);
 
   const filteredBookings =
 
@@ -424,6 +480,10 @@ const LabOwnerDashboard = () => {
             'assistants' && (
 
             <div className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
+            <div className="mb-6">
+
+
+</div>
             <DashboardSectionHeader
                 title="Lab Assistants"
                 subtitle="Manage your assistants"
@@ -787,23 +847,54 @@ const LabOwnerDashboard = () => {
           ref={tableRef}
           className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8"
         >
-<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
-     <DashboardSectionHeader
-            title="Bookings"
-            subtitle="Manage assigned laboratory bookings"
-          />
-           <button
-    onClick={() =>
-      setShowAssistantForm(true)
-    }
-    className="bg-blue-600 hover:bg-blue-700 transition-all text-white px-6 py-4 rounded-2xl flex items-center justify-center gap-3 font-semibold shadow-lg shadow-blue-200"
-  >
+<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
 
-    <FaUserPlus />
+  <div>
+    <h2 className="text-2xl font-bold text-slate-900">
+      Booking Management
+    </h2>
 
-    Create Assistant
+    <p className="text-gray-500">
+      Manage laboratory bookings
+    </p>
+  </div>
 
-  </button>
+  <div className="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
+
+    <div className="relative flex-1 lg:w-96">
+
+      <input
+        type="text"
+        placeholder="Search patient, mobile, test, package..."
+        value={searchTerm}
+        onChange={(e) =>
+          setSearchTerm(e.target.value)
+        }
+        className="w-full pl-12 pr-4 py-3 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+      />
+
+      <span className="absolute left-4 top-1/2 -translate-y-1/2">
+        🔍
+      </span>
+
+    </div>
+
+    <div className="bg-blue-50 px-5 py-3 rounded-2xl font-semibold text-blue-700 whitespace-nowrap">
+      {filteredBookings.length} Bookings
+    </div>
+
+    <button
+      onClick={() =>
+        setShowAssistantForm(true)
+      }
+      className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold"
+    >
+      <FaUserPlus />
+      Create Assistant
+    </button>
+
+  </div>
+
 </div>
          
 
@@ -817,18 +908,548 @@ const LabOwnerDashboard = () => {
               <EmptyState text="No Bookings Found" />
 
             ) : (
+              <>
+              <div className="hidden lg:block overflow-x-auto">
 
-              <DashboardTable
-                bookings={
-                  filteredBookings
+  <table className="w-full">
+
+    <thead>
+
+      <tr className="bg-slate-50 border-b">
+
+        <th className="px-4 py-4 text-left">
+          Patient
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Test / Package
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Amount
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Date
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Assistant
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Status
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Payment
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Report
+        </th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      {filteredBookings.map((booking) => (
+
+        <tr
+          key={booking._id}
+          className="
+          border-b
+          hover:bg-slate-50
+          transition
+          "
+        >
+
+          <td className="px-4 py-4">
+
+            <div>
+
+              <h4 className="font-semibold">
+                {booking.patientName}
+              </h4>
+
+              <p className="text-sm text-gray-500">
+                {booking.phone}
+              </p>
+
+            </div>
+
+          </td>
+
+          <td className="px-4 py-4">
+
+            <div>
+
+              <p className="font-medium">
+                {booking?.test?.title ||
+                  booking?.package?.title}
+              </p>
+
+              <p className="text-xs text-gray-500 mt-1">
+                {booking.city}
+              </p>
+
+            </div>
+
+          </td>
+
+          <td className="px-4 py-4 font-semibold text-green-600">
+
+            ₹
+            {booking?.test?.price ||
+              booking?.package?.price}
+
+          </td>
+
+          <td className="px-4 py-4">
+
+            <div>
+              {booking.bookingDate}
+            </div>
+
+            <div className="text-sm text-gray-500">
+              {booking.bookingTime}
+            </div>
+
+          </td>
+
+          <td className="px-4 py-4">
+
+            {booking.assignedLabAssistant ? (
+
+              <div>
+
+                <p className="font-medium">
+                  {booking.assignedLabAssistant.name}
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  {booking.assignedLabAssistant.email}
+                </p>
+
+              </div>
+
+            ) : (
+
+              <select
+                onChange={(e) =>
+                  handleAssignAssistant(
+                    booking._id,
+                    e.target.value
+                  )
                 }
-                assistants={
-                  assistants
-                }
-                handleAssignAssistant={
-                  handleAssignAssistant
-                }
-              />
+                className="
+                border
+                rounded-xl
+                px-3
+                py-2
+                "
+              >
+
+                <option value="">
+                  Assign
+                </option>
+
+                {assistants.map((assistant) => (
+
+                  <option
+                    key={assistant._id}
+                    value={assistant._id}
+                  >
+                    {assistant.name}
+                  </option>
+
+                ))}
+
+              </select>
+
+            )}
+
+          </td>
+
+          <td className="px-4 py-4">
+
+            <span className="
+            bg-blue-100
+            text-blue-700
+            px-3
+            py-1
+            rounded-full
+            text-xs
+            ">
+              {booking.status}
+            </span>
+
+          </td>
+
+          <td className="px-4 py-4">
+
+            <span
+              className={`
+              px-3 py-1 rounded-full text-xs
+
+              ${
+                booking.paymentStatus === "Paid"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }
+              `}
+            >
+              {booking.paymentStatus}
+            </span>
+
+          </td>
+
+          <td className="px-4 py-4">
+
+            {booking.report ? (
+
+              <a
+                href={booking.report}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                View Report
+              </a>
+
+            ) : (
+
+              <span className="text-yellow-600">
+                Pending
+              </span>
+
+            )}
+
+          </td>
+
+        </tr>
+
+      ))}
+
+    </tbody>
+
+  </table>
+
+</div>
+<div className="lg:hidden grid gap-4">
+
+{filteredBookings.map((booking) => (
+
+<div
+  key={booking._id}
+  className="bg-white rounded-[28px] shadow-lg border border-slate-100"
+>
+
+  {/* Top Status Bar */}
+
+  <div className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600" />
+
+  <div className="p-5">
+
+    {/* Patient */}
+
+    <div className="flex justify-between items-start gap-3">
+
+      <div>
+
+        <h2 className="font-bold text-xl text-slate-900">
+          {booking.patientName}
+        </h2>
+
+        <p className="text-gray-500 mt-1">
+          📞 {booking.phone}
+        </p>
+
+      </div>
+
+      <div className="flex flex-col gap-2">
+
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-semibold
+
+          ${
+            booking.paymentStatus === "Paid"
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {booking.paymentStatus}
+        </span>
+
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-semibold
+
+          ${
+            booking.status === "Completed"
+              ? "bg-green-100 text-green-700"
+              : booking.status === "Pending"
+              ? "bg-yellow-100 text-yellow-700"
+              : "bg-blue-100 text-blue-700"
+          }`}
+        >
+          {booking.status}
+        </span>
+
+      </div>
+
+    </div>
+
+    {/* Test Information */}
+
+    <div className="grid grid-cols-2 gap-3 mt-5">
+
+      <div className="bg-blue-50 rounded-2xl p-4">
+
+        <p className="text-xs text-gray-500">
+          Test / Package
+        </p>
+
+        <h3 className="font-bold text-slate-800 mt-1">
+
+          {booking?.test?.title ||
+           booking?.package?.title}
+
+        </h3>
+
+      </div>
+
+      <div className="bg-green-50 rounded-2xl p-4">
+
+        <p className="text-xs text-gray-500">
+          Amount
+        </p>
+
+        <h3 className="font-bold text-green-700 mt-1">
+
+          ₹
+          {booking?.test?.price ||
+           booking?.package?.price}
+
+        </h3>
+
+      </div>
+
+    </div>
+
+    {/* Schedule */}
+
+    <div className="grid grid-cols-2 gap-3 mt-4">
+
+      <div className="bg-purple-50 rounded-2xl p-4">
+
+        <p className="text-xs text-gray-500">
+          Booking Date
+        </p>
+
+        <h3 className="font-semibold text-purple-700 mt-1">
+          {booking.bookingDate}
+        </h3>
+
+      </div>
+
+      <div className="bg-orange-50 rounded-2xl p-4">
+
+        <p className="text-xs text-gray-500">
+          Booking Time
+        </p>
+
+        <h3 className="font-semibold text-orange-700 mt-1">
+          {booking.bookingTime}
+        </h3>
+
+      </div>
+
+    </div>
+
+    {/* Address */}
+
+    <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+
+      <p className="text-xs text-gray-500">
+        Patient Address
+      </p>
+
+      <p className="mt-2 text-slate-700">
+
+        {booking.flatNo},
+        {" "}
+        {booking.address},
+        {" "}
+        {booking.city}
+        {" - "}
+        {booking.pincode}
+
+      </p>
+
+    </div>
+
+    {/* Assistant */}
+
+   <div className="mt-4 bg-purple-50 rounded-2xl p-4">
+
+  <div className="flex items-center justify-between mb-3">
+
+    <p className="text-xs font-medium text-gray-500">
+      Assigned Assistant
+    </p>
+
+    {booking.assignedLabAssistant && (
+      <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">
+        Assigned
+      </span>
+    )}
+
+  </div>
+
+  {booking.assignedLabAssistant ? (
+
+    <div className="bg-white rounded-xl p-3 border border-purple-100">
+
+      <h3 className="font-semibold text-slate-800">
+        {booking.assignedLabAssistant.name}
+      </h3>
+
+      <p className="text-sm text-gray-500 mt-1">
+        {booking.assignedLabAssistant.email}
+      </p>
+
+    </div>
+
+  ) : (
+
+    <div>
+
+      <p className="text-sm text-red-500 mb-3">
+        No Assistant Assigned
+      </p>
+
+     <select
+  onChange={(e) =>
+    handleAssignAssistant(
+      booking._id,
+      e.target.value
+    )
+  }
+  className="
+  w-full
+  border
+  border-purple-200
+  rounded-xl
+  px-4
+  py-3
+  text-sm
+  bg-white
+  "
+>
+        <option value="">
+          Select Assistant
+        </option>
+
+        {assistants.map((assistant) => (
+
+          <option
+            key={assistant._id}
+            value={assistant._id}
+          >
+            {assistant.name}
+          </option>
+
+        ))}
+
+      </select>
+
+    </div>
+
+  )}
+
+</div>
+
+    {/* Report */}
+
+    <div className="mt-4 bg-green-50 rounded-2xl p-4">
+
+  <div className="flex items-center justify-between mb-3">
+
+    <p className="text-xs font-medium text-gray-500">
+      Report Status
+    </p>
+
+    {booking.report ? (
+      <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">
+        Uploaded
+      </span>
+    ) : (
+      <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">
+        Pending
+      </span>
+    )}
+
+  </div>
+
+  {booking.report ? (
+
+    <div className="bg-white rounded-xl p-3 border border-green-100">
+
+      <p className="font-semibold text-green-700">
+        ✅ Report Uploaded
+      </p>
+
+      <a
+        href={booking.report}
+        target="_blank"
+        rel="noreferrer"
+        className="
+        mt-3
+        inline-flex
+        items-center
+        gap-2
+        bg-blue-600
+        hover:bg-blue-700
+        text-white
+        px-4
+        py-2
+        rounded-xl
+        text-sm
+        font-medium
+        transition
+        "
+      >
+        📄 View Report
+      </a>
+
+    </div>
+
+  ) : (
+
+    <div className="bg-white rounded-xl p-3 border border-yellow-100">
+
+      <p className="text-yellow-700 font-medium">
+        ⏳ Report Not Uploaded Yet
+      </p>
+
+    </div>
+
+  )}
+
+</div>
+
+  </div>
+
+</div>
+
+))}
+
+</div>
+
+</>
+             
             )
           }
 

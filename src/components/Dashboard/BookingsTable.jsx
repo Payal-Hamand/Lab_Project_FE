@@ -16,7 +16,8 @@ const BookingsTable = ({
 
   showReport = true,
 
-  showAssistant = false
+  showAssistant = false,
+   openManageModal
 
 }) => {
 
@@ -64,11 +65,6 @@ const BookingsTable = ({
               Status
 
             </th>
-             <th className="text-left px-6 py-4">
-
-             Distance
-
-            </th>
 
             {
               showPayment && (
@@ -102,6 +98,10 @@ const BookingsTable = ({
                 </th>
               )
             }
+
+            <th className="text-left px-6 py-4">
+              Actions
+            </th>
 
           </tr>
 
@@ -186,21 +186,23 @@ const BookingsTable = ({
 
                     <span
                       className={`px-4 py-2 rounded-full text-xs font-semibold
-
                       ${
-                        item.status ===
-                        'Completed'
+  item.status === 'Completed'
+    ? 'bg-green-100 text-green-700'
 
-                          ? 'bg-green-100 text-green-700'
+  : item.status === 'Assigned'
+    ? 'bg-blue-100 text-blue-700'
 
-                          : item.status ===
-                            'Assigned'
+  : item.status === 'Cancelled'
+    ? 'bg-red-100 text-red-700'
 
-                          ? 'bg-blue-100 text-blue-700'
+  : item.status === 'Rescheduled'
+    ? 'bg-purple-100 text-purple-700'
 
-                          : 'bg-yellow-100 text-yellow-700'
-                      }
+  : 'bg-yellow-100 text-yellow-700'
+}
                       `}
+                      
                     >
 
                       {item.status}
@@ -208,14 +210,6 @@ const BookingsTable = ({
                     </span>
 
                   </td>
-                  <td>
-  {
-    (
-      item.assignedDistance /
-      1000
-    ).toFixed(1)
-  } km
-</td>
 
                   {/* Payment */}
 
@@ -344,6 +338,36 @@ const BookingsTable = ({
                     )
                   }
 
+<td className="px-6 py-5">
+
+  {
+    item.status !== 'Completed' &&
+    item.status !== 'Cancelled' && (
+
+      <button
+        onClick={() =>
+          openManageModal &&
+          openManageModal(item)
+        }
+        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium"
+      >
+        ⚙️ Manage
+      </button>
+
+    )
+  }
+
+  {
+    item.status === 'Cancelled' && (
+
+      <span className="bg-red-100 text-red-700 px-3 py-2 rounded-xl text-xs font-semibold">
+        Cancelled
+      </span>
+
+    )
+  }
+
+</td>
                 </tr>
               )
             )
