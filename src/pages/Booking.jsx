@@ -27,59 +27,6 @@ import {
   FaFlask
 } from 'react-icons/fa'
 
-const tok = {
-  // typography
-  fontDisplay: "'Plus Jakarta Sans', sans-serif",
-  fontBody:    "'Inter', sans-serif",
-
-  // colours
-  bg:          '#f0f4fa',
-  card:        '#ffffff',
-  navy:        '#0b1120',
-  navyLight:   '#111827',
-  accent:      '#1d4ed8',
-  accentHover: '#1e40af',
-  accentMid:   '#dbeafe',
-  accentText:  '#1d4ed8',
-  border:      '#e2e8f0',
-  borderFocus: '#1d4ed8',
-  textPrimary: '#0f172a',
-  textSec:     '#475569',
-  textMuted:   '#94a3b8',
-  inputBg:     '#f8fafc',
-  summaryBg:   '#0b1120',
-  summaryBdr:  '#1e293b',
-  summaryRow:  '#0f172a',
-  summaryAcc:  '#3b82f6',
-  summaryDim:  '#334155',
-  summaryVal:  '#cbd5e1',
-}
-const SummaryRow = ({ icon, label, children }) => (
-  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 18 }}>
-    <div style={{
-      width: 34, height: 34,
-      background: 'rgba(59,130,246,.1)', border: '1px solid rgba(59,130,246,.18)',
-      borderRadius: 9, display: 'flex', alignItems: 'center',
-      justifyContent: 'center', flexShrink: 0,
-    }}>
-      <span style={{ color: tok.summaryAcc, fontSize: 13 }}>{icon}</span>
-    </div>
-    <div>
-      <div style={{
-        fontSize: 10, fontWeight: 700, letterSpacing: '.1em',
-        textTransform: 'uppercase', color: tok.summaryDim,
-        fontFamily: tok.fontBody, marginBottom: 3,
-      }}>{label}</div>
-      <div style={{ fontSize: 14, color: tok.summaryVal, fontFamily: tok.fontBody, lineHeight: 1.5 }}>
-        {children}
-      </div>
-    </div>
-  </div>
-)
-
-const Muted = ({ children }) => (
-  <span style={{ color: '#1e3a5f', fontStyle: 'normal', fontWeight: 400 }}>{children}</span>
-)
 
 const Booking = () => {
 
@@ -963,7 +910,6 @@ name="test"
     </button>
 
   </div>
-
 </div>
 <div>
 
@@ -1141,104 +1087,6 @@ name="test"
 
       </div>
       
-       {/* ── Summary card ── */}
-        <div style={{
-          background: tok.summaryBg, borderRadius: 20,
-          border: `1px solid ${tok.summaryBdr}`, overflow: 'hidden',
-          position: 'sticky', top: 20,
-          boxShadow: '0 8px 40px rgba(0,0,0,.3)',
-        }}>
-          {/* header */}
-          <div style={{ padding: '26px 26px 18px' }}>
-            <div style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: '.12em',
-              textTransform: 'uppercase', color: tok.summaryAcc,
-              fontFamily: tok.fontBody, marginBottom: 10,
-            }}>Booking Summary</div>
-            <div style={{
-              fontFamily: tok.fontDisplay, fontSize: 19, fontWeight: 700,
-              color: '#f1f5f9', letterSpacing: '-.02em',
-            }}>Your appointment<br />at a glance</div>
-          </div>
-
-          <div style={{ height: 1, background: tok.summaryBdr }} />
-
-          {/* rows */}
-          <div style={{ padding: '20px 26px 4px' }}>
-            <SummaryRow icon={<FaFlask />} label="Test">
-              {selectedTestObj ? selectedTestObj.title : <Muted>Not selected</Muted>}
-            </SummaryRow>
-            <SummaryRow icon={<FaUser />} label="Patient">
-              {formData.patientName ? (
-                <span>
-                  {formData.patientName}
-                  {(formData.age || formData.gender) && (
-                    <span style={{ display: 'block', fontSize: 12, color: tok.summaryDim, marginTop: 2 }}>
-                      {[formData.age && `${formData.age} yrs`, formData.gender].filter(Boolean).join(' · ')}
-                    </span>
-                  )}
-                </span>
-              ) : <Muted>Not entered</Muted>}
-            </SummaryRow>
-            <SummaryRow icon={<FaCalendarAlt />} label="Schedule">
-              {(formData.bookingDate || formData.bookingTime) ? (
-                <span>
-                  {formData.bookingDate && new Date(formData.bookingDate)
-                    .toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  {formData.bookingTime && (
-                    <span style={{ display: 'block', fontSize: 12, color: tok.summaryDim, marginTop: 2 }}>
-                      {formData.bookingTime}
-                    </span>
-                  )}
-                </span>
-              ) : <Muted>Not set</Muted>}
-            </SummaryRow>
-            <SummaryRow icon={<FaMapMarkerAlt />} label="Location">
-              {formData.city || <Muted>Not entered</Muted>}
-            </SummaryRow>
-          </div>
-
-          <div style={{ height: 1, background: tok.summaryBdr, margin: '0 0 0' }} />
-
-          {/* price */}
-          <div style={{ padding: '18px 26px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{
-              fontSize: 11, fontWeight: 700, letterSpacing: '.09em',
-              textTransform: 'uppercase', color: tok.summaryDim, fontFamily: tok.fontBody,
-            }}>Total Amount</span>
-            <span style={{
-              fontFamily: tok.fontDisplay, fontSize: 26, fontWeight: 800,
-              color: '#f1f5f9', letterSpacing: '-.02em',
-            }}>
-              <span style={{ fontSize: 15, fontFamily: tok.fontBody, fontWeight: 600, color: tok.summaryAcc, verticalAlign: 'super' }}>₹</span>
-              {selectedTestObj ? selectedTestObj.price : '—'}
-            </span>
-          </div>
-
-          {/* trust badges */}
-          <div style={{ padding: '10px 26px 26px' }}>
-            <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
-              {[
-                { icon: <FaShieldAlt />, label: 'NABL Certified' },
-                { icon: <FaHome />,      label: 'Home Visit' },
-                { icon: <FaCheckCircle />, label: 'Verified Reports' },
-              ].map(b => (
-                <div key={b.label} style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  background: 'rgba(255,255,255,.03)',
-                  border: `1px solid ${tok.summaryBdr}`,
-                  borderRadius: 7, padding: '5px 10px',
-                  fontSize: 11, fontWeight: 600,
-                  color: tok.summaryDim, fontFamily: tok.fontBody,
-                }}>
-                  <span style={{ color: tok.summaryAcc, fontSize: 10 }}>{b.icon}</span>
-                  {b.label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
 
     </div>
 

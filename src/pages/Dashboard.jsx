@@ -5,6 +5,9 @@ import React, {
   useRef
 } from 'react'
 
+import BookingDateTime from '../components/BookingDateTime'
+import { toast } from 'react-toastify'
+
 import Navbar from '../components/Navbar'
 
 import API from '../services/api'
@@ -27,17 +30,55 @@ import {
 import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
+   const { user } =useContext(AuthContext)
+  const [selectedBooking,
+  setSelectedBooking] =
+useState(null)
+const [showManageModal,
+  setShowManageModal] =
+useState(false)
+  const [action, setAction] =
+useState('')
 
-  const { user } =useContext(AuthContext)
+const [reason, setReason] =
+useState('')
+
+const [newDate, setNewDate] =
+useState('')
+
+const [newTime, setNewTime] =
+useState('')
   const [bookings, setBookings] = useState([])
   const [activeSection,setActiveSection] = useState('all')
   const [loading, setLoading] = useState(true)
   const tableRef = useRef(null)
   const navigate = useNavigate()
+  const [customReason,
+  setCustomReason] =
+useState('')
+
+const [rescheduleData, setRescheduleData] = useState({
+  bookingDate: '',
+  bookingTime: ''
+})
 
   useEffect(() => {
     fetchBookings()
   }, [])
+const openManageModal = booking => {
+
+  setSelectedBooking(booking)
+
+  setAction('')
+  setReason('')
+
+  setRescheduleData({
+    bookingDate: '',
+    bookingTime: ''
+  })
+
+  setShowManageModal(true)
+}
 
   const fetchBookings = async () => {
     try {
@@ -55,6 +96,114 @@ const Dashboard = () => {
       setLoading(false)
     }
   }
+
+  const handleCancel = async () => {
+
+  if (!reason) {
+
+    toast.error(
+      'Please select cancellation reason'
+    )
+
+    return
+  }
+
+  if (
+    reason === 'Other' &&
+    !customReason.trim()
+  ) {
+
+    toast.error(
+      'Please enter custom reason'
+    )
+
+    return
+  }
+
+  try {
+
+    await API.put(
+      `/bookings/manage/${selectedBooking._id}`,
+      {
+        action: 'cancel',
+
+        reason:
+          reason === 'Other'
+            ? customReason
+            : reason
+      }
+    )
+
+    toast.success(
+      'Booking Cancelled Successfully'
+    )
+
+    fetchBookings()
+
+    setShowManageModal(false)
+
+  } catch (error) {
+
+    toast.error(
+      error?.response?.data?.message ||
+      'Failed To Cancel Booking'
+    )
+  }
+}
+const handleReschedule = async () => {
+
+  if (!rescheduleData.bookingDate) {
+    toast.error('Please select booking date')
+    return
+  }
+
+  if (!rescheduleData.bookingTime) {
+    toast.error('Please select booking time')
+    return
+  }
+
+  try {
+
+    await API.put(
+      `/bookings/manage/${selectedBooking._id}`,
+      {
+        action: 'reschedule',
+
+        bookingDate:
+          rescheduleData.bookingDate,
+
+        bookingTime:
+          rescheduleData.bookingTime,
+
+        reason
+      }
+    )
+
+    toast.success(
+      'Booking Rescheduled Successfully'
+    )
+
+    fetchBookings()
+
+    setShowManageModal(false)
+
+  } catch (error) {
+
+    toast.error(
+      error?.response?.data?.message ||
+      'Failed To Reschedule Booking'
+    )
+  }
+}
+
+const handleRescheduleChange = (e) => {
+  const { name, value } = e.target
+
+  setRescheduleData(prev => ({
+    ...prev,
+    [name]: value
+  }))
+}
   const scrollToTable = () => {
 
   setTimeout(() => {
@@ -96,6 +245,7 @@ const Dashboard = () => {
       )
 
     : bookings
+
 
   return (
 
@@ -272,16 +422,405 @@ const Dashboard = () => {
 
     ) : (
 
-      <BookingsTable
-  bookings={filteredBookings}
-/>
+      <>
+        <div className="hidden lg:block">
+
+  <BookingsTable
+    bookings={filteredBookings}
+    openManageModal={openManageModal}
+  />
+
+</div>
+
+<div className="lg:hidden grid gap-4">
+
+  {filteredBookings.map((booking) => (
+
+    <div
+      key={booking._id}
+      className="bg-white rounded-[28px] shadow-lg border border-slate-100 overflow-hidden"
+    >
+
+      <div className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600" />
+
+      <div className="p-5">
+
+        {/* Patient */}
+
+        <div className="flex justify-between items-start">
+
+          <div>
+
+            <h2 className="font-bold text-xl text-slate-900">
+              {booking.patientName}
+            </h2>
+
+            <p className="text-gray-500 mt-1">
+              📞 {booking.phone}
+            </p>
+
+          </div>
+
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold
+
+            ${
+              booking.status === 'Completed'
+                ? 'bg-green-100 text-green-700'
+                : booking.status === 'Cancelled'
+                ? 'bg-red-100 text-red-700'
+                : booking.status === 'Rescheduled'
+                ? 'bg-purple-100 text-purple-700'
+                : 'bg-yellow-100 text-yellow-700'
+            }
+            `}
+          >
+            {booking.status}
+          </span>
+
+        </div>
+
+        {/* Test */}
+
+        <div className="mt-4 bg-blue-50 rounded-2xl p-4">
+
+          <p className="text-xs text-gray-500">
+            Test / Package
+          </p>
+
+          <h3 className="font-bold text-blue-900 mt-1">
+
+            {booking?.test?.title ||
+             booking?.package?.title}
+
+          </h3>
+
+        </div>
+
+        {/* Schedule */}
+
+        <div className="grid grid-cols-2 gap-3 mt-4">
+
+          <div className="bg-purple-50 rounded-2xl p-4">
+
+            <p className="text-xs text-gray-500">
+              Date
+            </p>
+
+            <h3 className="font-semibold text-purple-700 mt-1">
+              {booking.bookingDate}
+            </h3>
+
+          </div>
+
+          <div className="bg-orange-50 rounded-2xl p-4">
+
+            <p className="text-xs text-gray-500">
+              Time
+            </p>
+
+            <h3 className="font-semibold text-orange-700 mt-1">
+              {booking.bookingTime}
+            </h3>
+
+          </div>
+
+        </div>
+
+        {/* Payment */}
+
+        <div className="mt-4 bg-green-50 rounded-2xl p-4">
+
+          <div className="flex justify-between">
+
+            <span className="text-xs text-gray-500">
+              Payment Status
+            </span>
+
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold
+
+              ${
+                booking.paymentStatus === 'Paid'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-700'
+              }
+              `}
+            >
+              {booking.paymentStatus}
+            </span>
+
+          </div>
+
+        </div>
+
+        {/* Address */}
+
+        <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+
+          <p className="text-xs text-gray-500">
+            Service Address
+          </p>
+
+          <p className="text-slate-700 mt-2">
+
+            {booking.flatNo},
+            {' '}
+            {booking.address},
+            {' '}
+            {booking.city}
+            {' - '}
+            {booking.pincode}
+
+          </p>
+
+        </div>
+
+        {/* Report */}
+
+        {booking.report && (
+
+          <a
+            href={booking.report}
+            target="_blank"
+            rel="noreferrer"
+            className="
+            mt-4
+            w-full
+            flex
+            justify-center
+            bg-green-600
+            hover:bg-green-700
+            text-white
+            py-3
+            rounded-2xl
+            font-medium
+            "
+          >
+            📄 Download Report
+          </a>
+
+        )}
+
+        {/* Manage */}
+
+        {booking.status !== 'Completed' &&
+         booking.status !== 'Cancelled' && (
+
+          <button
+            onClick={() =>
+              openManageModal(booking)
+            }
+            className="
+            mt-4
+            w-full
+            bg-orange-500
+            hover:bg-orange-600
+            text-white
+            py-3
+            rounded-2xl
+            font-medium
+            "
+          >
+            ⚙️ Manage Booking
+          </button>
+
+        )}
+
+      </div>
+
+    </div>
+
+  ))}
+
+</div>
+      </>
     )
   }
 
 </div>
 
       </div>
+{showManageModal && selectedBooking && (
 
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+
+    <div className="bg-white rounded-3xl p-6 w-full max-w-md">
+
+    <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden">
+
+  <div className="flex items-center justify-between px-6 py-5 border-b bg-gradient-to-r from-blue-50 to-purple-50">
+
+   <div>
+      <h2 className="text-xl font-bold text-gray-900">
+        Manage Booking
+      </h2>
+
+      <p className="text-xs text-gray-500 mt-1">
+        Cancel or reschedule your appointment
+      </p>
+    </div>
+
+    <button
+      onClick={() => {
+        setShowManageModal(false)
+        setAction('')
+        setReason('')
+      }}
+      className="text-2xl text-gray-400 hover:text-red-500"
+    >
+      ✕
+    </button>
+
+  </div>
+</div>
+
+     <div className="space-y-4">
+
+  {action === '' && (
+
+    <>
+      <button
+        onClick={() =>
+          setAction('reschedule')
+        }
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium"
+      >
+        📅 Reschedule Booking
+      </button>
+
+      <button
+        onClick={() =>
+          setAction('cancel')
+        }
+        className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium"
+      >
+        ❌ Cancel Booking
+      </button>
+    </>
+
+  )}
+
+  {action === 'reschedule' && (
+
+    <div className="space-y-4">
+
+      <button
+        onClick={() =>
+          setAction('')
+        }
+        className="text-sm text-blue-600"
+      >
+        ← Back
+      </button>
+
+     <BookingDateTime
+  formData={rescheduleData}
+  handleChange={handleRescheduleChange}
+/>
+
+      <textarea
+        rows={3}
+        value={reason}
+        onChange={e =>
+          setReason(
+            e.target.value
+          )
+        }
+        placeholder="Reason (Optional)"
+        className="w-full border rounded-xl px-4 py-3"
+      />
+
+      <button
+        onClick={handleReschedule}
+        className="w-full bg-green-600 text-white py-3 rounded-xl"
+      >
+        Save Changes
+      </button>
+
+    </div>
+
+  )}
+
+  {action === 'cancel' && (
+
+    <div className="space-y-4">
+
+      <button
+        onClick={() =>
+          setAction('')
+        }
+        className="text-sm text-blue-600"
+      >
+        ← Back
+      </button>
+
+      <select
+  value={reason}
+  onChange={e => setReason(e.target.value)}
+  className="w-full border rounded-xl px-4 py-3"
+>
+  <option value="">
+    Select Reason
+  </option>
+
+  <option value="Booked By Mistake">
+    Booked By Mistake
+  </option>
+
+  <option value="Not Available">
+    Not Available
+  </option>
+
+  <option value="Found Another Lab">
+    Found Another Lab
+  </option>
+
+  <option value="Other">
+    Other
+  </option>
+
+</select>
+
+{reason === 'Other' && (
+
+<textarea
+  rows={4}
+  required
+  placeholder="Please enter cancellation reason *"
+  value={customReason}
+  onChange={e =>
+    setCustomReason(e.target.value)
+  }
+  className="w-full border rounded-xl px-4 py-3"
+ />
+
+)}
+
+      <button
+        onClick={handleCancel}
+        disabled={
+  !reason ||
+  (
+    reason === 'Other' &&
+    !customReason.trim()
+  )
+}
+        className="w-full bg-red-600 disabled:bg-gray-300 text-white py-3 rounded-xl"
+      >
+        Confirm Cancellation
+      </button>
+
+    </div>
+
+  )}
+
+</div>
+    </div>
+
+  </div>
+
+)}
     </div>
   )
 }
