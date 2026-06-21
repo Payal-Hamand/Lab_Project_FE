@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar'
 
 import API from '../services/api'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import {
   FaSearch,
@@ -17,6 +17,8 @@ import {
 } from 'react-icons/fa'
 
 const TestsPage = () => {
+
+  const navigate = useNavigate()
 
   const [tests, setTests] = useState([])
 
@@ -54,7 +56,57 @@ const TestsPage = () => {
     }
   }
 
+   const handleBookNow = (
+  item,
+  type = 'package'
+) => {
+
+  const userData =
+    sessionStorage.getItem(
+      'user'
+    )
+
+  const user = userData
+
+    ? JSON.parse(userData)
+
+    : null
+
+  if (!user?.token) {
+
+    navigate('/login', {
+
+      state: {
+
+        message:
+          'Please login to continue booking',
+
+        redirectTo:
+          '/booking',
+
+        selectedItem: item,
+
+        bookingType: type
+
+      }
+    })
+
+  } else {
+
+    navigate('/booking', {
+
+      state: {
+
+        selectedItem: item,
+
+        bookingType: type
+
+      }
+    })
+  }
+}
   // Search
+
 
   const handleSearch = (e) => {
 
@@ -230,19 +282,19 @@ const TestsPage = () => {
 
                         </div>
 
-                        <Link
-                          to="/booking"
-                        >
+                       <button
+  onClick={() =>
+    handleBookNow(
+      item,
+      'package'
+    )
+  }
+  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-semibold"
+>
 
-                          <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-3 rounded-2xl flex items-center gap-2">
+  Book Now
 
-                            Book
-
-                            <FaArrowRight />
-
-                          </button>
-
-                        </Link>
+</button>
 
                       </div>
 

@@ -169,7 +169,11 @@ useEffect(() => {
     ...tests.map(t => ({ ...t, kind: 'test' })),
     ...packages.map(p => ({ ...p, kind: 'package' })),
   ]
-  const selectedTestObj = allItems.find(i => i._id === formData.test)
+  const selectedItemObj = allItems.find(
+  i =>
+    i._id === formData.test ||
+    i._id === formData.package
+)
   // Handle Change
 
   const handleChange = (e) => {
@@ -587,7 +591,7 @@ const reverseGeocode = async (lat, lng) => {
 
     }))
 
-    setShowMap(false)
+  
 
     toast.success(
       `Location Selected: ${area}`
@@ -943,12 +947,20 @@ name="test"
       />
 
       <button
-        type="button"
-        onClick={() => setShowMap(false)}
-        className="w-full mt-5 bg-green-600 text-white py-4 rounded-2xl font-semibold"
-      >
-        Confirm Location
-      </button>
+  onClick={() => {
+
+    if (!mapLocation?.lat) {
+      toast.error("Please select location")
+      return
+    }
+
+    setShowMap(false)
+
+  }}
+  className="w-full mt-5 bg-green-600 text-white py-4 rounded-2xl"
+>
+  Confirm Location
+</button>
 
     </div>
 

@@ -562,25 +562,32 @@ useEffect(() => {
                 </div>
 
               </div>
-
               {/* Test */}
-              <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+             <div className="mt-4 bg-slate-50 rounded-2xl p-4">
 
-                <p className="text-xs text-gray-500">
-                  Test / Package
-                </p>
+  <p className="text-xs text-gray-500 mb-2">
+    Test / Package
+  </p>
 
-                <h3 className="font-bold text-slate-800 mt-1">
-                  {item?.test?.title || item?.package?.title}
-                </h3>
+  <div className="flex justify-between items-center gap-4">
 
-                <p className="text-blue-600 font-bold mt-2">
-                  ₹
-                  {item?.test?.price ||
-                    item?.package?.price}
-                </p>
+    <h3 className="font-bold text-slate-800 text-lg">
+      {item?.test?.title ||
+        item?.package?.title ||
+        "N/A"}
+    </h3>
 
-              </div>
+    <p className="text-green-600 font-bold text-xl whitespace-nowrap">
+      ₹{
+        item?.test?.price ||
+        item?.package?.price ||
+        0
+      }
+    </p>
+
+  </div>
+
+</div>
 
               {/* Date Time */}
               <div className="grid grid-cols-2 gap-3 mt-4">

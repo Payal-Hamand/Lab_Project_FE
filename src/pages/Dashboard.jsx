@@ -482,20 +482,31 @@ const handleRescheduleChange = (e) => {
 
         {/* Test */}
 
-        <div className="mt-4 bg-blue-50 rounded-2xl p-4">
+       <div className="mt-4 bg-slate-50 rounded-2xl p-4">
 
-          <p className="text-xs text-gray-500">
-            Test / Package
-          </p>
+  <p className="text-xs text-gray-500 mb-2">
+    Test / Package
+  </p>
 
-          <h3 className="font-bold text-blue-900 mt-1">
+  <div className="flex justify-between items-center gap-4">
 
-            {booking?.test?.title ||
-             booking?.package?.title}
+    <h3 className="font-bold text-slate-800 text-lg">
+      {booking?.test?.title ||
+        booking?.package?.title ||
+        "N/A"}
+    </h3>
 
-          </h3>
+    <p className="text-green-600 font-bold text-xl whitespace-nowrap">
+      ₹{
+        booking?.test?.price ||
+        booking?.package?.price ||
+        0
+      }
+    </p>
 
-        </div>
+  </div>
+
+</div>
 
         {/* Schedule */}
 
