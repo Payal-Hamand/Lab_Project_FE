@@ -19,6 +19,10 @@ import TestsPage from '../pages/TestsPage'
 import AdminDashboard from '../pages/AdminDashboard'
 import LabAssistantDashboard from '../pages/LabAssistantDashboard'
 import LabOwnerDashboard from '../pages/LabOwnerDashboard'
+import ForgotPassword from '../pages/ForgotPassword'
+import VerifyOtp from '../pages/VerifyOtp'
+import ResetPassword from '../pages/ResetPassword'
+
 
 
 const AppRoutes = () => {
@@ -95,6 +99,20 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+  path="/forgot-password"
+  element={<ForgotPassword />}
+/>
+
+<Route
+  path="/verify-otp"
+  element={<VerifyOtp />}
+/>
+
+<Route
+  path="/reset-password"
+  element={<ResetPassword />}
+/>
 
       <Route
         path="/admin"

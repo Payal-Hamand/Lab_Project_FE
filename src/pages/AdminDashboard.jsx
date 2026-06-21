@@ -762,107 +762,85 @@ const getLabLocation = () => {
 
 {/* ACTION CARDS */}
 
-<div className="flex flex-wrap gap-4 mt-8">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
 
-  {/* CREATE TEST */}
+  {/* Create Test */}
 
   <button
-    onClick={() =>
-      setActivePanel('test')
-    }
-    className="group flex items-center gap-3 bg-white hover:bg-blue-600 border border-blue-100 hover:border-blue-600 px-5 py-4 rounded-2xl shadow-sm transition-all"
+    onClick={() => setActivePanel("test")}
+    className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-3xl p-5 shadow-lg hover:scale-[1.02] transition"
   >
+    <div className="flex items-center gap-4">
 
-    <div className="w-11 h-11 rounded-xl bg-blue-100 group-hover:bg-white/20 flex items-center justify-center text-blue-600 group-hover:text-white transition">
+      <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+        <FaFlask className="text-2xl" />
+      </div>
 
-      <FaFlask className="text-lg" />
+      <div className="text-left">
+        <h3 className="font-bold text-lg">
+          Create Test
+        </h3>
 
-    </div>
-
-    <div className="text-left">
-
-      <h3 className="font-bold text-blue-950 group-hover:text-white text-sm">
-
-        Create Test
-
-      </h3>
-
-      <p className="text-xs text-gray-500 group-hover:text-blue-100 mt-1">
-
-        Add lab tests
-
-      </p>
+        <p className="text-blue-100 text-sm">
+          Add laboratory tests
+        </p>
+      </div>
 
     </div>
-
   </button>
 
-  {/* CREATE PACKAGE */}
+  {/* Create Package */}
 
   <button
-    onClick={() =>
-      setActivePanel('package')
-    }
-    className="group flex items-center gap-3 bg-white hover:bg-purple-600 border border-purple-100 hover:border-purple-600 px-5 py-4 rounded-2xl shadow-sm transition-all"
+    onClick={() => setActivePanel("package")}
+    className="bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-3xl p-5 shadow-lg hover:scale-[1.02] transition"
   >
+    <div className="flex items-center gap-4">
 
-    <div className="w-11 h-11 rounded-xl bg-purple-100 group-hover:bg-white/20 flex items-center justify-center text-purple-600 group-hover:text-white transition">
+      <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+        <FaBoxOpen className="text-2xl" />
+      </div>
 
-      <FaBoxOpen className="text-lg" />
+      <div className="text-left">
+        <h3 className="font-bold text-lg">
+          Create Package
+        </h3>
+
+        <p className="text-purple-100 text-sm">
+          Add health packages
+        </p>
+      </div>
 
     </div>
-
-    <div className="text-left">
-
-      <h3 className="font-bold text-blue-950 group-hover:text-white text-sm">
-
-        Create Package
-
-      </h3>
-
-      <p className="text-xs text-gray-500 group-hover:text-purple-100 mt-1">
-
-        Add health package
-
-      </p>
-    </div>
-
   </button>
 
-  {/* CREATE LAB OWNER */}
+  {/* Create Lab Owner */}
 
   <button
-    onClick={() =>
-      setActivePanel('lab-owner')
-    }
-    className="group flex items-center gap-3 bg-white hover:bg-green-600 border border-green-100 hover:border-green-600 px-5 py-4 rounded-2xl shadow-sm transition-all"
+    onClick={() => setActivePanel("lab-owner")}
+    className="bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-3xl p-5 shadow-lg hover:scale-[1.02] transition"
   >
+    <div className="flex items-center gap-4">
 
-    <div className="w-11 h-11 rounded-xl bg-green-100 group-hover:bg-white/20 flex items-center justify-center text-green-600 group-hover:text-white transition">
+      <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+        <FaUsers className="text-2xl" />
+      </div>
 
-      <FaUsers className="text-lg" />
+      <div className="text-left">
+        <h3 className="font-bold text-lg">
+          Create Lab Owner
+        </h3>
 
-    </div>
-
-    <div className="text-left">
-
-      <h3 className="font-bold text-blue-950 group-hover:text-white text-sm">
-
-        Create Lab Owner
-
-      </h3>
-
-      <p className="text-xs text-gray-500 group-hover:text-green-100 mt-1">
-
-        Add laboratory owner
-
-      </p>
+        <p className="text-green-100 text-sm">
+          Add laboratory owner
+        </p>
+      </div>
 
     </div>
-
   </button>
 
 </div>
+
 <DashboardSidePanel
   open={activePanel === 'test'}
   title="Create Test"
@@ -1455,21 +1433,189 @@ const getLabLocation = () => {
   />
 
   {
-    loading ? (
+  loading ? (
+    <LoadingSpinner />
+  ) : filteredBookings.length === 0 ? (
+    <EmptyState text="No Bookings Found" />
+  ) : (
+    <>
+      {/* Desktop Table */}
 
-      <LoadingSpinner />
+      <div className="hidden lg:block overflow-x-auto">
 
-    ) : filteredBookings.length === 0 ? (
+        <BookingsTable
+          bookings={filteredBookings}
+        />
 
-      <EmptyState text="No Bookings Found" />
+      </div>
 
-    ) : (
+      {/* Mobile Cards */}
 
-      <BookingsTable
-        bookings={filteredBookings}
-      />
-    )
-  }
+      <div className="lg:hidden grid gap-4">
+
+        {filteredBookings.map((item) => (
+
+          <div
+            key={item._id}
+            className="bg-white rounded-[28px] shadow-lg border border-slate-100 overflow-hidden"
+          >
+
+            <div className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600" />
+
+            <div className="p-5">
+
+              {/* Patient */}
+
+              <div className="flex justify-between items-start">
+
+                <div>
+
+                  <h2 className="font-bold text-lg text-slate-900">
+                    {item.patientName}
+                  </h2>
+
+                  <p className="text-gray-500 text-sm mt-1">
+                    📞 {item.phone}
+                  </p>
+
+                </div>
+
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold
+                  ${
+                    item.status === "Completed"
+                      ? "bg-green-100 text-green-700"
+                      : item.status === "Pending"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-blue-100 text-blue-700"
+                  }`}
+                >
+                  {item.status}
+                </span>
+
+              </div>
+
+              {/* Test / Package */}
+
+              <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+
+                <p className="text-xs text-gray-500 mb-2">
+                  Test / Package
+                </p>
+
+                <div className="flex justify-between items-center gap-3">
+
+                  <h3 className="font-bold text-slate-800 flex-1">
+                    {item?.test?.title ||
+                      item?.package?.title}
+                  </h3>
+
+                  <span className="text-green-600 font-bold text-lg whitespace-nowrap">
+                    ₹
+                    {item?.test?.price ||
+                      item?.package?.price}
+                  </span>
+
+                </div>
+
+              </div>
+
+              {/* Date & Time */}
+
+              <div className="grid grid-cols-2 gap-3 mt-4">
+
+                <div className="bg-purple-50 rounded-2xl p-4">
+
+                  <p className="text-xs text-gray-500">
+                    Date
+                  </p>
+
+                  <h3 className="font-semibold text-purple-700 mt-1">
+                    {item.bookingDate}
+                  </h3>
+
+                </div>
+
+                <div className="bg-orange-50 rounded-2xl p-4">
+
+                  <p className="text-xs text-gray-500">
+                    Time
+                  </p>
+
+                  <h3 className="font-semibold text-orange-700 mt-1">
+                    {item.bookingTime}
+                  </h3>
+
+                </div>
+
+              </div>
+
+              {/* Address */}
+
+              <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+
+                <p className="text-xs text-gray-500">
+                  Address
+                </p>
+
+                <p className="text-slate-700 mt-2 text-sm">
+                  {item.flatNo}, {item.address},
+                  {" "}
+                  {item.city} - {item.pincode}
+                </p>
+
+              </div>
+
+              {/* Payment */}
+
+              <div className="mt-4 bg-green-50 rounded-2xl p-4">
+
+                <div className="flex justify-between items-center">
+
+                  <p className="text-xs text-gray-500">
+                    Payment Status
+                  </p>
+
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold
+                    ${
+                      item.paymentStatus === "Paid"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {item.paymentStatus}
+                  </span>
+
+                </div>
+
+              </div>
+
+              {/* User */}
+
+              <div className="mt-4 bg-blue-50 rounded-2xl p-4">
+
+                <p className="text-xs text-gray-500">
+                  User
+                </p>
+
+                <h3 className="font-semibold text-blue-700 mt-1">
+                  {item.user?.name || "N/A"}
+                </h3>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+    </>
+  )
+}
+
 </div>
 {/* LAB OWNERS */}
 <div ref={labOwnersRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
