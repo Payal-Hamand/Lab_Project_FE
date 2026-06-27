@@ -90,6 +90,10 @@ useState(false)
         '/bookings/assigned'
       )
 
+      console.log(
+      "Bookings Data:",
+      data
+    );
       setBookings(data)
 
     } catch (error) {
@@ -116,6 +120,23 @@ useState(false)
   }, 100)
 }
 
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const payment = params.get("payment");
+
+  if (payment) {
+    // Remove query params after showing toast
+    window.history.replaceState({}, "", "/lab-assistant");
+  }
+
+  if (payment === "success") {
+    toast.success("Payment Successful");
+  }
+
+  if (payment === "failed") {
+    toast.error("Payment Failed");
+  }
+}, []);
 
 const handleReached =
 async (bookingId) => {
@@ -501,29 +522,331 @@ useEffect(() => {
     <EmptyState text="No Assigned Bookings" />
   ) : (
     <>
-      {/* DESKTOP TABLE */}
-      <div className="hidden lg:block overflow-x-auto">
+     <div className="hidden lg:block overflow-x-auto">
 
-        <table className="w-full">
-          <thead>
-            {/* Your current table header */}
-          </thead>
+  <table className="w-full min-w-[1400px]">
 
-          <tbody>
-            {filteredBookings.map((item) => (
+    <thead className="bg-blue-50">
 
-              <tr
-                key={item._id}
-                className="border-b hover:bg-slate-50"
+      <tr>
+
+        <th className="px-4 py-4 text-left">
+          Patient
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Test
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Date
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Address
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Status
+        </th>
+
+        <th className="px-4 py-4 text-left">
+          Payment
+        </th>
+
+        <th className="px-4 py-4 text-center w-[240px]">
+          Actions
+        </th>
+        <th className="px-4 py-4 text-center">
+  Report
+</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      {filteredBookings.map(item => (
+
+        <tr
+          key={item._id}
+          className="border-b hover:bg-slate-50"
+        >
+
+          {/* Patient */}
+
+          <td className="px-4 py-5">
+
+            <div className="flex items-center gap-3">
+
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+
+                <FaUserCircle className="text-blue-600 text-2xl" />
+
+              </div>
+
+              <div>
+
+                <h3 className="font-semibold">
+                  {item.patientName}
+                </h3>
+
+                <p className="text-sm text-gray-500">
+                  {item.phone}
+                </p>
+
+              </div>
+
+            </div>
+
+          </td>
+
+          {/* Test */}
+
+          <td className="px-4 py-5">
+
+            <div>
+
+              <p className="font-semibold">
+
+                {item?.test?.title ||
+                  item?.package?.title}
+
+              </p>
+
+              <p className="text-green-600 font-bold">
+
+                ₹
+                {item?.test?.price ||
+                  item?.package?.price}
+
+              </p>
+
+            </div>
+
+          </td>
+
+          {/* Date */}
+
+          <td className="px-4 py-5">
+
+            <p className="font-medium">
+              {item.bookingDate}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              {item.bookingTime}
+            </p>
+
+          </td>
+
+          {/* Address */}
+
+          <td className="px-4 py-5 max-w-xs">
+
+            <div className="flex gap-2">
+
+              <FaMapMarkerAlt className="text-red-500 mt-1" />
+
+              <span className="text-sm text-gray-600">
+
+                {item.address}
+
+              </span>
+
+            </div>
+
+          </td>
+
+          {/* Status */}
+
+          <td className="px-4 py-5">
+
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold
+              ${
+                item.status === 'Completed'
+                  ? 'bg-green-100 text-green-700'
+                  : item.status === 'Reached'
+                  ? 'bg-blue-100 text-blue-700'
+                  : item.status === 'Assigned'
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+
+              {item.status}
+
+            </span>
+
+          </td>
+
+          {/* Payment */}
+
+          <td className="px-4 py-5">
+
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold
+              ${
+                item.paymentStatus === 'Paid'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-700'
+              }`}
+            >
+
+              {item.paymentStatus}
+
+            </span>
+
+          </td>
+
+          {/* Actions */}
+
+          <td className="px-4 py-5">
+
+            <div className="flex gap-2 flex-wrap">
+
+              <button
+                onClick={() =>
+                  openNavigation(item)
+                }
+                className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl"
               >
-                {/* Your current table row code */}
-              </tr>
+                <FaRoute />
+              </button>
 
-            ))}
-          </tbody>
-        </table>
+              <button
+                onClick={() =>
+                  handleReached(item._id)
+                }
+                disabled={
+                  item.status !== 'Assigned'
+                }
+                className={`p-3 rounded-xl text-white
+                ${
+                  item.status === 'Assigned'
+                    ? 'bg-blue-600'
+                    : 'bg-gray-400'
+                }`}
+              >
+                <FaMapMarkedAlt />
+              </button>
 
-      </div>
+              <button
+                onClick={() =>
+                  openSampleModal(item)
+                }
+                disabled={
+                  item.status !== 'Reached'
+                }
+                className={`p-3 rounded-xl text-white
+                ${
+                  item.status === 'Reached'
+                    ? 'bg-purple-600'
+                    : 'bg-gray-400'
+                }`}
+              >
+                <FaMicroscope />
+              </button>
+
+              <button
+                onClick={() =>
+                  handlePayment(item)
+                }
+                disabled={
+                  item.status !== 'Sample Collected' ||
+                  item.paymentStatus === 'Paid'
+                }
+                className={`p-3 rounded-xl text-white
+                ${
+                  item.status === 'Sample Collected' &&
+                  item.paymentStatus !== 'Paid'
+                    ? 'bg-green-600'
+                    : 'bg-gray-400'
+                }`}
+              >
+                <FaMoneyCheckAlt />
+              </button>
+
+            </div>
+
+          </td>
+          {/* Report */}
+
+          <td className="px-4 py-5">
+
+  {item.report ? (
+
+    <a
+      href={item.report}
+      target="_blank"
+      rel="noreferrer"
+      className="
+      bg-green-600
+      text-white
+      px-4
+      py-2
+      rounded-xl
+      "
+    >
+      View Report
+    </a>
+
+  ) : item.paymentStatus === "Paid" ? (
+
+    <div className="space-y-2">
+
+      <input
+        type="file"
+        accept=".pdf"
+        onChange={(e) =>
+          setSelectedReport({
+            ...selectedReport,
+            [item._id]:
+              e.target.files[0]
+          })
+        }
+      />
+
+      <button
+        onClick={() =>
+          handleUploadReport(
+            item._id
+          )
+        }
+        className="
+        bg-blue-600
+        text-white
+        px-4
+        py-2
+        rounded-xl
+        "
+      >
+        Upload
+      </button>
+
+    </div>
+
+  ) : (
+
+    <span className="text-red-500">
+      Payment Pending
+    </span>
+
+  )}
+
+</td>
+
+        </tr>
+
+      ))}
+
+    </tbody>
+
+  </table>
+
+</div>
 
       {/* MOBILE CARDS */}
       <div className="lg:hidden space-y-5">
@@ -728,7 +1051,7 @@ useEffect(() => {
               </div>
 
               {/* Report */}
-              <div className="mt-5">
+              {/* <div className="mt-5">
 
                 {item.report ? (
 
@@ -755,9 +1078,126 @@ useEffect(() => {
                   </div>
 
                 )}
+              </div> */}
 
-              </div>
+<div className="mt-5">
 
+  {item.report ? (
+
+    <a
+      href={item.report}
+      target="_blank"
+      rel="noreferrer"
+      className="
+      w-full
+      flex
+      items-center
+      justify-center
+      gap-2
+      bg-green-600
+      hover:bg-green-700
+      text-white
+      rounded-2xl
+      py-3
+      "
+    >
+      <FaFileMedical />
+      View Report
+    </a>
+
+  ) : item.paymentStatus !== "Paid" ? (
+
+    <div className="
+      bg-red-50
+      text-red-600
+      rounded-2xl
+      py-3
+      text-center
+      font-medium
+    ">
+      Payment Pending
+    </div>
+
+  ) : (
+
+    <div className="space-y-3">
+
+      <label
+        className="
+        flex
+        items-center
+        justify-center
+        gap-2
+        border-2
+        border-dashed
+        border-blue-300
+        rounded-2xl
+        py-4
+        cursor-pointer
+        hover:bg-blue-50
+        "
+      >
+
+        <FaFileUpload />
+
+        Select Report
+
+        <input
+          type="file"
+          accept=".pdf"
+          hidden
+          onChange={(e) =>
+            setSelectedReport({
+              ...selectedReport,
+              [item._id]:
+                e.target.files[0]
+            })
+          }
+        />
+
+      </label>
+
+      {selectedReport[item._id] && (
+
+        <p className="text-sm text-gray-500 text-center">
+
+          {selectedReport[item._id].name}
+
+        </p>
+
+      )}
+
+      <button
+        onClick={() =>
+          handleUploadReport(
+            item._id
+          )
+        }
+        disabled={
+          uploadingReport[item._id]
+        }
+        className="
+        w-full
+        bg-blue-600
+        hover:bg-blue-700
+        text-white
+        rounded-2xl
+        py-3
+        font-semibold
+        "
+      >
+
+        {uploadingReport[item._id]
+          ? "Uploading..."
+          : "Upload Report"}
+
+      </button>
+
+    </div>
+
+  )}
+
+</div>
             </div>
 
           </div>

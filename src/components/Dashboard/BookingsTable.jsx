@@ -124,7 +124,7 @@ const BookingsTable = ({
 
                     {
                       item?.test
-                        ?.title
+                        ?.title || item?.package?.title
                     }
 
                   </td>
