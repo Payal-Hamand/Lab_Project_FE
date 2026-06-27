@@ -157,7 +157,7 @@ const Navbar = () => {
             to="/booking"
             className="hover:text-blue-600 transition"
           >
-            Book Test
+            About
           </Link>
 
          
