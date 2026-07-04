@@ -8,16 +8,14 @@ import {
 
 const BookingsTable = ({
 
-  bookings,
-
+ bookings,
   showPatient = true,
-
   showPayment = true,
-
   showReport = true,
-
   showAssistant = false,
-   openManageModal
+  openManageModal,
+  isAdmin = false,
+  openEditModal
 
 }) => {
 
@@ -65,6 +63,13 @@ const BookingsTable = ({
               Status
 
             </th>
+            {isAdmin && (
+  <th className="py-5 px-4 font-semibold">
+    Assigned Lab
+  </th>
+)}
+
+
 
             {
               showPayment && (
@@ -87,6 +92,7 @@ const BookingsTable = ({
                 </th>
               )
             }
+            
 
             {
               showReport && (
@@ -99,9 +105,9 @@ const BookingsTable = ({
               )
             }
 
-            <th className="text-left px-6 py-4">
-              Actions
-            </th>
+           <th className="text-left px-6 py-4">
+  {isAdmin ? "Edit" : "Actions"}
+</th>
 
           </tr>
 
@@ -120,7 +126,7 @@ const BookingsTable = ({
 
                   {/* Test */}
 
-                  <td className="px-6 py-5 font-semibold text-blue-950">
+                  <td className="px-6 py-5 font-semibold text-blue-950 truncate">
 
                     {
                       item?.test
@@ -138,7 +144,7 @@ const BookingsTable = ({
 
                         <div>
 
-                          <h3 className="font-semibold text-gray-800">
+                          <h3 className="font-semibold truncate text-gray-800">
 
                             {
                               item.patientName
@@ -162,7 +168,7 @@ const BookingsTable = ({
 
                   {/* Date */}
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-5 truncate">
 
                     {
                       item.bookingDate
@@ -172,7 +178,7 @@ const BookingsTable = ({
 
                   {/* Time */}
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-5 truncate">
 
                     {
                       item.bookingTime
@@ -182,7 +188,7 @@ const BookingsTable = ({
 
                   {/* Status */}
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-5 truncate">
 
                     <span
                       className={`px-4 py-2 rounded-full text-xs font-semibold
@@ -211,6 +217,30 @@ const BookingsTable = ({
 
                   </td>
 
+                  {/* Assign Lab */}
+                {isAdmin && (
+  <td className="py-5 px-4">
+
+    <div>
+      <h3 className="font-semibold text-blue-950">
+        {item.labOwner?.name || "Not Assigned"}
+      </h3>
+
+      <div className="group relative w-[220px]">
+
+        <p className="text-sm text-gray-600 mt-2 truncate cursor-pointer">
+          📍 {item.labOwner?.labAddress || "No Address"}
+        </p>
+
+        <div className="absolute hidden group-hover:block z-50 bg-gray-900 text-white text-xs rounded-xl p-3 w-72 left-0 top-8 shadow-lg">
+          {item.labOwner?.labAddress}
+        </div>
+
+      </div>
+    </div>
+
+  </td>
+)}
                   {/* Payment */}
 
                   {
@@ -340,32 +370,57 @@ const BookingsTable = ({
 
 <td className="px-6 py-5">
 
-  {
-    item.status !== 'Completed' &&
-    item.status !== 'Cancelled' && (
+  {isAdmin ? (
 
-      <button
-        onClick={() =>
-          openManageModal &&
-          openManageModal(item)
-        }
-        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium"
-      >
-        ⚙️ Manage
-      </button>
-
-    )
+   <button
+  onClick={() =>
+    openEditModal &&
+    openEditModal(item)
   }
+  disabled={item.status === "Completed"}
+  className={`px-4 py-2 rounded-xl text-sm font-medium truncate text-white
+    ${
+      item.status === "Completed" ||  item.status === "Cancelled"
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-blue-600 hover:bg-blue-700"
+    }
+  `}
+>
+  ✏️ Edit Lab
+</button>
 
-  {
-    item.status === 'Cancelled' && (
+  ) : (
 
-      <span className="bg-red-100 text-red-700 px-3 py-2 rounded-xl text-xs font-semibold">
-        Cancelled
-      </span>
+    <>
+      {
+        item.status !== 'Completed' &&
+        item.status !== 'Cancelled' && (
 
-    )
-  }
+          <button
+            onClick={() =>
+              openManageModal &&
+              openManageModal(item)
+            }
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium"
+          >
+            ⚙️ Manage
+          </button>
+
+        )
+      }
+
+      {
+        item.status === 'Cancelled' && (
+
+          <span className="bg-red-100 text-red-700 px-3 py-2 rounded-xl text-xs font-semibold">
+            Cancelled
+          </span>
+
+        )
+      }
+    </>
+
+  )}
 
 </td>
                 </tr>

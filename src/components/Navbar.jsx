@@ -75,7 +75,7 @@ const Navbar = () => {
           <div className="flex items-center gap-6">
 
             <p>
-              📞 1800-123-4567
+              📞 913-050-1863
             </p>
 
             <p className="hidden md:block">
@@ -154,7 +154,7 @@ const Navbar = () => {
           </Link>
 
           <Link
-            to="/booking"
+            to="/about"
             className="hover:text-blue-600 transition"
           >
             About

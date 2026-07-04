@@ -3,6 +3,7 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 
 import Packages from '../components/Packages'
+import Footer from './Footer '
 
 const PackagesPage = () => {
 
@@ -37,6 +38,9 @@ const PackagesPage = () => {
       {/* Packages */}
 
       <Packages />
+
+      <Footer/>
+
 
     </div>
   )

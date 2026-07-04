@@ -59,11 +59,28 @@ const [packages,
 setPackages] =
 useState([])
 
-const [labOwners,
-setLabOwners] =
-useState([])
+
+const [labOwners, setLabOwners] =
+  useState([])
   const [loading, setLoading] =
     useState(true)
+    const [selectedBooking, setSelectedBooking] =
+  useState(null)
+  
+const [selectedLab, setSelectedLab] =
+  useState('')
+const [showEditModal, setShowEditModal] =
+  useState(false)
+const openEditModal = booking => {
+
+  setSelectedBooking(booking)
+
+  setSelectedLab(
+    booking.labOwner?._id || ''
+  )
+
+  setShowEditModal(true)
+}
     const tableRef = useRef(null)
     const labOwnersRef =
   useRef(null)
@@ -100,6 +117,7 @@ useState([])
   image: ''
 
 })
+
 const selectedTestsPrice =
 
   allTests
@@ -185,6 +203,26 @@ const handleLabOwnerChange =
 
     })
   }
+  useEffect(() => {
+  fetchLabOwners()
+}, [])
+
+const fetchLabOwners = async () => {
+  try {
+
+    const { data } =
+      await API.get(
+        '/bookings/lab-owners'
+      )
+
+    setLabOwners(data)
+
+  } catch (error) {
+
+    console.log(error)
+
+  }
+}
  const handleCreateTest =
 async (e) => {
 
@@ -256,7 +294,34 @@ async (e) => {
     setCreatingAssistant(false);
   }
 }
-  
+  const handleUpdateLab = async () => {
+  try {
+
+    await API.put(
+      `/bookings/update-booking-lab/${selectedBooking._id}`,
+      {
+        labOwnerId: selectedLab
+      }
+    );
+
+    toast.success(
+      "Lab Updated Successfully"
+    );
+
+    fetchBookings();
+
+    setShowEditModal(false);
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to Update Lab"
+    );
+
+  }
+};
+
 const handleCreatePackage =
 async (e) => {
 
@@ -657,8 +722,6 @@ const getLabLocation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
         {/* Stats */}
-
-        {/* <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6"> */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
 
   <DashboardStatsCard
@@ -1170,13 +1233,8 @@ const getLabLocation = () => {
         placeholder="Enter package price"
         value={packageData.price}
         onChange={handlePackageChange}
-        className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-purple-500"
-      />
-
+        className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-purple-500"/>
     </div>
-
- 
-
   {/* DESCRIPTION */}
 
   <div>
@@ -1444,174 +1502,184 @@ const getLabLocation = () => {
       <div className="hidden lg:block overflow-x-auto">
 
         <BookingsTable
-          bookings={filteredBookings}
+          
+           bookings={filteredBookings}
+  isAdmin={true}
+  openEditModal={openEditModal}
         />
 
       </div>
 
       {/* Mobile Cards */}
 
-      <div className="lg:hidden grid gap-4">
+<div className="lg:hidden grid gap-4">
+  {filteredBookings.map((item) => (
+    <div
+      key={item._id}
+      className="bg-white rounded-[28px] shadow-lg border border-slate-100 overflow-hidden"
+    >
+      <div className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600" />
 
-        {filteredBookings.map((item) => (
+      <div className="p-5">
 
-          <div
-            key={item._id}
-            className="bg-white rounded-[28px] shadow-lg border border-slate-100 overflow-hidden"
-          >
+        {/* Header */}
+        <div className="flex justify-between items-start">
 
-            <div className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600" />
+          <div>
+            <h2 className="font-bold text-lg text-slate-900">
+              {item.patientName}
+            </h2>
 
-            <div className="p-5">
-
-              {/* Patient */}
-
-              <div className="flex justify-between items-start">
-
-                <div>
-
-                  <h2 className="font-bold text-lg text-slate-900">
-                    {item.patientName}
-                  </h2>
-
-                  <p className="text-gray-500 text-sm mt-1">
-                    📞 {item.phone}
-                  </p>
-
-                </div>
-
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold
-                  ${
-                    item.status === "Completed"
-                      ? "bg-green-100 text-green-700"
-                      : item.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-blue-100 text-blue-700"
-                  }`}
-                >
-                  {item.status}
-                </span>
-
-              </div>
-
-              {/* Test / Package */}
-
-              <div className="mt-4 bg-slate-50 rounded-2xl p-4">
-
-                <p className="text-xs text-gray-500 mb-2">
-                  Test / Package
-                </p>
-
-                <div className="flex justify-between items-center gap-3">
-
-                  <h3 className="font-bold text-slate-800 flex-1">
-                    {item?.test?.title ||
-                      item?.package?.title}
-                  </h3>
-
-                  <span className="text-green-600 font-bold text-lg whitespace-nowrap">
-                    ₹
-                    {item?.test?.price ||
-                      item?.package?.price}
-                  </span>
-
-                </div>
-
-              </div>
-
-              {/* Date & Time */}
-
-              <div className="grid grid-cols-2 gap-3 mt-4">
-
-                <div className="bg-purple-50 rounded-2xl p-4">
-
-                  <p className="text-xs text-gray-500">
-                    Date
-                  </p>
-
-                  <h3 className="font-semibold text-purple-700 mt-1">
-                    {item.bookingDate}
-                  </h3>
-
-                </div>
-
-                <div className="bg-orange-50 rounded-2xl p-4">
-
-                  <p className="text-xs text-gray-500">
-                    Time
-                  </p>
-
-                  <h3 className="font-semibold text-orange-700 mt-1">
-                    {item.bookingTime}
-                  </h3>
-
-                </div>
-
-              </div>
-
-              {/* Address */}
-
-              <div className="mt-4 bg-slate-50 rounded-2xl p-4">
-
-                <p className="text-xs text-gray-500">
-                  Address
-                </p>
-
-                <p className="text-slate-700 mt-2 text-sm">
-                  {item.flatNo}, {item.address},
-                  {" "}
-                  {item.city} - {item.pincode}
-                </p>
-
-              </div>
-
-              {/* Payment */}
-
-              <div className="mt-4 bg-green-50 rounded-2xl p-4">
-
-                <div className="flex justify-between items-center">
-
-                  <p className="text-xs text-gray-500">
-                    Payment Status
-                  </p>
-
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold
-                    ${
-                      item.paymentStatus === "Paid"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {item.paymentStatus}
-                  </span>
-
-                </div>
-
-              </div>
-
-              {/* User */}
-
-              <div className="mt-4 bg-blue-50 rounded-2xl p-4">
-
-                <p className="text-xs text-gray-500">
-                  User
-                </p>
-
-                <h3 className="font-semibold text-blue-700 mt-1">
-                  {item.user?.name || "N/A"}
-                </h3>
-
-              </div>
-
-            </div>
-
+            <p className="text-gray-500 text-sm mt-1">
+              📞 {item.phone}
+            </p>
           </div>
 
-        ))}
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold
+            ${
+              item.status === "Completed"
+                ? "bg-green-100 text-green-700"
+                : item.status === "Pending"
+                ? "bg-yellow-100 text-yellow-700"
+                : item.status === "Cancelled"
+                ? "bg-red-100 text-red-700"
+                : "bg-blue-100 text-blue-700"
+            }`}
+          >
+            {item.status}
+          </span>
 
+        </div>
+
+        {/* Assigned Lab */}
+
+        <div className="mt-4 bg-purple-50 rounded-2xl p-4">
+          <p className="text-xs text-gray-500">
+            Assigned Lab
+          </p>
+
+          <h3 className="font-semibold text-purple-700 mt-1">
+            {item.labOwner?.name || "Not Assigned"}
+          </h3>
+
+          <p
+            title={item.labOwner?.labAddress}
+            className="text-sm text-gray-600 mt-2 truncate"
+          >
+            📍 {item.labOwner?.labAddress || "No Address"}
+          </p>
+        </div>
+
+        {/* Test / Package */}
+
+        <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+          <p className="text-xs text-gray-500 mb-2">
+            Test / Package
+          </p>
+
+          <div className="flex justify-between items-center gap-3">
+            <h3 className="font-bold text-slate-800 flex-1">
+              {item?.test?.title || item?.package?.title}
+            </h3>
+
+            <span className="text-green-600 font-bold text-lg">
+              ₹
+              {item?.test?.price || item?.package?.price}
+            </span>
+          </div>
+        </div>
+
+        {/* Date & Time */}
+
+        <div className="grid grid-cols-2 gap-3 mt-4">
+
+          <div className="bg-purple-50 rounded-2xl p-4">
+            <p className="text-xs text-gray-500">Date</p>
+
+            <h3 className="font-semibold text-purple-700 mt-1">
+              {item.bookingDate}
+            </h3>
+          </div>
+
+          <div className="bg-orange-50 rounded-2xl p-4">
+            <p className="text-xs text-gray-500">Time</p>
+
+            <h3 className="font-semibold text-orange-700 mt-1">
+              {item.bookingTime}
+            </h3>
+          </div>
+
+        </div>
+
+        {/* Address */}
+
+        <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+          <p className="text-xs text-gray-500">
+            Address
+          </p>
+
+          <p className="text-slate-700 mt-2 text-sm">
+            {item.flatNo}, {item.address},{" "}
+            {item.city} - {item.pincode}
+          </p>
+        </div>
+
+        {/* Payment */}
+
+        <div className="mt-4 bg-green-50 rounded-2xl p-4 flex justify-between items-center">
+
+          <p className="text-xs text-gray-500">
+            Payment Status
+          </p>
+
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold
+            ${
+              item.paymentStatus === "Paid"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {item.paymentStatus}
+          </span>
+          
+
+        </div>
+
+        {/* User */}
+
+        {/* <div className="mt-4 bg-blue-50 rounded-2xl p-4">
+          <p className="text-xs text-gray-500">
+            User
+          </p>
+
+          <h3 className="font-semibold text-blue-700 mt-1">
+            {item.user?.name || "N/A"}
+          </h3>
+        </div> */}
+
+<div className="mt-4">
+  {item.status === "Completed" ? (
+    <div className="w-full bg-green-100 text-green-700 py-3 rounded-2xl text-center font-semibold">
+      ✅ Booking Completed
+    </div>
+  ) : (
+    <button
+      onClick={() =>
+        openEditModal(item)
+      }
+      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold"
+    >
+      ✏️ Edit Assigned Lab
+    </button>
+  )}
+</div>
       </div>
+    </div>
+  ))}
+</div>
+   
     </>
   )
 }
@@ -1762,7 +1830,51 @@ const getLabLocation = () => {
       </div>
     )
   }
+{showEditModal && selectedBooking && (
 
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+    <div className="bg-white rounded-3xl p-6 w-full max-w-md">
+
+      <h2 className="text-2xl font-bold mb-5">
+        Edit Assigned Lab
+      </h2>
+
+     <select
+  value={selectedLab}
+  onChange={(e) =>
+    setSelectedLab(
+      e.target.value
+    )
+  }
+  className="w-full border rounded-xl p-3"
+>
+  <option value="">
+    Select Lab Owner
+  </option>
+
+  {labOwners.map((lab) => (
+    <option
+      key={lab._id}
+      value={lab._id}
+    >
+      {lab.name}
+    </option>
+  ))}
+</select>
+
+      <button
+  onClick={handleUpdateLab}
+  disabled={!selectedLab}
+  className="w-full mt-5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-3 rounded-xl"
+>
+  Save Changes
+</button>
+    </div>
+
+  </div>
+
+)}
 </div>
 
       </div>

@@ -15,7 +15,8 @@ import {
   FaClock,
   FaCheckCircle,
   FaUsers,
-  FaUserPlus
+  FaUserPlus,
+   FaDownload
 } from 'react-icons/fa'
 
 import {
@@ -42,31 +43,24 @@ const LabOwnerDashboard = () => {
 
   const [assistants, setAssistants] =
     useState([])
+const [selectedReport, setSelectedReport] =
+  useState({});
 
-  const [loading, setLoading] =
-    useState(true)
-
-  const [activeSection,
-    setActiveSection
-  ] = useState('all')
-
+const [uploadingReport, setUploadingReport] =
+  useState({});
+  const [loading, setLoading] = useState(true)
+  const [activeSection,setActiveSection] = useState('all')
   const [selectedAssistant,
     setSelectedAssistant
   ] = useState(null)
-
   const [showAssistantForm,
     setShowAssistantForm
   ] = useState(false)
 const [showAssignModal, setShowAssignModal] = useState(false);
 const [selectedBooking, setSelectedBooking] = useState(null);
-
-
-  const [searchTerm,
-setSearchTerm] =
+  const [searchTerm,setSearchTerm] =
 useState("");
-
-  const [assistantData,
-    setAssistantData
+  const [assistantData,setAssistantData
   ] = useState({
 
     name: '',
@@ -233,27 +227,75 @@ useState("");
 
 const searchBookings =
 async (value) => {
-
   setSearchTerm(value);
-
   try {
-
     const { data } =
       await API.get(
-
         `/bookings/lab-owner/search?search=${value}`
-
       );
-
     setBookings(data);
-
   } catch (error) {
-
     console.log(error);
-
   }
 
 };
+
+const handleUploadReport = async (bookingId) => {
+
+  if (!selectedReport[bookingId]) {
+    return toast.error(
+      "Please select report file"
+    );
+  }
+
+  try {
+
+    setUploadingReport(prev => ({
+      ...prev,
+      [bookingId]: true
+    }));
+
+    const formData = new FormData();
+
+    formData.append(
+      "report",
+      selectedReport[bookingId]
+    );
+
+    await API.put(
+      `/bookings/upload-report/${bookingId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data"
+        }
+      }
+    );
+
+    toast.success(
+      "Report Uploaded Successfully"
+    );
+
+    fetchBookings();
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data?.message ||
+      "Upload Failed"
+    );
+
+  } finally {
+
+    setUploadingReport(prev => ({
+      ...prev,
+      [bookingId]: false
+    }));
+
+  }
+};
+
   const scrollToTable = () => {
 
     setTimeout(() => {
@@ -386,12 +428,9 @@ async (value) => {
               setSelectedAssistant(
                 null
               )
-
               setActiveSection('all')
-
               scrollToTable()
-            }}
-          />
+            }} />
 
           <DashboardStatsCard
             title="Pending"
@@ -414,11 +453,9 @@ async (value) => {
               setSelectedAssistant(
                 null
               )
-
               setActiveSection(
                 'pending'
               )
-
               scrollToTable()
             }}
           />
@@ -480,10 +517,7 @@ async (value) => {
             'assistants' && (
 
             <div className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
-            <div className="mb-6">
-
-
-</div>
+            
             <DashboardSectionHeader
                 title="Lab Assistants"
                 subtitle="Manage your assistants"
@@ -496,14 +530,9 @@ async (value) => {
                   )
                 }
               />
-
- 
               {/* ASSISTANT CARDS */}
 
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5 mt-10">
-
-
-
                 {
                   assistants.map(
                     assistant => {
@@ -917,11 +946,11 @@ async (value) => {
 
       <tr className="bg-slate-50 border-b">
 
-        <th className="px-4 py-4 text-left">
+        <th className="px-4 py-4 text-left ">
           Patient
         </th>
 
-        <th className="px-4 py-4 text-left">
+        <th className="px-4 py-4 text-left truncate">
           Test / Package
         </th>
 
@@ -929,23 +958,26 @@ async (value) => {
           Amount
         </th>
 
-        <th className="px-4 py-4 text-left">
+        <th className="px-4 py-4 text-left truncate">
           Date
         </th>
 
-        <th className="px-4 py-4 text-left">
+        <th className="px-4 py-4 text-left truncate">
           Assistant
         </th>
 
-        <th className="px-4 py-4 text-left">
+        <th className="px-4 py-4 text-left truncate">
           Status
         </th>
 
-        <th className="px-4 py-4 text-left">
+        <th className="px-4 py-4 text-left truncate">
           Payment
         </th>
-
         <th className="px-4 py-4 text-left">
+  Samples
+</th>
+
+        <th className="px-4 py-4 text-left ">
           Report
         </th>
 
@@ -966,7 +998,7 @@ async (value) => {
           "
         >
 
-          <td className="px-4 py-4">
+          <td className="px-4 py-4 truncate">
 
             <div>
 
@@ -982,7 +1014,7 @@ async (value) => {
 
           </td>
 
-          <td className="px-4 py-4">
+          <td className="px-4 py-4 truncate">
 
             <div>
 
@@ -1007,7 +1039,7 @@ async (value) => {
 
           </td>
 
-          <td className="px-4 py-4">
+          <td className="px-4 py-4 truncate">
 
             <div>
               {booking.bookingDate}
@@ -1073,7 +1105,7 @@ async (value) => {
 
           </td>
 
-          <td className="px-4 py-4">
+          <td className="px-4 py-4 truncate">
 
             <span className="
             bg-blue-100
@@ -1105,28 +1137,152 @@ async (value) => {
             </span>
 
           </td>
+        <td className="px-4 py-4">
+
+  {booking.sampleImages?.length > 0 ? (
+
+    <div className="flex items-center gap-2">
+
+      {booking.sampleImages
+        .slice(0, 3)
+        .map((image, index) => (
+
+          <a
+            key={index}
+            href={image}
+            target="_blank"
+            rel="noreferrer"
+            className="group relative"
+          >
+
+            <img
+              src={image}
+              alt={`Sample ${index + 1}`}
+              className="
+              w-14 h-14
+              rounded-xl
+              object-cover
+              border-2 border-white
+              shadow
+              hover:scale-110
+              transition
+              "
+            />
+
+            <span
+              className="
+              absolute -bottom-7 left-1/2
+              -translate-x-1/2
+              bg-black text-white
+              text-xs px-2 py-1
+              rounded opacity-0
+              group-hover:opacity-100
+              transition whitespace-nowrap
+              "
+            >
+              View Image
+            </span>
+
+          </a>
+
+        ))}
+
+      {booking.sampleImages.length > 3 && (
+
+        <button
+          className="
+          w-14 h-14 rounded-xl
+          bg-blue-100 text-blue-700
+          font-bold text-sm
+          "
+          title={`${booking.sampleImages.length - 3} more images`}
+        >
+          +{booking.sampleImages.length - 3}
+        </button>
+
+      )}
+
+    </div>
+
+  ) : (
+
+    <span className="text-gray-400">
+      No Samples
+    </span>
+
+  )}
+
+</td>
 
           <td className="px-4 py-4">
 
             {booking.report ? (
 
-              <a
-                href={booking.report}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                View Report
-              </a>
+  <a
+    href={booking.report}
+    target="_blank"
+    rel="noreferrer"
+    className="
+    bg-green-600
+    text-white
+    px-4
+    py-2
+    rounded-xl
+    inline-block
+    "
+  >
+    View Report
+  </a>
 
-            ) : (
+) : booking.paymentStatus === "Paid" ? (
 
-              <span className="text-yellow-600">
-                Pending
-              </span>
+  <div className="space-y-2">
 
-            )}
+    <input
+      type="file"
+      accept=".pdf"
+      onChange={(e) =>
+        setSelectedReport({
+          ...selectedReport,
+          [booking._id]:
+            e.target.files[0]
+        })
+      }
+    />
 
+    <button
+      onClick={() =>
+        handleUploadReport(
+          booking._id
+        )
+      }
+      disabled={
+        uploadingReport[booking._id]
+      }
+      className="
+      bg-blue-600
+      text-white
+      px-4
+      py-2
+      rounded-xl
+      "
+    >
+      {
+        uploadingReport[booking._id]
+        ? "Uploading..."
+        : "Upload"
+      }
+    </button>
+
+  </div>
+
+) : (
+
+  <span className="text-red-500">
+    Payment Pending
+  </span>
+
+)}
           </td>
 
         </tr>
@@ -1370,68 +1526,61 @@ async (value) => {
   )}
 
 </div>
+{/* Sample Images */}
 
-    {/* Report */}
+<div className="mt-4 bg-pink-50 rounded-2xl p-4">
 
-    <div className="mt-4 bg-green-50 rounded-2xl p-4">
-
-  <div className="flex items-center justify-between mb-3">
+  <div className="flex justify-between items-center mb-3">
 
     <p className="text-xs font-medium text-gray-500">
-      Report Status
+      Sample Images
     </p>
 
-    {booking.report ? (
-      <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">
-        Uploaded
-      </span>
-    ) : (
-      <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">
-        Pending
-      </span>
-    )}
+    <span className="bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">
+      {booking.sampleImages?.length || 0} Images
+    </span>
 
   </div>
 
-  {booking.report ? (
+  {booking.sampleImages?.length > 0 ? (
 
-    <div className="bg-white rounded-xl p-3 border border-green-100">
+    <div className="grid grid-cols-5 gap-3">
 
-      <p className="font-semibold text-green-700">
-        ✅ Report Uploaded
-      </p>
+      {booking.sampleImages.map(
+        (image, index) => (
 
-      <a
-        href={booking.report}
-        target="_blank"
-        rel="noreferrer"
-        className="
-        mt-3
-        inline-flex
-        items-center
-        gap-2
-        bg-blue-600
-        hover:bg-blue-700
-        text-white
-        px-4
-        py-2
-        rounded-xl
-        text-sm
-        font-medium
-        transition
-        "
-      >
-        📄 View Report
-      </a>
+          <a
+            key={index}
+            href={image}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              src={image}
+              alt={`Sample ${index + 1}`}
+              className="
+              w-full
+              h-20
+              object-cover
+              rounded-xl
+              border
+              hover:scale-105
+              transition
+              "
+            />
+          </a>
+
+        )
+      )}
 
     </div>
 
   ) : (
 
-    <div className="bg-white rounded-xl p-3 border border-yellow-100">
+    <div className="bg-white rounded-xl p-4 text-center">
 
-      <p className="text-yellow-700 font-medium">
-        ⏳ Report Not Uploaded Yet
+      <p className="text-gray-500">
+        No sample images uploaded yet
       </p>
 
     </div>
@@ -1439,6 +1588,143 @@ async (value) => {
   )}
 
 </div>
+
+    {/* Report */}
+
+  {booking.report ? (
+
+  <div className="bg-white rounded-xl p-4 border border-green-100">
+
+    <div className="flex items-center justify-between">
+
+      <p className="font-semibold text-green-700">
+        ✅ Report Uploaded
+      </p>
+
+      <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">
+        Ready
+      </span>
+
+    </div>
+
+    <a
+      href={booking.report}
+      target="_blank"
+      rel="noreferrer"
+      className="
+      mt-4
+      inline-flex
+      items-center
+      justify-center
+      gap-2
+      bg-green-600
+      hover:bg-green-700
+      text-white
+      px-4
+      py-3
+      rounded-xl
+      w-full
+      font-medium
+      transition
+      "
+    >
+      <FaDownload />
+      View Report
+    </a>
+
+  </div>
+
+) : booking.paymentStatus === "Paid" ? (
+
+  <div className="space-y-3">
+
+    <label
+      className="
+      flex items-center justify-center
+      gap-2 border-2 border-dashed
+      border-blue-300 rounded-2xl
+      py-4 cursor-pointer
+      hover:bg-blue-50
+      "
+    >
+
+      📄 Select Report
+
+      <input
+        type="file"
+        accept=".pdf"
+        hidden
+        onChange={(e) =>
+          setSelectedReport({
+            ...selectedReport,
+            [booking._id]: e.target.files[0]
+          })
+        }
+      />
+
+    </label>
+
+    {selectedReport[booking._id] && (
+
+      <div className="bg-blue-50 rounded-xl p-3">
+
+        <p className="text-sm text-blue-700 font-medium break-all">
+
+          Selected:
+          {" "}
+          {selectedReport[booking._id].name}
+
+        </p>
+
+      </div>
+
+    )}
+
+    <button
+      onClick={() =>
+        handleUploadReport(
+          booking._id
+        )
+      }
+      disabled={
+        uploadingReport[booking._id]
+      }
+      className="
+      w-full
+      bg-blue-600
+      hover:bg-blue-700
+      text-white
+      rounded-2xl
+      py-3
+      disabled:bg-gray-400
+      "
+    >
+
+      {
+        uploadingReport[booking._id]
+          ? "Uploading..."
+          : "Upload Report"
+      }
+
+    </button>
+
+  </div>
+
+) : (
+
+  <div className="bg-yellow-50 rounded-xl p-4 text-center">
+
+    <p className="text-yellow-700 font-medium">
+      Payment Pending
+    </p>
+
+    <p className="text-gray-500 text-sm mt-1">
+      Report can be uploaded only after payment.
+    </p>
+
+  </div>
+
+)}
 
   </div>
 
