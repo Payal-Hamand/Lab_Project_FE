@@ -15,6 +15,7 @@ import {
   FaFlask,
   FaArrowRight
 } from 'react-icons/fa'
+import Footer from './Footer '
 
 const TestsPage = () => {
 
@@ -309,6 +310,7 @@ const TestsPage = () => {
         }
 
       </div>
+      <Footer/>
 
     </div>
   )

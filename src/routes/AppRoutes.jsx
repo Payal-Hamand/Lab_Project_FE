@@ -22,6 +22,7 @@ import LabOwnerDashboard from '../pages/LabOwnerDashboard'
 import ForgotPassword from '../pages/ForgotPassword'
 import VerifyOtp from '../pages/VerifyOtp'
 import ResetPassword from '../pages/ResetPassword'
+import AboutAs from '../pages/AboutAs'
 
 
 
@@ -42,6 +43,10 @@ const AppRoutes = () => {
       <Route
   path='/lab-owner'
   element={<LabOwnerDashboard />}
+/>
+<Route
+  path='/about'
+  element={<AboutAs />}
 />
 
       <Route

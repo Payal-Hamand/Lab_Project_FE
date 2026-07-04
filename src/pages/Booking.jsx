@@ -130,7 +130,7 @@ package: '',
 longitude: '',
 
   })
-  console.log(formData);
+  
  // Fetch Tests and Packages
    const fetchTests = async () => {
 

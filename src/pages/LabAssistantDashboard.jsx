@@ -40,11 +40,9 @@ const LabAssistantDashboard = () => {
 
   const [bookings, setBookings] =
     useState([])
-    const [selectedReport, setSelectedReport] =
-  useState({})
+    
   const [searchTerm, setSearchTerm] = useState("");
-  const [uploadingReport, setUploadingReport] = useState({});
-
+  
   const [uploadingSample, setUploadingSample] = useState(false);
 const [creatingAssistant, setCreatingAssistant] = useState(false);
   const [loading, setLoading] =
@@ -55,21 +53,15 @@ const [creatingAssistant, setCreatingAssistant] = useState(false);
 const [selectedBooking,
 setSelectedBooking] =
 useState(null)
-
 const [sampleImages,
 setSampleImages] =
 useState([])
-
-
-
 const [paymentBooking,
 setPaymentBooking] =
 useState(null)
-
 const [assistantNotes,
 setAssistantNotes] =
 useState('')
-
 const [showSampleModal,
 setShowSampleModal] =
 useState(false)
@@ -90,10 +82,6 @@ useState(false)
         '/bookings/assigned'
       )
 
-      console.log(
-      "Bookings Data:",
-      data
-    );
       setBookings(data)
 
     } catch (error) {
@@ -250,85 +238,126 @@ const openNavigation = (booking) => {
 
 const handlePayment =
   async (booking) => {
-try {
+
+    try {
 
       const { data } =
-  await API.post(
+        await API.post(
+          "/payment/create",
+          {
+            bookingId:
+              booking._id,
 
-    "/payment/create",
+            amount:
+              booking?.test?.price ||
+              booking?.package?.price,
+          }
+        );
 
-    {
-      bookingId:
-        booking._id,
+     const options = {
+  key: data.key,
+  amount: data.order.amount,
+  currency: data.order.currency,
+  name: "MediLab Healthcare",
+  description: "Lab Test Payment",
+  order_id: data.order.id,
 
-      patientName:
-        booking.patientName,
+  handler: async function (response) {
+    try {
+      const verify = await API.post(
+        "/payment/verify",
+        {
+          ...response,
+          bookingId: booking._id,
+        }
+      );
 
-      amount:
-  booking?.test?.price ||
-  booking?.package?.price,
+      if (verify.data.success) {
+        toast.success(
+          "Payment Successful"
+        );
 
-      mobileNumber:
-        booking.phone,
-    }
-  );
-
-      if (data.success) {
-
-        window.location.href =
-          data.url;
+        fetchBookings();
+      } else {
+        toast.error(
+          "Payment Verification Failed"
+        );
       }
+
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        "Payment Verification Failed"
+      );
+    }
+  },
+
+  // Trigger when user closes popup
+  modal: {
+    ondismiss: async function () {
+
+      toast.info(
+        "Payment Cancelled"
+      );
+
+      await API.put(
+        `/bookings/${booking._id}/payment-status`,
+        {
+          paymentStatus: "Failed"
+        }
+      );
+
+      fetchBookings();
+    }
+  },
+
+  prefill: {
+    name: booking.patientName,
+    contact: booking.phone,
+  },
+
+  theme: {
+    color: "#2563eb",
+  }
+};
+
+const razorpay =
+  new window.Razorpay(options);
+
+// Handle payment failure
+razorpay.on(
+  "payment.failed",
+  async function (response) {
+    toast.error(
+      response.error.description ||
+      "Payment Failed"
+    );
+
+    await API.put(
+      `/bookings/${booking._id}/payment-status`,
+      {
+        paymentStatus: "Failed"
+      }
+    );
+
+    fetchBookings();
+  }
+);
+
+razorpay.open();
+
 
     } catch (error) {
 
       console.log(error);
+
+      toast.error(
+        "Payment Failed"
+      );
     }
   };
 
-const handleUploadReport = async (bookingId) => {
-  if (!selectedReport[bookingId]) {
-    return toast.error("Please select report file");
-  }
 
-  try {
-    setUploadingReport((prev) => ({
-      ...prev,
-      [bookingId]: true,
-    }));
-
-    const formData = new FormData();
-
-    formData.append(
-      "report",
-      selectedReport[bookingId]
-    );
-
-    await API.put(
-      `/bookings/upload-report/${bookingId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type":
-            "multipart/form-data",
-        },
-      }
-    );
-
-    toast.success("Report Uploaded");
-    fetchBookings();
-
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      "Upload failed"
-    );
-  } finally {
-    setUploadingReport((prev) => ({
-      ...prev,
-      [bookingId]: false,
-    }));
-  }
-};
 useEffect(() => {
 
   const timer = setTimeout(() => {
@@ -576,7 +605,7 @@ useEffect(() => {
 
           {/* Patient */}
 
-          <td className="px-4 py-5">
+          <td className="px-4 py-5 truncate">
 
             <div className="flex items-center gap-3">
 
@@ -604,7 +633,7 @@ useEffect(() => {
 
           {/* Test */}
 
-          <td className="px-4 py-5">
+          <td className="px-4 py-5 truncate">
 
             <div>
 
@@ -629,7 +658,7 @@ useEffect(() => {
 
           {/* Date */}
 
-          <td className="px-4 py-5">
+          <td className="px-4 py-5 truncate">
 
             <p className="font-medium">
               {item.bookingDate}
@@ -643,7 +672,7 @@ useEffect(() => {
 
           {/* Address */}
 
-          <td className="px-4 py-5 max-w-xs">
+          <td className="px-4 py-5 max-w-xs truncate">
 
             <div className="flex gap-2">
 
@@ -661,7 +690,7 @@ useEffect(() => {
 
           {/* Status */}
 
-          <td className="px-4 py-5">
+          <td className="px-4 py-5 truncate">
 
             <span
               className={`px-3 py-1 rounded-full text-xs font-semibold
@@ -684,7 +713,7 @@ useEffect(() => {
 
           {/* Payment */}
 
-          <td className="px-4 py-5">
+          <td className="px-4 py-5 truncate">
 
             <span
               className={`px-3 py-1 rounded-full text-xs font-semibold
@@ -703,78 +732,106 @@ useEffect(() => {
 
           {/* Actions */}
 
-          <td className="px-4 py-5">
+         <td className="px-4 py-5">
 
-            <div className="flex gap-2 flex-wrap">
+  <div className="flex gap-2 flex-wrap">
 
-              <button
-                onClick={() =>
-                  openNavigation(item)
-                }
-                className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl"
-              >
-                <FaRoute />
-              </button>
+    {/* Navigation */}
 
-              <button
-                onClick={() =>
-                  handleReached(item._id)
-                }
-                disabled={
-                  item.status !== 'Assigned'
-                }
-                className={`p-3 rounded-xl text-white
-                ${
-                  item.status === 'Assigned'
-                    ? 'bg-blue-600'
-                    : 'bg-gray-400'
-                }`}
-              >
-                <FaMapMarkedAlt />
-              </button>
+    <div className="relative group">
 
-              <button
-                onClick={() =>
-                  openSampleModal(item)
-                }
-                disabled={
-                  item.status !== 'Reached'
-                }
-                className={`p-3 rounded-xl text-white
-                ${
-                  item.status === 'Reached'
-                    ? 'bg-purple-600'
-                    : 'bg-gray-400'
-                }`}
-              >
-                <FaMicroscope />
-              </button>
+      <button
+        onClick={() => openNavigation(item)}
+        className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl"
+      >
+        <FaRoute />
+      </button>
 
-              <button
-                onClick={() =>
-                  handlePayment(item)
-                }
-                disabled={
-                  item.status !== 'Sample Collected' ||
-                  item.paymentStatus === 'Paid'
-                }
-                className={`p-3 rounded-xl text-white
-                ${
-                  item.status === 'Sample Collected' &&
-                  item.paymentStatus !== 'Paid'
-                    ? 'bg-green-600'
-                    : 'bg-gray-400'
-                }`}
-              >
-                <FaMoneyCheckAlt />
-              </button>
+      <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
+        Navigation
+      </span>
 
-            </div>
+    </div>
 
-          </td>
+    {/* Reached */}
+
+    <div className="relative group">
+
+      <button
+        onClick={() => handleReached(item._id)}
+        disabled={item.status !== 'Assigned'}
+        className={`p-3 rounded-xl text-white
+        ${
+          item.status === 'Assigned'
+            ? 'bg-blue-600'
+            : 'bg-gray-400'
+        }`}
+      >
+        <FaMapMarkedAlt />
+      </button>
+
+      <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
+        Mark Reached
+      </span>
+
+    </div>
+
+    {/* Sample Collection */}
+
+    <div className="relative group">
+
+      <button
+        onClick={() => openSampleModal(item)}
+        disabled={item.status !== 'Reached'}
+        className={`p-3 rounded-xl text-white
+        ${
+          item.status === 'Reached'
+            ? 'bg-purple-600'
+            : 'bg-gray-400'
+        }`}
+      >
+        <FaMicroscope />
+      </button>
+
+      <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
+        Collect Sample
+      </span>
+
+    </div>
+
+    {/* Payment */}
+
+    <div className="relative group">
+
+      <button
+        onClick={() => handlePayment(item)}
+        disabled={
+          item.status !== 'Sample Collected' ||
+          item.paymentStatus === 'Paid'
+        }
+        className={`p-3 rounded-xl text-white
+        ${
+          item.status === 'Sample Collected' &&
+          item.paymentStatus !== 'Paid'
+            ? 'bg-green-600'
+            : 'bg-gray-400'
+        }`}
+      >
+        <FaMoneyCheckAlt />
+      </button>
+
+      <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
+        Collect Payment
+      </span>
+
+    </div>
+
+  </div>
+
+</td>
           {/* Report */}
 
-          <td className="px-4 py-5">
+          <td className="px-4 py-5 truncate">
 
   {item.report ? (
 
@@ -793,42 +850,7 @@ useEffect(() => {
       View Report
     </a>
 
-  ) : item.paymentStatus === "Paid" ? (
-
-    <div className="space-y-2">
-
-      <input
-        type="file"
-        accept=".pdf"
-        onChange={(e) =>
-          setSelectedReport({
-            ...selectedReport,
-            [item._id]:
-              e.target.files[0]
-          })
-        }
-      />
-
-      <button
-        onClick={() =>
-          handleUploadReport(
-            item._id
-          )
-        }
-        className="
-        bg-blue-600
-        text-white
-        px-4
-        py-2
-        rounded-xl
-        "
-      >
-        Upload
-      </button>
-
-    </div>
-
-  ) : (
+  ) :(
 
     <span className="text-red-500">
       Payment Pending
@@ -1050,36 +1072,6 @@ useEffect(() => {
 
               </div>
 
-              {/* Report */}
-              {/* <div className="mt-5">
-
-                {item.report ? (
-
-                  <a
-                    href={item.report}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-green-600 text-white rounded-2xl py-3"
-                  >
-                    <FaFileMedical />
-                    View Report
-                  </a>
-
-                ) : item.paymentStatus !== "Paid" ? (
-
-                  <div className="text-center text-red-500 text-sm">
-                    Payment Pending
-                  </div>
-
-                ) : (
-
-                  <div className="text-center text-blue-600 text-sm">
-                    Upload Report Available
-                  </div>
-
-                )}
-              </div> */}
-
 <div className="mt-5">
 
   {item.report ? (
@@ -1121,77 +1113,6 @@ useEffect(() => {
   ) : (
 
     <div className="space-y-3">
-
-      <label
-        className="
-        flex
-        items-center
-        justify-center
-        gap-2
-        border-2
-        border-dashed
-        border-blue-300
-        rounded-2xl
-        py-4
-        cursor-pointer
-        hover:bg-blue-50
-        "
-      >
-
-        <FaFileUpload />
-
-        Select Report
-
-        <input
-          type="file"
-          accept=".pdf"
-          hidden
-          onChange={(e) =>
-            setSelectedReport({
-              ...selectedReport,
-              [item._id]:
-                e.target.files[0]
-            })
-          }
-        />
-
-      </label>
-
-      {selectedReport[item._id] && (
-
-        <p className="text-sm text-gray-500 text-center">
-
-          {selectedReport[item._id].name}
-
-        </p>
-
-      )}
-
-      <button
-        onClick={() =>
-          handleUploadReport(
-            item._id
-          )
-        }
-        disabled={
-          uploadingReport[item._id]
-        }
-        className="
-        w-full
-        bg-blue-600
-        hover:bg-blue-700
-        text-white
-        rounded-2xl
-        py-3
-        font-semibold
-        "
-      >
-
-        {uploadingReport[item._id]
-          ? "Uploading..."
-          : "Upload Report"}
-
-      </button>
 
     </div>
 
