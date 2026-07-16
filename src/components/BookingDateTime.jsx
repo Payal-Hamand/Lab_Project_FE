@@ -1,25 +1,13 @@
-import React, {
-  useEffect
-} from 'react'
+import React, { useEffect } from 'react'
 
-import {
-  FaCalendarAlt,
-  FaClock
-} from 'react-icons/fa'
+import { FaCalendarAlt, FaClock } from 'react-icons/fa'
 
-const BookingDateTime = ({
-  formData,
-  handleChange
-}) => {
-
-  const today = new Date()
-    .toISOString()
-    .split('T')[0]
+const BookingDateTime = ({ formData, handleChange }) => {
+  const today = new Date().toISOString().split('T')[0]
 
   // Time Slots
 
   const allTimeSlots = [
-
     '08:00 AM',
 
     '09:00 AM',
@@ -42,166 +30,95 @@ const BookingDateTime = ({
 
     '06:00 PM',
 
-    '07:00 PM'
-
+    '07:00 PM',
   ]
 
   // Available Slots
 
   const getAvailableTimeSlots = () => {
-
     // No date selected
 
     if (!formData.bookingDate) {
-
       return allTimeSlots
     }
 
-    const todayDate =
-      new Date()
+    const todayDate = new Date()
 
-    const selectedDate =
-      new Date(
-        formData.bookingDate
-      )
+    const selectedDate = new Date(formData.bookingDate)
 
     // Normalize Dates
 
-    todayDate.setHours(
-      0,
-      0,
-      0,
-      0
-    )
+    todayDate.setHours(0, 0, 0, 0)
 
-    selectedDate.setHours(
-      0,
-      0,
-      0,
-      0
-    )
+    selectedDate.setHours(0, 0, 0, 0)
 
     // Past Date
 
-    if (
-      selectedDate < todayDate
-    ) {
-
+    if (selectedDate < todayDate) {
       return []
     }
 
     // Future Date
 
-    if (
-      selectedDate > todayDate
-    ) {
-
+    if (selectedDate > todayDate) {
       return allTimeSlots
     }
 
     // TODAY SLOT FILTER
 
-    const currentTime =
-      new Date()
+    const currentTime = new Date()
 
-    const currentMinutes =
+    const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes()
 
-      currentTime.getHours() *
-        60 +
+    return allTimeSlots.filter((slot) => {
+      const [time, modifier] = slot.split(' ')
 
-      currentTime.getMinutes()
+      let [hours, minutes] = time.split(':')
 
-    return allTimeSlots.filter(
-      (slot) => {
+      hours = parseInt(hours)
 
-        const [time, modifier] =
-          slot.split(' ')
+      minutes = parseInt(minutes)
 
-        let [hours, minutes] =
-          time.split(':')
+      // Convert to 24h
 
-        hours =
-          parseInt(hours)
-
-        minutes =
-          parseInt(minutes)
-
-        // Convert to 24h
-
-        if (
-          modifier === 'PM' &&
-          hours !== 12
-        ) {
-
-          hours += 12
-        }
-
-        if (
-          modifier === 'AM' &&
-          hours === 12
-        ) {
-
-          hours = 0
-        }
-
-        const slotMinutes =
-
-          hours * 60 +
-          minutes
-
-        return (
-          slotMinutes >
-          currentMinutes
-        )
+      if (modifier === 'PM' && hours !== 12) {
+        hours += 12
       }
-    )
+
+      if (modifier === 'AM' && hours === 12) {
+        hours = 0
+      }
+
+      const slotMinutes = hours * 60 + minutes
+
+      return slotMinutes > currentMinutes
+    })
   }
 
   // Auto Remove Invalid Time
 
   useEffect(() => {
+    const availableSlots = getAvailableTimeSlots()
 
-    const availableSlots =
-      getAvailableTimeSlots()
-
-    if (
-
-      formData.bookingTime &&
-
-      !availableSlots.includes(
-        formData.bookingTime
-      )
-
-    ) {
-
+    if (formData.bookingTime && !availableSlots.includes(formData.bookingTime)) {
       handleChange({
-
         target: {
-
           name: 'bookingTime',
 
-          value: ''
-
-        }
+          value: '',
+        },
       })
     }
-
   }, [formData.bookingDate])
 
   return (
-
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-
       {/* Date */}
 
       <div>
-
         <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-
           <FaCalendarAlt />
-
           Booking Date
-
         </label>
 
         <input
@@ -213,19 +130,14 @@ const BookingDateTime = ({
           required
           className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
         />
-
       </div>
 
       {/* Time */}
 
       <div>
-
         <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-
           <FaClock />
-
           Booking Time
-
         </label>
 
         <select
@@ -233,58 +145,26 @@ const BookingDateTime = ({
           value={formData.bookingTime}
           onChange={handleChange}
           required
-          disabled={
-            getAvailableTimeSlots()
-              .length === 0
-          }
+          disabled={getAvailableTimeSlots().length === 0}
           className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base bg-white"
         >
+          <option value="">Choose Time Slot</option>
 
-          <option value="">
-            Choose Time Slot
-          </option>
-
-          {
-            getAvailableTimeSlots()
-              .map(
-                (
-                  slot,
-                  index
-                ) => (
-
-                  <option
-                    key={index}
-                    value={slot}
-                  >
-
-                    {slot}
-
-                  </option>
-                )
-              )
-          }
-
+          {getAvailableTimeSlots().map((slot, index) => (
+            <option key={index} value={slot}>
+              {slot}
+            </option>
+          ))}
         </select>
 
         {/* Warning */}
 
-        {
-          formData.bookingDate &&
-
-          getAvailableTimeSlots()
-            .length === 0 && (
-
-            <p className="text-red-500 text-sm mt-2">
-
-              Today's booking slots are over.
-              Please select another date.
-
-            </p>
-          )
-        }
-
+        {formData.bookingDate && getAvailableTimeSlots().length === 0 && (
+          <p className="text-red-500 text-sm mt-2">
+            Today's booking slots are over. Please select another date.
+          </p>
+        )}
       </div>
-
     </div>
   )
 }

@@ -1,73 +1,42 @@
-import React, {
-  createContext,
-  useEffect,
-  useState
-} from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 
-export const AuthContext =
-  createContext()
+export const AuthContext = createContext()
 
-export const AuthProvider = ({
-  children
-}) => {
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null)
 
-  const [user, setUser] =
-    useState(null)
-
-  const [loading, setLoading] =
-    useState(true)
+  const [loading, setLoading] = useState(true)
 
   // Restore User
 
   useEffect(() => {
-
     try {
-
-      const savedUser =
-        sessionStorage.getItem(
-          'user'
-        )
+      const savedUser = sessionStorage.getItem('user')
 
       if (savedUser) {
+        const parsedUser = JSON.parse(savedUser)
 
-        const parsedUser =
-          JSON.parse(savedUser)
-
-        if (
-          parsedUser?.token
-        ) {
-
+        if (parsedUser?.token) {
           setUser(parsedUser)
-
         } else {
-
-          sessionStorage.removeItem(
-            'user'
-          )
+          sessionStorage.removeItem('user')
         }
       }
-
     } catch (error) {
-
       console.log(error)
 
-      sessionStorage.removeItem(
-        'user'
-      )
+      sessionStorage.removeItem('user')
     }
 
     setLoading(false)
-
   }, [])
 
   // Login
 
   const login = (data) => {
-
     setUser(data)
 
     sessionStorage.setItem(
-
       'user',
 
       JSON.stringify(data)
@@ -77,19 +46,14 @@ export const AuthProvider = ({
   // Logout
 
   const logout = () => {
-
     setUser(null)
 
-    sessionStorage.removeItem(
-      'user'
-    )
+    sessionStorage.removeItem('user')
   }
 
   return (
-
     <AuthContext.Provider
       value={{
-
         user,
 
         setUser,
@@ -98,13 +62,10 @@ export const AuthProvider = ({
 
         logout,
 
-        loading
-
+        loading,
       }}
     >
-
       {children}
-
     </AuthContext.Provider>
   )
 }

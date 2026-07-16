@@ -1,16 +1,9 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import {
-  FaSearch,
-  FaShieldAlt,
-  FaTruck,
-  FaClock,
-  FaFlask,
-  FaTimes
-} from 'react-icons/fa'
+import { FaSearch, FaShieldAlt, FaTruck, FaClock, FaFlask, FaTimes } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import { AuthContext } from '../context/AuthContext'
-import API from '../services/api'
+import { AuthContext } from '@/context/AuthContext'
+import API from '@/services/api'
 
 const Hero = () => {
   const navigate = useNavigate()
@@ -26,10 +19,7 @@ const Hero = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [testsRes, packagesRes] = await Promise.all([
-          API.get('/tests'),
-          API.get('/packages'),
-        ])
+        const [testsRes, packagesRes] = await Promise.all([API.get('/tests'), API.get('/packages')])
         setTests(testsRes.data)
         setPackages(packagesRes.data)
       } catch (err) {
@@ -70,16 +60,16 @@ const Hero = () => {
   }, [])
 
   // Close on scroll
-useEffect(() => {
-  const handleScroll = (e) => {
-    const dropdown = document.getElementById('hero-search-dropdown')
-    // If the scroll happened inside the dropdown, don't close it
-    if (dropdown && dropdown.contains(e.target)) return
-    setShowDropdown(false)
-  }
-  window.addEventListener('scroll', handleScroll, true)
-  return () => window.removeEventListener('scroll', handleScroll, true)
-}, [])
+  useEffect(() => {
+    const handleScroll = (e) => {
+      const dropdown = document.getElementById('hero-search-dropdown')
+      // If the scroll happened inside the dropdown, don't close it
+      if (dropdown && dropdown.contains(e.target)) return
+      setShowDropdown(false)
+    }
+    window.addEventListener('scroll', handleScroll, true)
+    return () => window.removeEventListener('scroll', handleScroll, true)
+  }, [])
 
   const allItems = [
     ...tests.map((t) => ({ ...t, type: 'test' })),
@@ -89,9 +79,7 @@ useEffect(() => {
   const displayedItems =
     search.trim() === ''
       ? allItems
-      : allItems.filter((item) =>
-          item.title?.toLowerCase().includes(search.toLowerCase())
-        )
+      : allItems.filter((item) => item.title?.toLowerCase().includes(search.toLowerCase()))
 
   const goToBooking = (item, type) => {
     setShowDropdown(false)
@@ -110,11 +98,6 @@ useEffect(() => {
     navigate('/booking', { state: { selectedItem: item, bookingType: type } })
   }
 
-  const handleBookNow = () => {
-    if (!user) { navigate('/login'); return }
-    navigate('/booking')
-  }
-
   // Popular search quick-fill
   const fillSearch = (term) => {
     setSearch(term)
@@ -124,7 +107,6 @@ useEffect(() => {
   return (
     <section className="bg-[#f4f8ff]">
       <div className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-10 items-center">
-
         {/* Left Content */}
         <div>
           {/* Badge */}
@@ -141,15 +123,21 @@ useEffect(() => {
 
           {/* Paragraph */}
           <p className="text-gray-600 text-lg mt-6 leading-8">
-            Book lab tests online with ease and get accurate reports
-            from certified labs with home sample collection.
+            Book lab tests online with ease and get accurate reports from certified labs with home
+            sample collection.
           </p>
 
           {/* Features */}
           <div className="flex flex-wrap gap-6 mt-8 text-blue-700 font-medium">
-            <div className="flex items-center gap-2"><FaShieldAlt /> Accurate Reports</div>
-            <div className="flex items-center gap-2"><FaTruck /> Home Collection</div>
-            <div className="flex items-center gap-2"><FaClock /> Fast Delivery</div>
+            <div className="flex items-center gap-2">
+              <FaShieldAlt /> Accurate Reports
+            </div>
+            <div className="flex items-center gap-2">
+              <FaTruck /> Home Collection
+            </div>
+            <div className="flex items-center gap-2">
+              <FaClock /> Fast Delivery
+            </div>
           </div>
 
           {/* ── Search Box ── */}
@@ -172,7 +160,10 @@ useEffect(() => {
               />
               {search && (
                 <button
-                  onClick={() => { setSearch(''); setShowDropdown(false) }}
+                  onClick={() => {
+                    setSearch('')
+                    setShowDropdown(false)
+                  }}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <FaTimes />
@@ -228,51 +219,59 @@ useEffect(() => {
       </div>
 
       {/* ── Portal Dropdown (renders at document.body level) ── */}
-      {showDropdown && createPortal(
-        <div
-          id="hero-search-dropdown"
-          style={dropdownStyle}
-          className="bg-white rounded-2xl shadow-2xl border border-blue-100 max-h-80 overflow-y-auto"
-        >
-          {/* Header */}
-          <div className="sticky top-0 bg-white px-5 pt-4 pb-2 text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 flex justify-between items-center">
-            <span>
-              {search.trim() === ''
-                ? `All Tests & Packages (${displayedItems.length})`
-                : `Results for "${search}" (${displayedItems.length})`}
-            </span>
-            <button onClick={() => setShowDropdown(false)} className="text-gray-400 hover:text-gray-600">
-              <FaTimes size={12} />
-            </button>
-          </div>
-
-          {displayedItems.length === 0 ? (
-            <div className="p-8 text-center text-gray-400">
-              <FaFlask className="mx-auto text-3xl mb-3 text-gray-200" />
-              No tests found for "{search}"
-            </div>
-          ) : (
-            displayedItems.map((item) => (
+      {showDropdown &&
+        createPortal(
+          <div
+            id="hero-search-dropdown"
+            style={dropdownStyle}
+            className="bg-white rounded-2xl shadow-2xl border border-blue-100 max-h-80 overflow-y-auto"
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white px-5 pt-4 pb-2 text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 flex justify-between items-center">
+              <span>
+                {search.trim() === ''
+                  ? `All Tests & Packages (${displayedItems.length})`
+                  : `Results for "${search}" (${displayedItems.length})`}
+              </span>
               <button
-                key={item._id}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => goToBooking(item, item.type)}
-                className="w-full flex items-center gap-4 px-5 py-3 hover:bg-blue-50 transition border-b border-gray-50 last:border-0 group text-left"
+                onClick={() => setShowDropdown(false)}
+                className="text-gray-400 hover:text-gray-600"
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition">
-                  <FaFlask />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-800 truncate">{item.title}</p>
-                  <p className="text-xs text-gray-400 capitalize">{item.type} · {item.category}</p>
-                </div>
-                <div className="text-pink-600 font-bold text-base flex-shrink-0">₹{item.price}</div>
+                <FaTimes size={12} />
               </button>
-            ))
-          )}
-        </div>,
-        document.body
-      )}
+            </div>
+
+            {displayedItems.length === 0 ? (
+              <div className="p-8 text-center text-gray-400">
+                <FaFlask className="mx-auto text-3xl mb-3 text-gray-200" />
+                No tests found for "{search}"
+              </div>
+            ) : (
+              displayedItems.map((item) => (
+                <button
+                  key={item._id}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => goToBooking(item, item.type)}
+                  className="w-full flex items-center gap-4 px-5 py-3 hover:bg-blue-50 transition border-b border-gray-50 last:border-0 group text-left"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition">
+                    <FaFlask />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-800 truncate">{item.title}</p>
+                    <p className="text-xs text-gray-400 capitalize">
+                      {item.type} · {item.category}
+                    </p>
+                  </div>
+                  <div className="text-pink-600 font-bold text-base flex-shrink-0">
+                    ₹{item.price}
+                  </div>
+                </button>
+              ))
+            )}
+          </div>,
+          document.body
+        )}
     </section>
   )
 }

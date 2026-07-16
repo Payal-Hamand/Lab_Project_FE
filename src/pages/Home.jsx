@@ -1,14 +1,13 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import Hero from '../components/Hero'
-import Features from '../components/Features'
-import Packages from '../components/Packages'
-import Footer from './Footer '
+import Navbar from '@/components/Navbar'
+import Hero from '@/components/Hero'
+import Features from '@/components/Features'
+import Packages from '@/components/Packages'
+import Footer from './Footer'
 
 const Home = () => {
   return (
     <div>
-
       <Navbar />
 
       <Hero />
@@ -16,8 +15,7 @@ const Home = () => {
       <Features />
 
       <Packages />
-      <Footer/>
-
+      <Footer />
     </div>
   )
 }

@@ -1,47 +1,26 @@
 // Firebase SDK
 
-import { initializeApp }
-from 'firebase/app'
+import { initializeApp } from 'firebase/app'
 
-import {
-  getStorage
-} from 'firebase/storage'
+import { getStorage } from 'firebase/storage'
 
-import {
-  getAnalytics
-} from 'firebase/analytics'
+import { getAnalytics } from 'firebase/analytics'
 
 // Firebase Config
 
 const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyAjBrBM8OFkbR7DGJ-c2kd4wfoY4cEIRik",
-
-  authDomain:
-    "medilab-project-d2b0d.firebaseapp.com",
-
-  projectId:
-    "medilab-project-d2b0d",
-
-  storageBucket:
-"medilab-project-d2b0d.appspot.com",
-
-  messagingSenderId:
-    "277880195243",
-
-  appId:
-    "1:277880195243:web:633680173efd911fa78fee",
-
-  measurementId:
-    "G-L85BLK1DSE"
-
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
 // Initialize Firebase
 
-const app =
-  initializeApp(firebaseConfig)
+const app = initializeApp(firebaseConfig)
 
 // Analytics
 
@@ -49,7 +28,6 @@ getAnalytics(app)
 
 // Storage
 
-const storage =
-  getStorage(app)
+const storage = getStorage(app)
 
 export { storage }

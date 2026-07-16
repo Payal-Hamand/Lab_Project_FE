@@ -5,20 +5,14 @@ import axios from 'axios'
 // })
 
 const API = axios.create({
-
-    baseURL:
-    import.meta.env.VITE_API_URL
-
+  baseURL: import.meta.env.VITE_API_URL,
 })
 
 API.interceptors.request.use(
-
   (config) => {
-
     const userInfo = sessionStorage.getItem('user')
 
     if (userInfo) {
-
       const token = JSON.parse(userInfo).token
 
       config.headers.Authorization = `Bearer ${token}`
@@ -28,7 +22,6 @@ API.interceptors.request.use(
   },
 
   (error) => {
-
     return Promise.reject(error)
   }
 )

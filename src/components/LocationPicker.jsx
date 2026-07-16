@@ -65,7 +65,6 @@
 //   ) : null
 // }
 
-
 // function RecenterMap({
 //   location
 // }) {
@@ -133,50 +132,30 @@
 //   )
 // }
 
-
-
 import React from 'react'
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents
-} from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 
 const markerIcon = new L.Icon({
-  iconUrl:
-    'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl:
-    'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41]
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
 })
 
-function DraggableMarker({
-  location,
-  setLocation,
-  onLocationSelect
-}) {
-
+function DraggableMarker({ location, setLocation, onLocationSelect }) {
   useMapEvents({
     click(e) {
+      const lat = e.latlng.lat
 
-      const lat =
-        e.latlng.lat
-
-      const lng =
-        e.latlng.lng
+      const lng = e.latlng.lng
 
       setLocation({
         lat,
-        lng
+        lng,
       })
 
-      onLocationSelect(
-        lat,
-        lng
-      )
-    }
+      onLocationSelect(lat, lng)
+    },
   })
 
   if (!location) return null
@@ -185,70 +164,41 @@ function DraggableMarker({
     <Marker
       draggable
       icon={markerIcon}
-      position={[
-        location.lat,
-        location.lng
-      ]}
+      position={[location.lat, location.lng]}
       eventHandlers={{
-        dragend: e => {
-
-          const pos =
-            e.target.getLatLng()
+        dragend: (e) => {
+          const pos = e.target.getLatLng()
 
           setLocation({
             lat: pos.lat,
-            lng: pos.lng
+            lng: pos.lng,
           })
 
-          onLocationSelect(
-            pos.lat,
-            pos.lng
-          )
-        }
+          onLocationSelect(pos.lat, pos.lng)
+        },
       }}
     />
   )
 }
 
-export default function LocationPicker({
-  location,
-  setLocation,
-  onLocationSelect
-}) {
-
+export default function LocationPicker({ location, setLocation, onLocationSelect }) {
   return (
     <MapContainer
-      center={
-        location
-          ? [
-              location.lat,
-              location.lng
-            ]
-          : [
-              18.5204,
-              73.8567
-            ]
-      }
+      center={location ? [location.lat, location.lng] : [18.5204, 73.8567]}
       zoom={17}
       style={{
         height: '500px',
         width: '100%',
-        borderRadius: '20px'
+        borderRadius: '20px',
       }}
     >
-
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
       <DraggableMarker
         location={location}
         setLocation={setLocation}
-        onLocationSelect={
-          onLocationSelect
-        }
+        onLocationSelect={onLocationSelect}
       />
-
     </MapContainer>
   )
 }
