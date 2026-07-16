@@ -4,6 +4,8 @@ import API from '@/services/api'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaSearch, FaClock, FaFlask, FaArrowRight } from 'react-icons/fa'
 import Footer from './Footer'
+import { ROUTES } from '@/constants/routes'
+import { API_ENDPOINTS } from '@/constants/api'
 const TestsPage = () => {
   const navigate = useNavigate()
   const [tests, setTests] = useState([])
@@ -13,7 +15,7 @@ const TestsPage = () => {
   // Fetch Tests
   const fetchTests = async () => {
     try {
-      const { data } = await API.get('/tests')
+      const { data } = await API.get(API_ENDPOINTS.TESTS)
       setTests(data)
       setFilteredTests(data)
     } catch (error) {
@@ -29,16 +31,16 @@ const TestsPage = () => {
     const userData = sessionStorage.getItem('user')
     const user = userData ? JSON.parse(userData) : null
     if (!user?.token) {
-      navigate('/login', {
+      navigate(ROUTES.LOGIN, {
         state: {
           message: 'Please login to continue booking',
-          redirectTo: '/booking',
+          redirectTo: ROUTES.BOOKING,
           selectedItem: item,
           bookingType: type,
         },
       })
     } else {
-      navigate('/booking', {
+      navigate(ROUTES.BOOKING, {
         state: {
           selectedItem: item,
           bookingType: type,
@@ -54,7 +56,7 @@ const TestsPage = () => {
     setFilteredTests(filtered)
   }
   return (
-    <div className="bg-[#f4f8ff] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <Navbar />
       {/* Hero */}
       <div className="bg-blue-950 py-20">

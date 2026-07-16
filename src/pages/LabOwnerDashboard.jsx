@@ -17,6 +17,9 @@ import {
   LoadingSpinner,
   EmptyState,
 } from '@/components/Dashboard'
+import { ROUTES } from '@/constants/routes'
+import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
+import { API_ENDPOINTS } from '@/constants/api'
 const LabOwnerDashboard = () => {
   const tableRef = useRef(null)
   const [bookings, setBookings] = useState([])
@@ -38,7 +41,7 @@ const LabOwnerDashboard = () => {
   })
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get('/bookings/lab-owner')
+      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.LAB_OWNER)
       setBookings(data)
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to fetch bookings')
@@ -48,7 +51,7 @@ const LabOwnerDashboard = () => {
   }
   const fetchAssistants = async () => {
     try {
-      const { data } = await API.get('/users/my-assistants')
+      const { data } = await API.get(API_ENDPOINTS.USERS.MY_ASSISTANTS)
       setAssistants(data)
     } catch (error) {
       console.log(error)
@@ -88,7 +91,7 @@ const LabOwnerDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      const { data } = await API.post('/admin/create-lab-assistant', assistantData)
+      const { data } = await API.post(API_ENDPOINTS.ADMIN.CREATE_LAB_ASSISTANT, assistantData)
       toast.success(data?.message || 'Assistant created successfully')
       fetchAssistants()
       setAssistantData({
@@ -110,7 +113,7 @@ const LabOwnerDashboard = () => {
       return toast.error('Please select an assistant')
     }
     try {
-      const { data } = await API.put('/bookings/assign-assistant', {
+      const { data } = await API.put(API_ENDPOINTS.BOOKINGS.ASSIGN_ASSISTANT, {
         bookingId,
         assistantId,
       })
@@ -123,7 +126,7 @@ const LabOwnerDashboard = () => {
   const searchBookings = async (value) => {
     setSearchTerm(value)
     try {
-      const { data } = await API.get(`/bookings/lab-owner/search?search=${value}`)
+      const { data } = await API.get(`${API_ENDPOINTS.BOOKINGS.LAB_OWNER_SEARCH}?search=${value}`)
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -140,7 +143,7 @@ const LabOwnerDashboard = () => {
       }))
       const formData = new FormData()
       formData.append('report', selectedReport[bookingId])
-      await API.put(`/bookings/upload-report/${bookingId}`, formData, {
+      await API.put(API_ENDPOINTS.BOOKINGS.UPLOAD_REPORT(bookingId), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -176,12 +179,12 @@ const LabOwnerDashboard = () => {
   const filteredBookings = selectedAssistant
     ? bookings.filter((booking) => booking.assignedLabAssistant?._id === selectedAssistant)
     : activeSection === 'pending'
-      ? bookings.filter((item) => item.status === 'Pending')
+      ? bookings.filter((item) => item.status === BOOKING_STATUS.PENDING)
       : activeSection === 'completed'
-        ? bookings.filter((item) => item.status === 'Completed')
+        ? bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED)
         : bookings
   return (
-    <div className="bg-[#f4f8ff] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <Navbar />
       {/* HERO */}
       <div className="bg-blue-950">
@@ -215,7 +218,7 @@ const LabOwnerDashboard = () => {
           />
           <DashboardStatsCard
             title="Pending"
-            value={bookings.filter((item) => item.status === 'Pending').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
             icon={<FaClock />}
             color="yellow"
             bgColor="bg-yellow-100 text-yellow-600"
@@ -228,7 +231,7 @@ const LabOwnerDashboard = () => {
           />
           <DashboardStatsCard
             title="Completed"
-            value={bookings.filter((item) => item.status === 'Completed').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
             icon={<FaCheckCircle />}
             color="green"
             bgColor="bg-green-100 text-green-600"
@@ -298,7 +301,10 @@ const LabOwnerDashboard = () => {
                       <div className="bg-green-50 rounded-2xl p-4 text-center">
                         <p className="text-sm text-gray-500">Completed</p>
                         <h4 className="text-2xl font-bold text-green-600 mt-2">
-                          {totalBookings.filter((item) => item.status === 'Completed').length}
+                          {
+                            totalBookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED)
+                              .length
+                          }
                         </h4>
                       </div>
                     </div>
@@ -552,7 +558,7 @@ const LabOwnerDashboard = () => {
                             className={`
               px-3 py-1 rounded-full text-xs
               ${
-                booking.paymentStatus === 'Paid'
+                booking.paymentStatus === PAYMENT_STATUS.PAID
                   ? 'bg-green-100 text-green-700'
                   : 'bg-red-100 text-red-700'
               }
@@ -634,7 +640,7 @@ const LabOwnerDashboard = () => {
                             >
                               View Report
                             </a>
-                          ) : booking.paymentStatus === 'Paid' ? (
+                          ) : booking.paymentStatus === PAYMENT_STATUS.PAID ? (
                             <div className="space-y-2">
                               <input
                                 type="file"
@@ -690,7 +696,7 @@ const LabOwnerDashboard = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold
           ${
-            booking.paymentStatus === 'Paid'
+            booking.paymentStatus === PAYMENT_STATUS.PAID
               ? 'bg-green-100 text-green-700'
               : 'bg-red-100 text-red-700'
           }`}
@@ -700,9 +706,9 @@ const LabOwnerDashboard = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold
           ${
-            booking.status === 'Completed'
+            booking.status === BOOKING_STATUS.COMPLETED
               ? 'bg-green-100 text-green-700'
-              : booking.status === 'Pending'
+              : booking.status === BOOKING_STATUS.PENDING
                 ? 'bg-yellow-100 text-yellow-700'
                 : 'bg-blue-100 text-blue-700'
           }`}
@@ -863,7 +869,7 @@ const LabOwnerDashboard = () => {
                             View Report
                           </a>
                         </div>
-                      ) : booking.paymentStatus === 'Paid' ? (
+                      ) : booking.paymentStatus === PAYMENT_STATUS.PAID ? (
                         <div className="space-y-3">
                           <label
                             className="

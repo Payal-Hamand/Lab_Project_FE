@@ -5,6 +5,8 @@ import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa'
 import API from '@/services/api'
 import { useContext } from 'react'
 import { AuthContext } from '@/context/AuthContext'
+import { ROUTES } from '@/constants/routes'
+import { API_ENDPOINTS } from '@/constants/api'
 const Signup = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -32,7 +34,7 @@ const Signup = () => {
     e.preventDefault()
     try {
       setLoading(true)
-      const { data } = await API.post('/auth/register', formData)
+      const { data } = await API.post(API_ENDPOINTS.AUTH.REGISTER, formData)
       login(data)
       toast.success('Account Created Successfully')
       if (location.state?.redirectTo) {
@@ -43,7 +45,7 @@ const Signup = () => {
           },
         })
       } else {
-        navigate('/dashboard')
+        navigate(ROUTES.DASHBOARD)
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Signup Failed')
@@ -52,7 +54,7 @@ const Signup = () => {
     }
   }
   return (
-    <div className="min-h-screen bg-[#f4f8ff] flex items-center justify-center px-4 sm:px-6 py-6 md:py-10">
+    <div className="min-h-screen bg-surface flex items-center justify-center px-4 sm:px-6 py-6 md:py-10">
       <div className="bg-white rounded-3xl md:rounded-[40px] shadow-xl overflow-hidden grid lg:grid-cols-2 max-w-6xl w-full">
         {/* Left Side */}
         <div className="hidden lg:block relative">
@@ -77,7 +79,7 @@ const Signup = () => {
           {/* Top */}
           <div className="flex items-center justify-between">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(ROUTES.HOME)}
               className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition text-sm md:text-base"
             >
               <FaArrowLeft />
@@ -155,7 +157,7 @@ const Signup = () => {
           {/* Bottom */}
           <p className="mt-8 text-gray-500 text-center text-sm md:text-base">
             Already have an account?
-            <Link to="/login" className="text-blue-600 font-semibold ml-2">
+            <Link to={ROUTES.LOGIN} className="text-blue-600 font-semibold ml-2">
               Login
             </Link>
           </p>

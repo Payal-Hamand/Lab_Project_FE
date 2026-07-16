@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import Navbar from '@/components/Navbar'
 import API from '@/services/api'
+import { ROUTES } from '@/constants/routes'
+import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
+import { API_ENDPOINTS } from '@/constants/api'
 import {
   FaMapMarkedAlt,
   FaMicroscope,
@@ -30,7 +33,7 @@ const LabAssistantDashboard = () => {
   const [showSampleModal, setShowSampleModal] = useState(false)
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get('/bookings/assigned')
+      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.ASSIGNED)
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -57,7 +60,7 @@ const LabAssistantDashboard = () => {
   }, [])
   const handleReached = async (bookingId) => {
     try {
-      await API.put(`/bookings/reached/${bookingId}`)
+      await API.put(API_ENDPOINTS.BOOKINGS.REACHED(bookingId))
       fetchBookings()
     } catch (error) {
       console.log(error)
@@ -81,7 +84,7 @@ const LabAssistantDashboard = () => {
         formData.append('sampleImages', image)
       })
       formData.append('assistantNotes', assistantNotes)
-      await API.put(`/bookings/sample/${selectedBooking._id}`, formData, {
+      await API.put(API_ENDPOINTS.BOOKINGS.SAMPLE(selectedBooking._id), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -107,7 +110,7 @@ const LabAssistantDashboard = () => {
   }
   const handlePayment = async (booking) => {
     try {
-      const { data } = await API.post('/payment/create', {
+      const { data } = await API.post(API_ENDPOINTS.PAYMENT.CREATE, {
         bookingId: booking._id,
         amount: booking?.test?.price || booking?.package?.price,
       })
@@ -120,7 +123,7 @@ const LabAssistantDashboard = () => {
         order_id: data.order.id,
         handler: async function (response) {
           try {
-            const verify = await API.post('/payment/verify', {
+            const verify = await API.post(API_ENDPOINTS.PAYMENT.VERIFY, {
               ...response,
               bookingId: booking._id,
             })
@@ -139,7 +142,7 @@ const LabAssistantDashboard = () => {
         modal: {
           ondismiss: async function () {
             toast.info('Payment Cancelled')
-            await API.put(`/bookings/${booking._id}/payment-status`, {
+            await API.put(API_ENDPOINTS.BOOKINGS.PAYMENT_STATUS(booking._id), {
               paymentStatus: 'Failed',
             })
             fetchBookings()
@@ -157,7 +160,7 @@ const LabAssistantDashboard = () => {
       // Handle payment failure
       razorpay.on('payment.failed', async function (response) {
         toast.error(response.error.description || 'Payment Failed')
-        await API.put(`/bookings/${booking._id}/payment-status`, {
+        await API.put(API_ENDPOINTS.BOOKINGS.PAYMENT_STATUS(booking._id), {
           paymentStatus: 'Failed',
         })
         fetchBookings()
@@ -171,7 +174,7 @@ const LabAssistantDashboard = () => {
   const searchBookings = async (value) => {
     setSearchTerm(value)
     try {
-      const { data } = await API.get(`/bookings/assigned/search?search=${value}`)
+      const { data } = await API.get(`${API_ENDPOINTS.BOOKINGS.ASSIGNED_SEARCH}?search=${value}`)
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -189,12 +192,12 @@ const LabAssistantDashboard = () => {
   }, [searchTerm])
   const filteredBookings =
     activeSection === 'pending'
-      ? bookings.filter((item) => item.status === 'Pending')
+      ? bookings.filter((item) => item.status === BOOKING_STATUS.PENDING)
       : activeSection === 'completed'
-        ? bookings.filter((item) => item.status === 'Completed')
+        ? bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED)
         : bookings
   return (
-    <div className="bg-[#f4f8ff] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <Navbar />
       {/* Hero */}
       <div className="bg-blue-950">
@@ -221,7 +224,7 @@ const LabAssistantDashboard = () => {
           />
           <DashboardStatsCard
             title="Pending Reports"
-            value={bookings.filter((item) => item.status === 'Pending').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
             icon={<FaClipboardList />}
             color="yellow"
             bgColor="bg-yellow-100 text-yellow-600"
@@ -230,7 +233,7 @@ const LabAssistantDashboard = () => {
           />
           <DashboardStatsCard
             title="Completed"
-            value={bookings.filter((item) => item.status === 'Completed').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
             icon={<FaCheckCircle />}
             color="green"
             bgColor="bg-green-100 text-green-600"
@@ -318,11 +321,11 @@ const LabAssistantDashboard = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold
               ${
-                item.status === 'Completed'
+                item.status === BOOKING_STATUS.COMPLETED
                   ? 'bg-green-100 text-green-700'
-                  : item.status === 'Reached'
+                  : item.status === BOOKING_STATUS.REACHED
                     ? 'bg-blue-100 text-blue-700'
-                    : item.status === 'Assigned'
+                    : item.status === BOOKING_STATUS.ASSIGNED
                       ? 'bg-yellow-100 text-yellow-700'
                       : 'bg-gray-100 text-gray-700'
               }`}
@@ -335,7 +338,7 @@ const LabAssistantDashboard = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold
               ${
-                item.paymentStatus === 'Paid'
+                item.paymentStatus === PAYMENT_STATUS.PAID
                   ? 'bg-green-100 text-green-700'
                   : 'bg-red-100 text-red-700'
               }`}
@@ -362,9 +365,9 @@ const LabAssistantDashboard = () => {
                             <div className="relative group">
                               <button
                                 onClick={() => handleReached(item._id)}
-                                disabled={item.status !== 'Assigned'}
+                                disabled={item.status !== BOOKING_STATUS.ASSIGNED}
                                 className={`p-3 rounded-xl text-white
-        ${item.status === 'Assigned' ? 'bg-blue-600' : 'bg-gray-400'}`}
+        ${item.status === BOOKING_STATUS.ASSIGNED ? 'bg-blue-600' : 'bg-gray-400'}`}
                               >
                                 <FaMapMarkedAlt />
                               </button>
@@ -376,9 +379,9 @@ const LabAssistantDashboard = () => {
                             <div className="relative group">
                               <button
                                 onClick={() => openSampleModal(item)}
-                                disabled={item.status !== 'Reached'}
+                                disabled={item.status !== BOOKING_STATUS.REACHED}
                                 className={`p-3 rounded-xl text-white
-        ${item.status === 'Reached' ? 'bg-purple-600' : 'bg-gray-400'}`}
+        ${item.status === BOOKING_STATUS.REACHED ? 'bg-purple-600' : 'bg-gray-400'}`}
                               >
                                 <FaMicroscope />
                               </button>
@@ -391,12 +394,13 @@ const LabAssistantDashboard = () => {
                               <button
                                 onClick={() => handlePayment(item)}
                                 disabled={
-                                  item.status !== 'Sample Collected' ||
-                                  item.paymentStatus === 'Paid'
+                                  item.status !== BOOKING_STATUS.SAMPLE_COLLECTED ||
+                                  item.paymentStatus === PAYMENT_STATUS.PAID
                                 }
                                 className={`p-3 rounded-xl text-white
         ${
-          item.status === 'Sample Collected' && item.paymentStatus !== 'Paid'
+          item.status === BOOKING_STATUS.SAMPLE_COLLECTED &&
+          item.paymentStatus !== PAYMENT_STATUS.PAID
             ? 'bg-green-600'
             : 'bg-gray-400'
         }`}
@@ -493,11 +497,11 @@ const LabAssistantDashboard = () => {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold
                   ${
-                    item.status === 'Completed'
+                    item.status === BOOKING_STATUS.COMPLETED
                       ? 'bg-green-100 text-green-700'
-                      : item.status === 'Reached'
+                      : item.status === BOOKING_STATUS.REACHED
                         ? 'bg-blue-100 text-blue-700'
-                        : item.status === 'Assigned'
+                        : item.status === BOOKING_STATUS.ASSIGNED
                           ? 'bg-yellow-100 text-yellow-700'
                           : 'bg-gray-100 text-gray-700'
                   }`}
@@ -507,7 +511,7 @@ const LabAssistantDashboard = () => {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold
                   ${
-                    item.paymentStatus === 'Paid'
+                    item.paymentStatus === PAYMENT_STATUS.PAID
                       ? 'bg-green-100 text-green-700'
                       : 'bg-red-100 text-red-700'
                   }`}
@@ -525,28 +529,30 @@ const LabAssistantDashboard = () => {
                         </button>
                         <button
                           onClick={() => handleReached(item._id)}
-                          disabled={item.status !== 'Assigned'}
+                          disabled={item.status !== BOOKING_STATUS.ASSIGNED}
                           className={`h-12 rounded-2xl text-white
-                  ${item.status === 'Assigned' ? 'bg-blue-600' : 'bg-gray-400'}`}
+                  ${item.status === BOOKING_STATUS.ASSIGNED ? 'bg-blue-600' : 'bg-gray-400'}`}
                         >
                           <FaMapMarkedAlt className="mx-auto" />
                         </button>
                         <button
                           onClick={() => openSampleModal(item)}
-                          disabled={item.status !== 'Reached'}
+                          disabled={item.status !== BOOKING_STATUS.REACHED}
                           className={`h-12 rounded-2xl text-white
-                  ${item.status === 'Reached' ? 'bg-purple-600' : 'bg-gray-400'}`}
+                  ${item.status === BOOKING_STATUS.REACHED ? 'bg-purple-600' : 'bg-gray-400'}`}
                         >
                           <FaMicroscope className="mx-auto" />
                         </button>
                         <button
                           onClick={() => handlePayment(item)}
                           disabled={
-                            item.status !== 'Sample Collected' || item.paymentStatus === 'Paid'
+                            item.status !== BOOKING_STATUS.SAMPLE_COLLECTED ||
+                            item.paymentStatus === PAYMENT_STATUS.PAID
                           }
                           className={`h-12 rounded-2xl text-white
                   ${
-                    item.status === 'Sample Collected' && item.paymentStatus !== 'Paid'
+                    item.status === BOOKING_STATUS.SAMPLE_COLLECTED &&
+                    item.paymentStatus !== PAYMENT_STATUS.PAID
                       ? 'bg-green-600'
                       : 'bg-gray-400'
                   }`}
@@ -576,7 +582,7 @@ const LabAssistantDashboard = () => {
                             <FaFileMedical />
                             View Report
                           </a>
-                        ) : item.paymentStatus !== 'Paid' ? (
+                        ) : item.paymentStatus !== PAYMENT_STATUS.PAID ? (
                           <div
                             className="
       bg-red-50

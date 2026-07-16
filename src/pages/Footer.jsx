@@ -1,20 +1,19 @@
 import React from 'react'
-// Checked Up — Footer
-// Fonts: Plus Jakarta Sans (display) + Inter (body)
+import { ROUTES } from '@/constants/routes'
 const linkGroups = [
   {
     title: 'Product',
     links: [
-      { label: 'Home', href: '/' },
-      { label: 'Tests', href: '/tests' },
-      { label: 'Packages', href: '/packages' },
-      { label: 'Book a test', href: '/booking' },
+      { label: 'Home', href: ROUTES.HOME },
+      { label: 'Tests', href: ROUTES.TESTS },
+      { label: 'Packages', href: ROUTES.PACKAGES },
+      { label: 'Book a test', href: ROUTES.BOOKING },
     ],
   },
   {
     title: 'Company',
     links: [
-      { label: 'About', href: '/about' },
+      { label: 'About', href: ROUTES.ABOUT },
       { label: 'Partner labs', href: '/partners' },
       { label: 'Careers', href: '/careers' },
       { label: 'Contact', href: '/contact' },

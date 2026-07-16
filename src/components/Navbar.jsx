@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaFlask, FaBars, FaTimes, FaUserCircle, FaSignOutAlt } from 'react-icons/fa'
 import { AuthContext } from '@/context/AuthContext'
+import { ROUTES } from '@/constants/routes'
+import { ROLES } from '@/constants/roles'
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext)
   const navigate = useNavigate()
@@ -16,7 +18,7 @@ const Navbar = () => {
   }, [menuOpen])
   const handleLogout = () => {
     logout()
-    navigate('/login')
+    navigate(ROUTES.LOGIN)
     setMenuOpen(false)
   }
   return (
@@ -34,7 +36,7 @@ const Navbar = () => {
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
+        <Link to={ROUTES.HOME} className="flex items-center gap-3">
           {/* Icon */}
           <div className="relative flex-shrink-0">
             <div className="w-[58px] h-[58px] bg-blue-700 rounded-2xl flex items-center justify-center">
@@ -68,16 +70,16 @@ const Navbar = () => {
         </Link>
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center gap-8 font-medium text-gray-700">
-          <Link to="/" className="hover:text-blue-600 transition">
+          <Link to={ROUTES.HOME} className="hover:text-blue-600 transition">
             Home
           </Link>
-          <Link to="/tests" className="hover:text-blue-600 transition">
+          <Link to={ROUTES.TESTS} className="hover:text-blue-600 transition">
             Tests
           </Link>
-          <Link to="/packages" className="hover:text-blue-600 transition">
+          <Link to={ROUTES.PACKAGES} className="hover:text-blue-600 transition">
             Packages
           </Link>
-          <Link to="/about" className="hover:text-blue-600 transition">
+          <Link to={ROUTES.ABOUT} className="hover:text-blue-600 transition">
             About
           </Link>
         </div>
@@ -85,12 +87,12 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center gap-4">
           {!user ? (
             <>
-              <Link to="/login">
+              <Link to={ROUTES.LOGIN}>
                 <button className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition px-5 py-2 rounded-xl">
                   Login
                 </button>
               </Link>
-              <Link to="/signup">
+              <Link to={ROUTES.SIGNUP}>
                 <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-xl">
                   Signup
                 </button>
@@ -98,29 +100,29 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex items-center gap-4">
-              {user.role === 'admin' && (
-                <Link to="/admin">
+              {user.role === ROLES.ADMIN && (
+                <Link to={ROUTES.ADMIN}>
                   <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl transition">
                     Admin Panel
                   </button>
                 </Link>
               )}
-              {user.role === 'patient' && (
-                <Link to="/dashboard">
+              {user.role === ROLES.PATIENT && (
+                <Link to={ROUTES.DASHBOARD}>
                   <button className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl transition">
                     Dashboard
                   </button>
                 </Link>
               )}
-              {user.role === 'lab_owner' && (
-                <Link to="/lab-owner">
+              {user.role === ROLES.LAB_OWNER && (
+                <Link to={ROUTES.LAB_OWNER}>
                   <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl transition">
                     Lab Owner Dashboard
                   </button>
                 </Link>
               )}
-              {user.role === 'lab_assistant' && (
-                <Link to="/lab-assistant">
+              {user.role === ROLES.LAB_ASSISTANT && (
+                <Link to={ROUTES.LAB_ASSISTANT}>
                   <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl transition">
                     Lab Dashboard
                   </button>
@@ -168,16 +170,16 @@ const Navbar = () => {
             </div>
             {/* Links */}
             <div className="flex flex-col gap-6 mt-8 text-lg font-medium text-gray-700">
-              <Link to="/" onClick={() => setMenuOpen(false)}>
+              <Link to={ROUTES.HOME} onClick={() => setMenuOpen(false)}>
                 Home
               </Link>
-              <Link to="/tests" onClick={() => setMenuOpen(false)}>
+              <Link to={ROUTES.TESTS} onClick={() => setMenuOpen(false)}>
                 Tests
               </Link>
-              <Link to="/packages" onClick={() => setMenuOpen(false)}>
+              <Link to={ROUTES.PACKAGES} onClick={() => setMenuOpen(false)}>
                 Packages
               </Link>
-              <Link to="/booking" onClick={() => setMenuOpen(false)}>
+              <Link to={ROUTES.BOOKING} onClick={() => setMenuOpen(false)}>
                 Book Test
               </Link>
             </div>
@@ -190,29 +192,29 @@ const Navbar = () => {
             )}
             {/* Dashboard Buttons */}
             <div className="mt-6 flex flex-col gap-4">
-              {user?.role === 'patient' && (
-                <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+              {user?.role === ROLES.PATIENT && (
+                <Link to={ROUTES.DASHBOARD} onClick={() => setMenuOpen(false)}>
                   <button className="w-full bg-green-500 text-white py-3 rounded-xl">
                     Dashboard
                   </button>
                 </Link>
               )}
-              {user?.role === 'admin' && (
-                <Link to="/admin" onClick={() => setMenuOpen(false)}>
+              {user?.role === ROLES.ADMIN && (
+                <Link to={ROUTES.ADMIN} onClick={() => setMenuOpen(false)}>
                   <button className="w-full bg-red-500 text-white py-3 rounded-xl">
                     Admin Panel
                   </button>
                 </Link>
               )}
-              {user?.role === 'lab_assistant' && (
-                <Link to="/lab-assistant" onClick={() => setMenuOpen(false)}>
+              {user?.role === ROLES.LAB_ASSISTANT && (
+                <Link to={ROUTES.LAB_ASSISTANT} onClick={() => setMenuOpen(false)}>
                   <button className="w-full bg-yellow-500 text-white py-3 rounded-xl">
                     Lab Dashboard
                   </button>
                 </Link>
               )}
-              {user?.role === 'lab_owner' && (
-                <Link to="/lab-owner" onClick={() => setMenuOpen(false)}>
+              {user?.role === ROLES.LAB_OWNER && (
+                <Link to={ROUTES.LAB_OWNER} onClick={() => setMenuOpen(false)}>
                   <button className="w-full bg-yellow-500 text-white py-3 rounded-xl">
                     Lab Owner Dashboard
                   </button>
@@ -223,12 +225,12 @@ const Navbar = () => {
             <div className="mt-8">
               {!user ? (
                 <div className="flex flex-col gap-4">
-                  <Link to="/login" onClick={() => setMenuOpen(false)}>
+                  <Link to={ROUTES.LOGIN} onClick={() => setMenuOpen(false)}>
                     <button className="border border-blue-600 text-blue-600 py-3 rounded-xl w-full">
                       Login
                     </button>
                   </Link>
-                  <Link to="/signup" onClick={() => setMenuOpen(false)}>
+                  <Link to={ROUTES.SIGNUP} onClick={() => setMenuOpen(false)}>
                     <button className="bg-blue-600 text-white py-3 rounded-xl w-full">
                       Signup
                     </button>

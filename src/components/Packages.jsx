@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { FaHeartbeat } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import API from '@/services/api'
+import { ROUTES } from '@/constants/routes'
+import { API_ENDPOINTS } from '@/constants/api'
 const Packages = () => {
   const navigate = useNavigate()
   const [packages, setPackages] = useState([])
   const [loading, setLoading] = useState(true)
   const fetchPackages = async () => {
     try {
-      const { data } = await API.get('/packages')
+      const { data } = await API.get(API_ENDPOINTS.PACKAGES)
       setPackages(data)
     } catch (error) {
       console.log(error)
@@ -23,16 +25,16 @@ const Packages = () => {
     const userData = sessionStorage.getItem('user')
     const user = userData ? JSON.parse(userData) : null
     if (!user?.token) {
-      navigate('/login', {
+      navigate(ROUTES.LOGIN, {
         state: {
           message: 'Please login to continue booking',
-          redirectTo: '/booking',
+          redirectTo: ROUTES.BOOKING,
           selectedItem: item,
           bookingType: type,
         },
       })
     } else {
-      navigate('/booking', {
+      navigate(ROUTES.BOOKING, {
         state: {
           selectedItem: item,
           bookingType: type,
@@ -41,7 +43,7 @@ const Packages = () => {
     }
   }
   return (
-    <section className="py-12 md:py-20 bg-[#f4f8ff]">
+    <section className="py-12 md:py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Heading */}
         <div className="text-center mb-10 md:mb-14">

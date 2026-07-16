@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import API from '@/services/api'
 import { toast } from 'react-toastify'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
+import { API_ENDPOINTS } from '@/constants/api'
 const VerifyOtp = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -16,12 +18,12 @@ const VerifyOtp = () => {
   }, [])
   const handleVerify = async () => {
     try {
-      await API.post('/pass/verify-otp', {
+      await API.post(API_ENDPOINTS.PASSWORD.VERIFY_OTP, {
         email,
         otp,
       })
       toast.success('OTP Verified')
-      navigate('/reset-password', {
+      navigate(ROUTES.RESET_PASSWORD, {
         state: {
           email,
           otp,

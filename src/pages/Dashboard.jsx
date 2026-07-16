@@ -12,6 +12,9 @@ import {
   EmptyState,
 } from '@/components/Dashboard'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
+import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
+import { API_ENDPOINTS } from '@/constants/api'
 const Dashboard = () => {
   const { user } = useContext(AuthContext)
   const [selectedBooking, setSelectedBooking] = useState(null)
@@ -30,7 +33,7 @@ const Dashboard = () => {
   })
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get('/bookings/my-bookings')
+      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.MY_BOOKINGS)
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -61,7 +64,7 @@ const Dashboard = () => {
       return
     }
     try {
-      await API.put(`/bookings/manage/${selectedBooking._id}`, {
+      await API.put(API_ENDPOINTS.BOOKINGS.MANAGE(selectedBooking._id), {
         action: 'cancel',
         reason: reason === 'Other' ? customReason : reason,
       })
@@ -82,7 +85,7 @@ const Dashboard = () => {
       return
     }
     try {
-      await API.put(`/bookings/manage/${selectedBooking._id}`, {
+      await API.put(API_ENDPOINTS.BOOKINGS.MANAGE(selectedBooking._id), {
         action: 'reschedule',
         bookingDate: rescheduleData.bookingDate,
         bookingTime: rescheduleData.bookingTime,
@@ -111,14 +114,14 @@ const Dashboard = () => {
   }
   const filteredBookings =
     activeSection === 'pending'
-      ? bookings.filter((item) => item.status === 'Pending')
+      ? bookings.filter((item) => item.status === BOOKING_STATUS.PENDING)
       : activeSection === 'completed'
-        ? bookings.filter((item) => item.status === 'Completed')
+        ? bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED)
         : activeSection === 'reports'
           ? bookings.filter((item) => item.report)
           : bookings
   return (
-    <div className="bg-[#f4f8ff] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <Navbar />
       {/* Hero */}
       <div className="bg-blue-950">
@@ -149,7 +152,7 @@ const Dashboard = () => {
           />
           <DashboardStatsCard
             title="Completed"
-            value={bookings.filter((item) => item.status === 'Completed').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
             icon={<FaCheckCircle />}
             color="green"
             bgColor="bg-green-100 text-green-600"
@@ -161,7 +164,7 @@ const Dashboard = () => {
           />
           <DashboardStatsCard
             title="Pending"
-            value={bookings.filter((item) => item.status === 'Pending').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
             icon={<FaClock />}
             color="yellow"
             bgColor="bg-yellow-100 text-yellow-600"
@@ -194,7 +197,7 @@ const Dashboard = () => {
             </div>
             <button
               onClick={() => {
-                navigate('/booking')
+                navigate(ROUTES.BOOKING)
               }}
               className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 md:px-6 py-3 rounded-2xl text-sm md:text-base font-medium text-center"
             >
@@ -229,11 +232,11 @@ const Dashboard = () => {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold
             ${
-              booking.status === 'Completed'
+              booking.status === BOOKING_STATUS.COMPLETED
                 ? 'bg-green-100 text-green-700'
-                : booking.status === 'Cancelled'
+                : booking.status === BOOKING_STATUS.CANCELLED
                   ? 'bg-red-100 text-red-700'
-                  : booking.status === 'Rescheduled'
+                  : booking.status === BOOKING_STATUS.RESCHEDULED
                     ? 'bg-purple-100 text-purple-700'
                     : 'bg-yellow-100 text-yellow-700'
             }
@@ -276,7 +279,7 @@ const Dashboard = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold
               ${
-                booking.paymentStatus === 'Paid'
+                booking.paymentStatus === PAYMENT_STATUS.PAID
                   ? 'bg-green-100 text-green-700'
                   : 'bg-red-100 text-red-700'
               }
@@ -318,10 +321,11 @@ const Dashboard = () => {
                         </a>
                       )}
                       {/* Manage */}
-                      {booking.status !== 'Completed' && booking.status !== 'Cancelled' && (
-                        <button
-                          onClick={() => openManageModal(booking)}
-                          className="
+                      {booking.status !== BOOKING_STATUS.COMPLETED &&
+                        booking.status !== BOOKING_STATUS.CANCELLED && (
+                          <button
+                            onClick={() => openManageModal(booking)}
+                            className="
             mt-4
             w-full
             bg-orange-500
@@ -331,10 +335,10 @@ const Dashboard = () => {
             rounded-2xl
             font-medium
             "
-                        >
-                          ⚙️ Manage Booking
-                        </button>
-                      )}
+                          >
+                            ⚙️ Manage Booking
+                          </button>
+                        )}
                     </div>
                   </div>
                 ))}

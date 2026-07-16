@@ -16,6 +16,8 @@ import {
   FaCheckCircle,
   FaFlask,
 } from 'react-icons/fa'
+import { ROUTES } from '@/constants/routes'
+import { API_ENDPOINTS } from '@/constants/api'
 const Booking = () => {
   const navigate = useNavigate()
   const pageLocation = useLocation()
@@ -57,7 +59,10 @@ const Booking = () => {
   // Fetch Tests and Packages
   const fetchTests = async () => {
     try {
-      const [testsRes, packagesRes] = await Promise.all([API.get('/tests'), API.get('/packages')])
+      const [testsRes, packagesRes] = await Promise.all([
+        API.get(API_ENDPOINTS.TESTS),
+        API.get(API_ENDPOINTS.PACKAGES),
+      ])
       setTests(testsRes.data)
       setPackages(packagesRes.data)
     } catch (error) {
@@ -133,9 +138,9 @@ const Booking = () => {
         latitude: mapLocation?.lat,
         longitude: mapLocation?.lng,
       }
-      await API.post('/bookings', payload)
+      await API.post(API_ENDPOINTS.BOOKINGS.BASE, payload)
       toast.success('Booking Created Successfully')
-      navigate('/dashboard')
+      navigate(ROUTES.DASHBOARD)
     } catch (error) {
       toast.error(error.response?.data?.message || 'Booking Failed')
     } finally {
@@ -223,7 +228,7 @@ const Booking = () => {
     }
   }
   return (
-    <div className="bg-[#f4f8ff] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <Navbar />
       {/* Header */}
       <div className="bg-blue-950 pt-8 pb-10 md:pt-12 md:pb-16">

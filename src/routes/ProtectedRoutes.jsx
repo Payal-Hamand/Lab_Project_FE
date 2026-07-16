@@ -1,16 +1,17 @@
 import React, { useContext } from 'react'
 import { Navigate } from 'react-router-dom'
 import { AuthContext } from '@/context/AuthContext'
+import { ROUTES } from '@/constants/routes'
 const ProtectedRoute = ({ children, roles }) => {
   const { user, loading } = useContext(AuthContext)
   if (loading) {
     return <h1>Loading...</h1>
   }
   if (!user) {
-    return <Navigate to="/login" />
+    return <Navigate to={ROUTES.LOGIN} />
   }
   if (roles && !roles.includes(user.role)) {
-    return <Navigate to="/" />
+    return <Navigate to={ROUTES.HOME} />
   }
   return children
 }

@@ -4,7 +4,7 @@ import Packages from '@/components/Packages'
 import Footer from './Footer'
 const PackagesPage = () => {
   return (
-    <div className="bg-[#f4f8ff] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <Navbar />
       {/* Header */}
       <div className="bg-blue-950 py-20">

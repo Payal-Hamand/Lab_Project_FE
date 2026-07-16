@@ -2,15 +2,17 @@ import React, { useState } from 'react'
 import API from '@/services/api'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
+import { API_ENDPOINTS } from '@/constants/api'
 const ForgotPassword = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const { data } = await API.post('/pass/forgot-password', { email })
+      const { data } = await API.post(API_ENDPOINTS.PASSWORD.FORGOT, { email })
       toast.success(data.message)
-      navigate('/verify-otp', {
+      navigate(ROUTES.VERIFY_OTP, {
         state: { email },
       })
     } catch (error) {

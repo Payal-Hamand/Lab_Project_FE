@@ -29,7 +29,7 @@ const Features = () => {
         {data.map((item, index) => (
           <div
             key={index}
-            className="bg-[#f8fbff] rounded-3xl p-8 shadow-sm hover:shadow-xl transition"
+            className="bg-surface-light rounded-3xl p-8 shadow-sm hover:shadow-xl transition"
           >
             <div className="bg-blue-100 text-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl">
               {item.icon}

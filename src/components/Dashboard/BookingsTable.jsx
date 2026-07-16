@@ -1,5 +1,6 @@
 import React from 'react'
 import { FaDownload } from 'react-icons/fa'
+import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 const BookingsTable = ({
   bookings,
   showPatient = true,
@@ -52,13 +53,13 @@ const BookingsTable = ({
                 <span
                   className={`px-4 py-2 rounded-full text-xs font-semibold
                       ${
-                        item.status === 'Completed'
+                        item.status === BOOKING_STATUS.COMPLETED
                           ? 'bg-green-100 text-green-700'
-                          : item.status === 'Assigned'
+                          : item.status === BOOKING_STATUS.ASSIGNED
                             ? 'bg-blue-100 text-blue-700'
-                            : item.status === 'Cancelled'
+                            : item.status === BOOKING_STATUS.CANCELLED
                               ? 'bg-red-100 text-red-700'
-                              : item.status === 'Rescheduled'
+                              : item.status === BOOKING_STATUS.RESCHEDULED
                                 ? 'bg-purple-100 text-purple-700'
                                 : 'bg-yellow-100 text-yellow-700'
                       }
@@ -91,7 +92,7 @@ const BookingsTable = ({
                   <span
                     className={`px-4 py-2 rounded-full text-xs font-semibold
                           ${
-                            item.paymentStatus === 'Paid'
+                            item.paymentStatus === PAYMENT_STATUS.PAID
                               ? 'bg-blue-100 text-blue-700'
                               : 'bg-red-100 text-red-700'
                           }
@@ -136,10 +137,10 @@ const BookingsTable = ({
                 {isAdmin ? (
                   <button
                     onClick={() => openEditModal && openEditModal(item)}
-                    disabled={item.status === 'Completed'}
+                    disabled={item.status === BOOKING_STATUS.COMPLETED}
                     className={`px-4 py-2 rounded-xl text-sm font-medium truncate text-white
     ${
-      item.status === 'Completed' || item.status === 'Cancelled'
+      item.status === BOOKING_STATUS.COMPLETED || item.status === BOOKING_STATUS.CANCELLED
         ? 'bg-gray-400 cursor-not-allowed'
         : 'bg-blue-600 hover:bg-blue-700'
     }
@@ -149,15 +150,16 @@ const BookingsTable = ({
                   </button>
                 ) : (
                   <>
-                    {item.status !== 'Completed' && item.status !== 'Cancelled' && (
-                      <button
-                        onClick={() => openManageModal && openManageModal(item)}
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium"
-                      >
-                        ⚙️ Manage
-                      </button>
-                    )}
-                    {item.status === 'Cancelled' && (
+                    {item.status !== BOOKING_STATUS.COMPLETED &&
+                      item.status !== BOOKING_STATUS.CANCELLED && (
+                        <button
+                          onClick={() => openManageModal && openManageModal(item)}
+                          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium"
+                        >
+                          ⚙️ Manage
+                        </button>
+                      )}
+                    {item.status === BOOKING_STATUS.CANCELLED && (
                       <span className="bg-red-100 text-red-700 px-3 py-2 rounded-xl text-xs font-semibold">
                         Cancelled
                       </span>

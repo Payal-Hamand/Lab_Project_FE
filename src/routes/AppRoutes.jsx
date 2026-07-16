@@ -15,51 +15,53 @@ import ForgotPassword from '@/pages/ForgotPassword'
 import VerifyOtp from '@/pages/VerifyOtp'
 import ResetPassword from '@/pages/ResetPassword'
 import AboutUs from '@/pages/AboutUs'
+import { ROUTES } from '@/constants/routes'
+import { ROLES } from '@/constants/roles'
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
+      <Route path={ROUTES.HOME} element={<Home />} />
+      <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route
-        path="/lab-owner"
+        path={ROUTES.LAB_OWNER}
         element={
-          <ProtectedRoute roles={['lab_owner']}>
+          <ProtectedRoute roles={[ROLES.LAB_OWNER]}>
             <LabOwnerDashboard />
           </ProtectedRoute>
         }
       />
-      <Route path="/about" element={<AboutUs />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/packages" element={<PackagesPage />} />
+      <Route path={ROUTES.ABOUT} element={<AboutUs />} />
+      <Route path={ROUTES.SIGNUP} element={<Signup />} />
+      <Route path={ROUTES.PACKAGES} element={<PackagesPage />} />
       <Route
-        path="/lab-assistant"
+        path={ROUTES.LAB_ASSISTANT}
         element={
-          <ProtectedRoute roles={['lab_assistant']}>
+          <ProtectedRoute roles={[ROLES.LAB_ASSISTANT]}>
             <LabAssistantDashboard />
           </ProtectedRoute>
         }
       />
-      <Route path="/tests" element={<TestsPage />} />
+      <Route path={ROUTES.TESTS} element={<TestsPage />} />
       <Route
-        path="/admin"
+        path={ROUTES.ADMIN}
         element={
-          <ProtectedRoute roles={['admin']}>
+          <ProtectedRoute roles={[ROLES.ADMIN]}>
             <AdminDashboard />
           </ProtectedRoute>
         }
       />
-      <Route path="/booking" element={<Booking />} />
+      <Route path={ROUTES.BOOKING} element={<Booking />} />
       <Route
-        path="/dashboard"
+        path={ROUTES.DASHBOARD}
         element={
-          <ProtectedRoute roles={['patient']}>
+          <ProtectedRoute roles={[ROLES.PATIENT]}>
             <Dashboard />
           </ProtectedRoute>
         }
       />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/verify-otp" element={<VerifyOtp />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+      <Route path={ROUTES.VERIFY_OTP} element={<VerifyOtp />} />
+      <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
     </Routes>
   )
 }

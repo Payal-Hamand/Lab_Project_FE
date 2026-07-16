@@ -4,6 +4,10 @@ import { toast } from 'react-toastify'
 import Navbar from '@/components/Navbar'
 import API from '@/services/api'
 import { FaUsers, FaFlask, FaClipboardList, FaVial, FaBoxOpen } from 'react-icons/fa'
+import { ROUTES } from '@/constants/routes'
+import { ROLES } from '@/constants/roles'
+import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
+import { API_ENDPOINTS } from '@/constants/api'
 import {
   DashboardStatsCard,
   DashboardSectionHeader,
@@ -80,7 +84,7 @@ const AdminDashboard = () => {
   }
   const fetchLabOwners = async () => {
     try {
-      const { data } = await API.get('/bookings/lab-owners')
+      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.LAB_OWNERS)
       setLabOwners(data)
     } catch (error) {
       console.log(error)
@@ -92,9 +96,9 @@ const AdminDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       const [testsRes, packagesRes, labOwnersRes] = await Promise.all([
-        API.get('/tests'),
-        API.get('/packages'),
-        API.get('/admin/lab-owners'),
+        API.get(API_ENDPOINTS.TESTS),
+        API.get(API_ENDPOINTS.PACKAGES),
+        API.get(API_ENDPOINTS.ADMIN.LAB_OWNERS),
       ])
       setTests(testsRes.data)
       setAllTests(testsRes.data)
@@ -119,7 +123,7 @@ const AdminDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      await API.post('/tests', testData)
+      await API.post(API_ENDPOINTS.TESTS, testData)
       toast.success('Test Created Successfully')
       fetchDashboardData()
       setActivePanel('')
@@ -139,7 +143,7 @@ const AdminDashboard = () => {
   }
   const handleUpdateLab = async () => {
     try {
-      await API.put(`/bookings/update-booking-lab/${selectedBooking._id}`, {
+      await API.put(API_ENDPOINTS.BOOKINGS.UPDATE_LAB(selectedBooking._id), {
         labOwnerId: selectedLab,
       })
       toast.success('Lab Updated Successfully')
@@ -164,7 +168,7 @@ const AdminDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      await API.post('/packages', {
+      await API.post(API_ENDPOINTS.PACKAGES, {
         ...packageData,
         testsIncluded: packageData.testsIncluded,
       })
@@ -201,7 +205,7 @@ const AdminDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      await API.post('/admin/create-lab-owner', {
+      await API.post(API_ENDPOINTS.ADMIN.CREATE_LAB_OWNER, {
         ...labOwnerData,
         servicePincodes: labOwnerData.servicePincodes.split(',').map((item) => item.trim()),
       })
@@ -225,7 +229,7 @@ const AdminDashboard = () => {
   }
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get('/bookings/all')
+      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.ALL)
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -254,12 +258,12 @@ const AdminDashboard = () => {
   }
   const filteredBookings =
     activeSection === 'pending'
-      ? bookings.filter((item) => item.status === 'Pending')
+      ? bookings.filter((item) => item.status === BOOKING_STATUS.PENDING)
       : activeSection === 'completed'
-        ? bookings.filter((item) => item.status === 'Completed')
+        ? bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED)
         : bookings
   return (
-    <div className="bg-[#f4f8ff] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <Navbar />
       {/* Hero */}
       <div className="bg-blue-950">
@@ -296,11 +300,11 @@ const AdminDashboard = () => {
             icon={<FaFlask />}
             color="green"
             bgColor="bg-green-100 text-green-600"
-            onClick={() => navigate('/tests')}
+            onClick={() => navigate(ROUTES.TESTS)}
           />
           <DashboardStatsCard
             title="Pending"
-            value={bookings.filter((item) => item.status === 'Pending').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
             icon={<FaVial />}
             color="yellow"
             bgColor="bg-yellow-100 text-yellow-600"
@@ -312,7 +316,7 @@ const AdminDashboard = () => {
           />
           <DashboardStatsCard
             title="Completed"
-            value={bookings.filter((item) => item.status === 'Completed').length}
+            value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
             icon={<FaBoxOpen />}
             color="purple"
             bgColor="bg-purple-100 text-purple-600"
@@ -328,7 +332,7 @@ const AdminDashboard = () => {
             icon={<FaBoxOpen />}
             color="purple"
             bgColor="bg-purple-100 text-purple-600"
-            onClick={() => navigate('/packages')}
+            onClick={() => navigate(ROUTES.PACKAGES)}
           />
           <DashboardStatsCard
             title="Lab Owners"
@@ -742,11 +746,11 @@ const AdminDashboard = () => {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold
             ${
-              item.status === 'Completed'
+              item.status === BOOKING_STATUS.COMPLETED
                 ? 'bg-green-100 text-green-700'
-                : item.status === 'Pending'
+                : item.status === BOOKING_STATUS.PENDING
                   ? 'bg-yellow-100 text-yellow-700'
-                  : item.status === 'Cancelled'
+                  : item.status === BOOKING_STATUS.CANCELLED
                     ? 'bg-red-100 text-red-700'
                     : 'bg-blue-100 text-blue-700'
             }`}
@@ -803,7 +807,7 @@ const AdminDashboard = () => {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold
             ${
-              item.paymentStatus === 'Paid'
+              item.paymentStatus === PAYMENT_STATUS.PAID
                 ? 'bg-green-100 text-green-700'
                 : 'bg-red-100 text-red-700'
             }`}
@@ -821,7 +825,7 @@ const AdminDashboard = () => {
           </h3>
         </div> */}
                       <div className="mt-4">
-                        {item.status === 'Completed' ? (
+                        {item.status === BOOKING_STATUS.COMPLETED ? (
                           <div className="w-full bg-green-100 text-green-700 py-3 rounded-2xl text-center font-semibold">
                             ✅ Booking Completed
                           </div>

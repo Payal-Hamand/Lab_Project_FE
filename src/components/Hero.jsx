@@ -4,6 +4,8 @@ import { FaSearch, FaShieldAlt, FaTruck, FaClock, FaFlask, FaTimes } from 'react
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '@/context/AuthContext'
 import API from '@/services/api'
+import { ROUTES } from '@/constants/routes'
+import { API_ENDPOINTS } from '@/constants/api'
 const Hero = () => {
   const navigate = useNavigate()
   const { user } = useContext(AuthContext)
@@ -17,7 +19,10 @@ const Hero = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [testsRes, packagesRes] = await Promise.all([API.get('/tests'), API.get('/packages')])
+        const [testsRes, packagesRes] = await Promise.all([
+          API.get(API_ENDPOINTS.TESTS),
+          API.get(API_ENDPOINTS.PACKAGES),
+        ])
         setTests(testsRes.data)
         setPackages(packagesRes.data)
       } catch (err) {
@@ -77,17 +82,17 @@ const Hero = () => {
     setShowDropdown(false)
     setSearch('')
     if (!user) {
-      navigate('/login', {
+      navigate(ROUTES.LOGIN, {
         state: {
           message: 'Please login to continue booking',
-          redirectTo: '/booking',
+          redirectTo: ROUTES.BOOKING,
           selectedItem: item,
           bookingType: type,
         },
       })
       return
     }
-    navigate('/booking', { state: { selectedItem: item, bookingType: type } })
+    navigate(ROUTES.BOOKING, { state: { selectedItem: item, bookingType: type } })
   }
   // Popular search quick-fill
   const fillSearch = (term) => {
@@ -95,7 +100,7 @@ const Hero = () => {
     openDropdown()
   }
   return (
-    <section className="bg-[#f4f8ff]">
+    <section className="bg-surface">
       <div className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-10 items-center">
         {/* Left Content */}
         <div>
@@ -184,21 +189,6 @@ const Hero = () => {
             alt="Lab"
             className="rounded-[40px] shadow-2xl"
           />
-          {/* Offer Card */}
-          {/* <div className="absolute top-10 -right-4 bg-white shadow-2xl rounded-3xl p-6 w-[280px] hidden lg:block">
-            <div className="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl">%</div>
-            <h3 className="text-center text-2xl font-bold mt-6 text-blue-950">Get 20% OFF</h3>
-            <p className="text-center text-gray-500 mt-2">on all lab tests</p>
-            <div className="border border-dashed border-blue-300 rounded-xl p-3 mt-5 text-center text-blue-600 font-bold">
-              MEDILAB20
-            </div>
-            <button
-              onClick={handleBookNow}
-              className="bg-blue-600 hover:bg-blue-700 transition text-white w-full py-3 rounded-xl mt-5 font-semibold"
-            >
-              Book Now
-            </button>
-          </div> */}
         </div>
       </div>
       {/* ── Portal Dropdown (renders at document.body level) ── */}

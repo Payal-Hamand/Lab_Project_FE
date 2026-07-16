@@ -5,6 +5,9 @@ import { toast } from 'react-toastify'
 import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { AuthContext } from '@/context/AuthContext'
 import API from '@/services/api'
+import { ROUTES } from '@/constants/routes'
+import { ROLES } from '@/constants/roles'
+import { API_ENDPOINTS } from '@/constants/api'
 const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -25,7 +28,7 @@ const Login = () => {
     e.preventDefault()
     try {
       setLoading(true)
-      const { data } = await API.post('/auth/login', formData)
+      const { data } = await API.post(API_ENDPOINTS.AUTH.LOGIN, formData)
       login(data)
       toast.success('Login Successful')
       if (location.state?.redirectTo) {
@@ -35,14 +38,14 @@ const Login = () => {
             bookingType: location.state?.bookingType,
           },
         })
-      } else if (data.role === 'admin') {
-        navigate('/admin')
-      } else if (data.role === 'lab_assistant') {
-        navigate('/lab-assistant')
-      } else if (data.role === 'lab_owner') {
-        navigate('/lab-owner')
+      } else if (data.role === ROLES.ADMIN) {
+        navigate(ROUTES.ADMIN)
+      } else if (data.role === ROLES.LAB_ASSISTANT) {
+        navigate(ROUTES.LAB_ASSISTANT)
+      } else if (data.role === ROLES.LAB_OWNER) {
+        navigate(ROUTES.LAB_OWNER)
       } else {
-        navigate('/dashboard')
+        navigate(ROUTES.DASHBOARD)
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login Failed')
@@ -51,7 +54,7 @@ const Login = () => {
     }
   }
   return (
-    <div className="min-h-screen bg-[#f4f8ff] flex items-center justify-center px-4 sm:px-6 py-6 md:py-10">
+    <div className="min-h-screen bg-surface flex items-center justify-center px-4 sm:px-6 py-6 md:py-10">
       <div className="bg-white rounded-3xl md:rounded-[40px] shadow-xl overflow-hidden grid lg:grid-cols-2 max-w-6xl w-full">
         {/* Left Side */}
         <div className="hidden lg:block relative">
@@ -75,7 +78,7 @@ const Login = () => {
           {/* Top */}
           <div className="flex items-center justify-between">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(ROUTES.HOME)}
               className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition text-sm md:text-base"
             >
               <FaArrowLeft />
@@ -128,7 +131,10 @@ const Login = () => {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
                 <div className="flex justify-end mt-2">
-                  <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">
+                  <Link
+                    to={ROUTES.FORGOT_PASSWORD}
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
@@ -145,8 +151,8 @@ const Login = () => {
           </form>
           {/* Bottom */}
           <p className="mt-8 text-gray-500 text-center text-sm md:text-base">
-            Don’t have an account?
-            <Link to="/signup" className="text-blue-600 font-semibold ml-2">
+            Don't have an account?
+            <Link to={ROUTES.SIGNUP} className="text-blue-600 font-semibold ml-2">
               Signup
             </Link>
           </p>
