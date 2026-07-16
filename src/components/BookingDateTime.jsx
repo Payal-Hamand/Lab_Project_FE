@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { FaCalendarAlt, FaClock } from 'react-icons/fa'
+import Input from '@/components/ui/Input'
+import Select from '@/components/ui/Select'
 const BookingDateTime = ({ formData, handleChange }) => {
   const today = new Date().toISOString().split('T')[0]
   // Time Slots
@@ -70,49 +72,45 @@ const BookingDateTime = ({ formData, handleChange }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
       {/* Date */}
-      <div>
-        <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-          <FaCalendarAlt />
-          Booking Date
-        </label>
-        <input
-          type="date"
-          name="bookingDate"
-          value={formData.bookingDate}
-          onChange={handleChange}
-          min={today}
-          required
-          className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
-        />
-      </div>
+      <Input
+        label={
+          <span className="flex items-center gap-2">
+            <FaCalendarAlt /> Booking Date
+          </span>
+        }
+        type="date"
+        name="bookingDate"
+        value={formData.bookingDate}
+        onChange={handleChange}
+        min={today}
+        required
+      />
       {/* Time */}
-      <div>
-        <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-          <FaClock />
-          Booking Time
-        </label>
-        <select
-          name="bookingTime"
-          value={formData.bookingTime}
-          onChange={handleChange}
-          required
-          disabled={getAvailableTimeSlots().length === 0}
-          className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base bg-white"
-        >
-          <option value="">Choose Time Slot</option>
-          {getAvailableTimeSlots().map((slot, index) => (
-            <option key={index} value={slot}>
-              {slot}
-            </option>
-          ))}
-        </select>
-        {/* Warning */}
-        {formData.bookingDate && getAvailableTimeSlots().length === 0 && (
-          <p className="text-red-500 text-sm mt-2">
-            Today's booking slots are over. Please select another date.
-          </p>
-        )}
-      </div>
+      <Select
+        label={
+          <span className="flex items-center gap-2">
+            <FaClock /> Booking Time
+          </span>
+        }
+        name="bookingTime"
+        value={formData.bookingTime}
+        onChange={handleChange}
+        required
+        disabled={getAvailableTimeSlots().length === 0}
+      >
+        <option value="">Choose Time Slot</option>
+        {getAvailableTimeSlots().map((slot, index) => (
+          <option key={index} value={slot}>
+            {slot}
+          </option>
+        ))}
+      </Select>
+      {/* Warning */}
+      {formData.bookingDate && getAvailableTimeSlots().length === 0 && (
+        <p className="text-red-500 text-sm mt-2">
+          Today's booking slots are over. Please select another date.
+        </p>
+      )}
     </div>
   )
 }

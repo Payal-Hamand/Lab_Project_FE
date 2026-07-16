@@ -18,6 +18,12 @@ import {
 } from 'react-icons/fa'
 import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
+import Select from '@/components/ui/Select'
+import Textarea from '@/components/ui/Textarea'
+import Modal from '@/components/ui/Modal'
+
 const Booking = () => {
   const navigate = useNavigate()
   const pageLocation = useLocation()
@@ -250,16 +256,16 @@ const Booking = () => {
           <form onSubmit={handleSubmit} className="mt-6 md:mt-10 space-y-5 md:space-y-7">
             {/* Test */}
             <div>
-              <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-                <FaFlask />
-                Select Test / Package
-              </label>
-              <select
+              <Select
+                label={
+                  <span className="flex items-center gap-2">
+                    <FaFlask /> Select Test / Package
+                  </span>
+                }
                 name="test"
                 value={formData.test || formData.package}
                 required
                 onChange={handleTestPackageChange}
-                className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
               >
                 <option value="">Choose Test or Package</option>
                 {/* TESTS */}
@@ -278,29 +284,29 @@ const Booking = () => {
                     </option>
                   ))}
                 </optgroup>
-              </select>
+              </Select>
             </div>
             {/* Patient Name */}
             <div>
-              <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-                <FaUser />
-                Patient Name
-              </label>
-              <input
+              <Input
+                label={
+                  <span className="flex items-center gap-2">
+                    <FaUser /> Patient Name
+                  </span>
+                }
                 type="text"
                 name="patientName"
                 value={formData.patientName}
                 onChange={handleChange}
                 required
                 placeholder="Enter patient name"
-                className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
               />
             </div>
             {/* Age + Gender */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
               <div>
-                <label className="font-semibold text-gray-700 text-sm md:text-base">Age</label>
-                <input
+                <Input
+                  label="Age"
                   type="number"
                   name="age"
                   value={formData.age}
@@ -309,57 +315,55 @@ const Booking = () => {
                   min="1"
                   max="100"
                   placeholder="Enter age"
-                  className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
                 />
               </div>
               <div>
-                <label className="font-semibold text-gray-700 text-sm md:text-base">Gender</label>
-                <select
+                <Select
+                  label="Gender"
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
                   required
-                  className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
                 >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
-                </select>
+                </Select>
               </div>
             </div>
             {/* Phone */}
             <div>
-              <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-                <FaPhoneAlt />
-                Phone Number
-              </label>
-              <input
+              <Input
+                label={
+                  <span className="flex items-center gap-2">
+                    <FaPhoneAlt /> Phone Number
+                  </span>
+                }
                 type="text"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
                 required
                 placeholder="Enter phone number"
-                className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
               />
             </div>
             {/* Address */}
             <div className="space-y-5">
               {/* Full Address */}
               <div>
-                <label className="font-semibold text-gray-700 flex items-center gap-2 text-sm md:text-base">
-                  <FaMapMarkerAlt />
-                  Full Address
-                </label>
-                <textarea
+                <Textarea
+                  label={
+                    <span className="flex items-center gap-2">
+                      <FaMapMarkerAlt /> Full Address
+                    </span>
+                  }
                   rows="3"
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   required
                   placeholder="House No, Street, Area"
-                  className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
                 />
               </div>
               <div className="bg-gray-50 border rounded-3xl p-5">
@@ -368,111 +372,82 @@ const Booking = () => {
                   Location
                 </label>
                 <div className="grid md:grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={getCurrentLocation}
-                    className="bg-blue-600 text-white py-3 rounded-2xl font-semibold"
-                  >
+                  <Button type="button" onClick={getCurrentLocation}>
                     📍 Use Current Location
-                  </button>
-                  <button
-                    type="button"
-                    onClick={openMap}
-                    className="bg-green-600 text-white py-3 rounded-2xl font-semibold"
-                  >
+                  </Button>
+                  <Button type="button" onClick={openMap} variant="success">
                     🗺️ Select On Map
-                  </button>
+                  </Button>
                 </div>
               </div>
-              <div>
-                <div className="mt-4">
-                  {showMap && (
-                    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                      <div className="bg-white w-full max-w-5xl rounded-3xl p-5">
-                        <div className="flex justify-between items-center mb-4">
-                          <h3 className="font-bold text-xl">Select Patient Location</h3>
-                          <button
-                            onClick={() => setShowMap(false)}
-                            className="text-red-500 text-2xl"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                        <LocationPicker
-                          location={mapLocation}
-                          setLocation={setMapLocation}
-                          onLocationSelect={reverseGeocode}
-                        />
-                        <button
-                          onClick={() => {
-                            if (!mapLocation?.lat) {
-                              toast.error('Please select location')
-                              return
-                            }
-                            setShowMap(false)
-                          }}
-                          className="w-full mt-5 bg-green-600 text-white py-4 rounded-2xl"
-                        >
-                          Confirm Location
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <Modal
+                open={showMap}
+                onClose={() => setShowMap(false)}
+                title="Select Patient Location"
+                size="full"
+              >
+                <LocationPicker
+                  location={mapLocation}
+                  setLocation={setMapLocation}
+                  onLocationSelect={reverseGeocode}
+                />
+                <Button
+                  onClick={() => {
+                    if (!mapLocation?.lat) {
+                      toast.error('Please select location')
+                      return
+                    }
+                    setShowMap(false)
+                  }}
+                  fullWidth
+                  variant="success"
+                  className="mt-5"
+                >
+                  Confirm Location
+                </Button>
+              </Modal>
               {/* Flat + Landmark */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                 <div>
-                  <label className="font-semibold text-gray-700 text-sm md:text-base">
-                    Flat / Apartment
-                  </label>
-                  <input
+                  <Input
+                    label="Flat / Apartment"
                     type="text"
                     name="flatNo"
                     value={formData.flatNo}
                     onChange={handleChange}
                     required
                     placeholder="Flat No / Building"
-                    className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold text-gray-700 text-sm md:text-base">
-                    Landmark
-                  </label>
-                  <input
+                  <Input
+                    label="Landmark"
                     type="text"
                     name="landmark"
                     value={formData.landmark}
                     onChange={handleChange}
                     required
                     placeholder="Near Mall / Hospital"
-                    className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
                   />
                 </div>
               </div>
               {/* City + State */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                 <div>
-                  <label className="font-semibold text-gray-700 text-sm md:text-base">
-                    City/State
-                  </label>
-                  <input
+                  <Input
+                    label="City/State"
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
                     required
                     placeholder="Enter city/state"
-                    className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
                   />
                 </div>
                 {/* Pincode */}
                 <div>
-                  <label className="font-semibold text-gray-700 text-sm md:text-base">
-                    Pincode
-                  </label>
-                  <input
+                  <Input
+                    label="Pincode"
                     type="text"
                     name="pincode"
                     maxLength={6}
@@ -480,7 +455,6 @@ const Booking = () => {
                     onChange={handleChange}
                     required
                     placeholder="Enter pincode"
-                    className="w-full border mt-2 md:mt-3 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
                   />
                 </div>
               </div>
@@ -488,13 +462,9 @@ const Booking = () => {
             {/* Date + Time */}
             <BookingDateTime formData={formData} handleChange={handleChange} />
             {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg w-full"
-            >
-              {loading ? 'Booking...' : 'Confirm Booking'}
-            </button>
+            <Button type="submit" loading={loading} fullWidth size="lg">
+              Confirm Booking
+            </Button>
           </form>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from '@/components/Navbar'
 import Footer from './Footer'
+import Button from '@/components/ui/Button'
 // Checked Up — About page
 // Fonts: Plus Jakarta Sans (display) + Inter (body) — load these in index.html:
 // <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -320,21 +321,9 @@ export default function AboutUs() {
         <p style={{ fontSize: '15px', color: '#64748B', margin: '0 0 28px' }}>
           Home collection is available in 40+ cities, with reports usually ready within a day.
         </p>
-        <button
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 600,
-            fontSize: '15px',
-            color: '#FFFFFF',
-            background: '#172554',
-            border: 'none',
-            borderRadius: '10px',
-            padding: '14px 32px',
-            cursor: 'pointer',
-          }}
-        >
+        <Button onClick={() => {}} className="font-semibold text-sm">
           Book a test
-        </button>
+        </Button>
       </section>
       <Footer />
     </div>

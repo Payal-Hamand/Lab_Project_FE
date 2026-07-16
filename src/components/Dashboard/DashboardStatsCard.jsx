@@ -1,9 +1,13 @@
 import React from 'react'
+import Button from '@/components/ui/Button'
+
 const DashboardStatsCard = ({ title, value, icon, color, bgColor, active, onClick }) => {
   return (
-    <button
+    <Button
+      variant="ghost"
+      fullWidth
       onClick={onClick}
-      className={`bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm text-left transition border-2 hover:shadow-lg w-full
+      className={`bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm text-left transition border-2 hover:shadow-lg
         ${active ? `border-${color}-500` : 'border-transparent'}
       `}
     >
@@ -20,7 +24,8 @@ const DashboardStatsCard = ({ title, value, icon, color, bgColor, active, onClic
           {icon}
         </div>
       </div>
-    </button>
+    </Button>
   )
 }
+
 export default DashboardStatsCard

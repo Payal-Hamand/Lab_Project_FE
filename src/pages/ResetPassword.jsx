@@ -4,6 +4,8 @@ import { toast } from 'react-toastify'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
 const ResetPassword = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -16,11 +18,7 @@ const ResetPassword = () => {
       return toast.error('Passwords do not match')
     }
     try {
-      const { data } = await API.post(API_ENDPOINTS.PASSWORD.RESET, {
-        email,
-        otp,
-        password,
-      })
+      const { data } = await API.post(API_ENDPOINTS.PASSWORD.RESET, { email, otp, password })
       toast.success(data.message)
       navigate(ROUTES.LOGIN)
     } catch (error) {
@@ -32,23 +30,21 @@ const ResetPassword = () => {
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center">Reset Password</h1>
         <div className="mt-6 space-y-4">
-          <input
+          <Input
             type="password"
             placeholder="New Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border p-4 rounded-xl"
           />
-          <input
+          <Input
             type="password"
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full border p-4 rounded-xl"
           />
-          <button onClick={handleReset} className="w-full bg-blue-600 text-white py-3 rounded-xl">
+          <Button onClick={handleReset} fullWidth>
             Reset Password
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { AuthContext } from '@/context/AuthContext'
 import API from '@/services/api'
 import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
 const Hero = () => {
   const navigate = useNavigate()
   const { user } = useContext(AuthContext)
@@ -150,7 +151,9 @@ const Hero = () => {
                 className="w-full px-2 py-4 outline-none text-gray-700 bg-transparent"
               />
               {search && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={() => {
                     setSearch('')
                     setShowDropdown(false)
@@ -158,15 +161,10 @@ const Hero = () => {
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <FaTimes />
-                </button>
+                </Button>
               )}
             </div>
-            <button
-              onClick={openDropdown}
-              className="bg-blue-600 hover:bg-blue-700 transition text-white px-8 py-4 rounded-xl font-semibold m-1"
-            >
-              Search
-            </button>
+            <Button onClick={openDropdown}>Search</Button>
           </div>
           {/* Popular Searches */}
           <div className="mt-5 flex flex-wrap gap-3 items-center">

@@ -6,6 +6,9 @@ import { FaSearch, FaClock, FaFlask, FaArrowRight } from 'react-icons/fa'
 import Footer from './Footer'
 import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
+import { InlineLoader } from '@/components/ui/Loader'
 const TestsPage = () => {
   const navigate = useNavigate()
   const [tests, setTests] = useState([])
@@ -69,19 +72,22 @@ const TestsPage = () => {
       <div className="max-w-7xl mx-auto px-6 mt-10">
         <div className="bg-white rounded-3xl shadow-sm p-4 flex items-center">
           <FaSearch className="text-gray-400 text-xl ml-4" />
-          <input
+          <Input
             type="text"
             value={search}
             onChange={handleSearch}
             placeholder="Search tests..."
-            className="w-full px-5 py-4 outline-none text-lg"
+            className="w-full px-5 py-4 outline-none text-lg border-0"
+            containerClassName="flex-1"
           />
         </div>
       </div>
       {/* Tests */}
       <div className="max-w-7xl mx-auto px-6 py-14">
         {loading ? (
-          <div className="text-center text-3xl font-bold">Loading...</div>
+          <div className="text-center text-3xl font-bold">
+            <InlineLoader />
+          </div>
         ) : filteredTests.length === 0 ? (
           <div className="text-center text-3xl font-bold text-gray-400">No Tests Found</div>
         ) : (
@@ -120,12 +126,7 @@ const TestsPage = () => {
                       <p className="text-gray-500">Price</p>
                       <h2 className="text-3xl font-bold text-blue-600">₹{item.price}</h2>
                     </div>
-                    <button
-                      onClick={() => handleBookNow(item, 'package')}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-semibold"
-                    >
-                      Book Now
-                    </button>
+                    <Button onClick={() => handleBookNow(item, 'package')}>Book Now</Button>
                   </div>
                 </div>
               </div>

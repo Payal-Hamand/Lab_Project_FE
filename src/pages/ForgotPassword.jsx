@@ -4,6 +4,8 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
 const ForgotPassword = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -12,9 +14,7 @@ const ForgotPassword = () => {
     try {
       const { data } = await API.post(API_ENDPOINTS.PASSWORD.FORGOT, { email })
       toast.success(data.message)
-      navigate(ROUTES.VERIFY_OTP, {
-        state: { email },
-      })
+      navigate(ROUTES.VERIFY_OTP, { state: { email } })
     } catch (error) {
       toast.error(error?.response?.data?.message)
     }
@@ -24,14 +24,15 @@ const ForgotPassword = () => {
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center">Forgot Password</h1>
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <input
+          <Input
             type="email"
             placeholder="Enter Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border p-4 rounded-xl"
           />
-          <button className="w-full bg-blue-600 text-white py-3 rounded-xl">Send OTP</button>
+          <Button type="submit" fullWidth>
+            Send OTP
+          </Button>
         </form>
       </div>
     </div>

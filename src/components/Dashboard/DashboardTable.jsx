@@ -1,5 +1,6 @@
 import React from 'react'
 import BookingStatusBadge from './BookingStatusBadge'
+import Select from '@/components/ui/Select'
 const DashboardTable = ({ bookings, assistants, handleAssignAssistant }) => {
   return (
     <div className="overflow-x-auto">
@@ -36,10 +37,10 @@ const DashboardTable = ({ bookings, assistants, handleAssignAssistant }) => {
                 )}
               </td>
               <td className="px-6 py-4">
-                <select
+                <Select
                   onChange={(e) => handleAssignAssistant(booking._id, e.target.value)}
                   value={booking.assignedLabAssistant?._id || ''}
-                  className="border rounded-xl px-4 py-2 outline-none min-w-55"
+                  containerClassName="min-w-[220px]"
                 >
                   <option value="">Select Assistant</option>
                   {assistants.map((assistant) => (
@@ -47,7 +48,7 @@ const DashboardTable = ({ bookings, assistants, handleAssignAssistant }) => {
                       {assistant.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </td>
             </tr>
           ))}

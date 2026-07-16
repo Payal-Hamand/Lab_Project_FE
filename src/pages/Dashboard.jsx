@@ -5,16 +5,18 @@ import Navbar from '@/components/Navbar'
 import API from '@/services/api'
 import { AuthContext } from '@/context/AuthContext'
 import { FaUser, FaCalendarAlt, FaFileMedical, FaCheckCircle, FaClock } from 'react-icons/fa'
-import {
-  DashboardStatsCard,
-  LoadingSpinner,
-  BookingsTable,
-  EmptyState,
-} from '@/components/Dashboard'
+import { DashboardStatsCard, BookingsTable, EmptyState } from '@/components/Dashboard'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
+import Select from '@/components/ui/Select'
+import Textarea from '@/components/ui/Textarea'
+import Modal from '@/components/ui/Modal'
+import Badge from '@/components/ui/Badge'
+import { Spinner } from '@/components/ui/Loader'
 const Dashboard = () => {
   const { user } = useContext(AuthContext)
   const [selectedBooking, setSelectedBooking] = useState(null)
@@ -195,17 +197,16 @@ const Dashboard = () => {
                 View all your booked tests & reports
               </p>
             </div>
-            <button
+            <Button
               onClick={() => {
                 navigate(ROUTES.BOOKING)
               }}
-              className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 md:px-6 py-3 rounded-2xl text-sm md:text-base font-medium text-center"
             >
               Book New Test
-            </button>
+            </Button>
           </div>
           {loading ? (
-            <LoadingSpinner />
+            <Spinner />
           ) : filteredBookings.length === 0 ? (
             <EmptyState text="No Bookings Found" />
           ) : (
@@ -229,21 +230,7 @@ const Dashboard = () => {
                           </h2>
                           <p className="text-gray-500 mt-1">📞 {booking.phone}</p>
                         </div>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold
-            ${
-              booking.status === BOOKING_STATUS.COMPLETED
-                ? 'bg-green-100 text-green-700'
-                : booking.status === BOOKING_STATUS.CANCELLED
-                  ? 'bg-red-100 text-red-700'
-                  : booking.status === BOOKING_STATUS.RESCHEDULED
-                    ? 'bg-purple-100 text-purple-700'
-                    : 'bg-yellow-100 text-yellow-700'
-            }
-            `}
-                        >
-                          {booking.status}
-                        </span>
+                        <Badge status={booking.status}>{booking.status}</Badge>
                       </div>
                       {/* Test */}
                       <div className="mt-4 bg-slate-50 rounded-2xl p-4">
@@ -276,17 +263,15 @@ const Dashboard = () => {
                       <div className="mt-4 bg-green-50 rounded-2xl p-4">
                         <div className="flex justify-between">
                           <span className="text-xs text-gray-500">Payment Status</span>
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold
-              ${
-                booking.paymentStatus === PAYMENT_STATUS.PAID
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-red-100 text-red-700'
-              }
-              `}
+                          <Badge
+                            status={
+                              booking.paymentStatus === PAYMENT_STATUS.PAID
+                                ? PAYMENT_STATUS.PAID
+                                : PAYMENT_STATUS.UNPAID
+                            }
                           >
                             {booking.paymentStatus}
-                          </span>
+                          </Badge>
                         </div>
                       </div>
                       {/* Address */}
@@ -323,21 +308,13 @@ const Dashboard = () => {
                       {/* Manage */}
                       {booking.status !== BOOKING_STATUS.COMPLETED &&
                         booking.status !== BOOKING_STATUS.CANCELLED && (
-                          <button
+                          <Button
                             onClick={() => openManageModal(booking)}
-                            className="
-            mt-4
-            w-full
-            bg-orange-500
-            hover:bg-orange-600
-            text-white
-            py-3
-            rounded-2xl
-            font-medium
-            "
+                            fullWidth
+                            variant="warning"
                           >
                             ⚙️ Manage Booking
-                          </button>
+                          </Button>
                         )}
                     </div>
                   </div>
@@ -347,109 +324,83 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-      {showManageModal && selectedBooking && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md">
-            <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-5 border-b bg-gradient-to-r from-blue-50 to-purple-50">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">Manage Booking</h2>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Cancel or reschedule your appointment
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowManageModal(false)
-                    setAction('')
-                    setReason('')
-                  }}
-                  className="text-2xl text-gray-400 hover:text-red-500"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
+      <Modal
+        open={showManageModal}
+        onClose={() => setShowManageModal(false)}
+        title="Manage Booking"
+        subtitle="Cancel or reschedule your appointment"
+      >
+        <div className="space-y-4">
+          {action === '' && (
+            <>
+              <Button onClick={() => setAction('reschedule')} fullWidth>
+                📅 Reschedule Booking
+              </Button>
+              <Button onClick={() => setAction('cancel')} variant="danger" fullWidth>
+                ❌ Cancel Booking
+              </Button>
+            </>
+          )}
+          {action === 'reschedule' && (
             <div className="space-y-4">
-              {action === '' && (
-                <>
-                  <button
-                    onClick={() => setAction('reschedule')}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium"
-                  >
-                    📅 Reschedule Booking
-                  </button>
-                  <button
-                    onClick={() => setAction('cancel')}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium"
-                  >
-                    ❌ Cancel Booking
-                  </button>
-                </>
-              )}
-              {action === 'reschedule' && (
-                <div className="space-y-4">
-                  <button onClick={() => setAction('')} className="text-sm text-blue-600">
-                    ← Back
-                  </button>
-                  <BookingDateTime
-                    formData={rescheduleData}
-                    handleChange={handleRescheduleChange}
-                  />
-                  <textarea
-                    rows={3}
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    placeholder="Reason (Optional)"
-                    className="w-full border rounded-xl px-4 py-3"
-                  />
-                  <button
-                    onClick={handleReschedule}
-                    className="w-full bg-green-600 text-white py-3 rounded-xl"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-              )}
-              {action === 'cancel' && (
-                <div className="space-y-4">
-                  <button onClick={() => setAction('')} className="text-sm text-blue-600">
-                    ← Back
-                  </button>
-                  <select
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    className="w-full border rounded-xl px-4 py-3"
-                  >
-                    <option value="">Select Reason</option>
-                    <option value="Booked By Mistake">Booked By Mistake</option>
-                    <option value="Not Available">Not Available</option>
-                    <option value="Found Another Lab">Found Another Lab</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  {reason === 'Other' && (
-                    <textarea
-                      rows={4}
-                      required
-                      placeholder="Please enter cancellation reason *"
-                      value={customReason}
-                      onChange={(e) => setCustomReason(e.target.value)}
-                      className="w-full border rounded-xl px-4 py-3"
-                    />
-                  )}
-                  <button
-                    onClick={handleCancel}
-                    disabled={!reason || (reason === 'Other' && !customReason.trim())}
-                    className="w-full bg-red-600 disabled:bg-gray-300 text-white py-3 rounded-xl"
-                  >
-                    Confirm Cancellation
-                  </button>
-                </div>
-              )}
+              <Button
+                onClick={() => setAction('')}
+                variant="ghost"
+                size="sm"
+                className="text-blue-600"
+              >
+                ← Back
+              </Button>
+              <BookingDateTime formData={rescheduleData} handleChange={handleRescheduleChange} />
+              <Textarea
+                rows={3}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Reason (Optional)"
+              />
+              <Button onClick={handleReschedule} variant="success" fullWidth>
+                Save Changes
+              </Button>
             </div>
-          </div>
+          )}
+          {action === 'cancel' && (
+            <div className="space-y-4">
+              <Button
+                onClick={() => setAction('')}
+                variant="ghost"
+                size="sm"
+                className="text-blue-600"
+              >
+                ← Back
+              </Button>
+              <Select value={reason} onChange={(e) => setReason(e.target.value)}>
+                <option value="">Select Reason</option>
+                <option value="Booked By Mistake">Booked By Mistake</option>
+                <option value="Not Available">Not Available</option>
+                <option value="Found Another Lab">Found Another Lab</option>
+                <option value="Other">Other</option>
+              </Select>
+              {reason === 'Other' && (
+                <Textarea
+                  rows={4}
+                  required
+                  placeholder="Please enter cancellation reason *"
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                />
+              )}
+              <Button
+                onClick={handleCancel}
+                disabled={!reason || (reason === 'Other' && !customReason.trim())}
+                variant="danger"
+                fullWidth
+              >
+                Confirm Cancellation
+              </Button>
+            </div>
+          )}
         </div>
-      )}
+      </Modal>
     </div>
   )
 }

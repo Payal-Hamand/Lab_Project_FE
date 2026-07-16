@@ -1,4 +1,5 @@
 import React from 'react'
+import Button from '@/components/ui/Button'
 const DashboardSidePanel = ({ open, title, subtitle, children, onClose }) => {
   if (!open) return null
   return (
@@ -10,12 +11,14 @@ const DashboardSidePanel = ({ open, title, subtitle, children, onClose }) => {
             <h2 className="text-2xl md:text-4xl font-bold text-blue-950">{title}</h2>
             <p className="text-gray-500 mt-2 text-sm md:text-base">{subtitle}</p>
           </div>
-          <button
+          <Button
             onClick={onClose}
-            className="text-3xl md:text-4xl leading-none text-gray-500 hover:text-red-500 transition"
+            variant="ghost"
+            size="icon"
+            className="text-3xl md:text-4xl leading-none text-gray-500 hover:text-red-500"
           >
             ×
-          </button>
+          </Button>
         </div>
         {/* BODY */}
         <div className="mt-6 md:mt-8">{children}</div>

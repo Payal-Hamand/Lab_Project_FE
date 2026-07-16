@@ -1,6 +1,8 @@
 import React from 'react'
 import { FaDownload } from 'react-icons/fa'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
+import Badge from '@/components/ui/Badge'
+import Button from '@/components/ui/Button'
 const BookingsTable = ({
   bookings,
   showPatient = true,
@@ -50,23 +52,7 @@ const BookingsTable = ({
               <td className="px-6 py-5 truncate">{item.bookingTime}</td>
               {/* Status */}
               <td className="px-6 py-5 truncate">
-                <span
-                  className={`px-4 py-2 rounded-full text-xs font-semibold
-                      ${
-                        item.status === BOOKING_STATUS.COMPLETED
-                          ? 'bg-green-100 text-green-700'
-                          : item.status === BOOKING_STATUS.ASSIGNED
-                            ? 'bg-blue-100 text-blue-700'
-                            : item.status === BOOKING_STATUS.CANCELLED
-                              ? 'bg-red-100 text-red-700'
-                              : item.status === BOOKING_STATUS.RESCHEDULED
-                                ? 'bg-purple-100 text-purple-700'
-                                : 'bg-yellow-100 text-yellow-700'
-                      }
-                      `}
-                >
-                  {item.status}
-                </span>
+                <Badge status={item.status}>{item.status}</Badge>
               </td>
               {/* Assign Lab */}
               {isAdmin && (
@@ -89,17 +75,7 @@ const BookingsTable = ({
               {/* Payment */}
               {showPayment && (
                 <td className="px-6 py-5">
-                  <span
-                    className={`px-4 py-2 rounded-full text-xs font-semibold
-                          ${
-                            item.paymentStatus === PAYMENT_STATUS.PAID
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-red-100 text-red-700'
-                          }
-                          `}
-                  >
-                    {item.paymentStatus}
-                  </span>
+                  <Badge status={item.paymentStatus}>{item.paymentStatus}</Badge>
                 </td>
               )}
               {/* Assistant */}
@@ -119,14 +95,15 @@ const BookingsTable = ({
               {showReport && (
                 <td className="px-6 py-5">
                   {item.report ? (
-                    <a
-                      href={item.report}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm inline-flex items-center gap-2"
-                    >
-                      <FaDownload />
-                      Download
+                    <a href={item.report} target="_blank" rel="noreferrer">
+                      <Button
+                        variant="success"
+                        size="sm"
+                        className="inline-flex items-center gap-2"
+                      >
+                        <FaDownload />
+                        Download
+                      </Button>
                     </a>
                   ) : (
                     <span className="text-gray-400 text-sm">Not Available</span>
@@ -135,29 +112,26 @@ const BookingsTable = ({
               )}
               <td className="px-6 py-5">
                 {isAdmin ? (
-                  <button
+                  <Button
                     onClick={() => openEditModal && openEditModal(item)}
                     disabled={item.status === BOOKING_STATUS.COMPLETED}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium truncate text-white
+                    className={`truncate
     ${
       item.status === BOOKING_STATUS.COMPLETED || item.status === BOOKING_STATUS.CANCELLED
         ? 'bg-gray-400 cursor-not-allowed'
-        : 'bg-blue-600 hover:bg-blue-700'
+        : ''
     }
   `}
                   >
                     ✏️ Edit Lab
-                  </button>
+                  </Button>
                 ) : (
                   <>
                     {item.status !== BOOKING_STATUS.COMPLETED &&
                       item.status !== BOOKING_STATUS.CANCELLED && (
-                        <button
-                          onClick={() => openManageModal && openManageModal(item)}
-                          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium"
-                        >
+                        <Button onClick={() => openManageModal && openManageModal(item)}>
                           ⚙️ Manage
-                        </button>
+                        </Button>
                       )}
                     {item.status === BOOKING_STATUS.CANCELLED && (
                       <span className="bg-red-100 text-red-700 px-3 py-2 rounded-xl text-xs font-semibold">

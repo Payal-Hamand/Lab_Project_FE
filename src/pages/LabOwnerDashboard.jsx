@@ -14,12 +14,17 @@ import {
   DashboardStatsCard,
   DashboardSectionHeader,
   DashboardTable,
-  LoadingSpinner,
   EmptyState,
 } from '@/components/Dashboard'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
+import Select from '@/components/ui/Select'
+import Modal from '@/components/ui/Modal'
+import Badge from '@/components/ui/Badge'
+import { Spinner } from '@/components/ui/Loader'
 const LabOwnerDashboard = () => {
   const tableRef = useRef(null)
   const [bookings, setBookings] = useState([])
@@ -263,7 +268,7 @@ const LabOwnerDashboard = () => {
               button
               buttonText="Create Assistant"
               buttonIcon={<FaUserPlus />}
-              onClick={() => setShowAssistantForm(!showAssistantForm)}
+              onClick={() => setShowAssistantForm(true)}
             />
             {/* ASSISTANT CARDS */}
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5 mt-10">
@@ -272,12 +277,13 @@ const LabOwnerDashboard = () => {
                   (booking) => booking.assignedLabAssistant?._id === assistant._id
                 )
                 return (
-                  <button
+                  <Button
                     key={assistant._id}
                     onClick={() => {
                       setSelectedAssistant(assistant._id)
                       scrollToTable()
                     }}
+                    variant="ghost"
                     className={`border rounded-3xl p-5 hover:shadow-xl transition text-left bg-white
                           ${
                             selectedAssistant === assistant._id
@@ -308,128 +314,69 @@ const LabOwnerDashboard = () => {
                         </h4>
                       </div>
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
           </div>
         )}
-        {showAssistantForm && (
-          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-end">
-            {/* PANEL */}
-            <div className="bg-white w-full max-w-xl h-screen overflow-y-auto shadow-2xl">
-              <div className="sticky top-0 bg-white border-b px-6 md:px-8 py-5 flex items-center justify-between z-10">
-                <div className="flex items-center gap-4">
-                  {/* BACK BUTTON */}
-                  <button
-                    type="button"
-                    onClick={() => setShowAssistantForm(false)}
-                    className="w-11 h-11 rounded-2xl bg-gray-100 hover:bg-blue-100 transition flex items-center justify-center text-xl font-bold"
-                  >
-                    ←
-                  </button>
-                  <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-blue-950">
-                      Create Assistant
-                    </h2>
-                    <p className="text-gray-500 mt-1 text-sm">Add new laboratory assistant</p>
-                  </div>
-                </div>
-                {/* CLOSE */}
-                <button
-                  type="button"
-                  onClick={() => setShowAssistantForm(false)}
-                  className="w-11 h-11 rounded-2xl bg-gray-100 hover:bg-red-100 hover:text-red-600 transition flex items-center justify-center text-2xl"
-                >
-                  ×
-                </button>
-              </div>
-              {/* BODY */}
-              <div className="p-6 md:p-8">
-                <form onSubmit={handleCreateAssistant} className="space-y-6">
-                  {/* NAME */}
-                  <div>
-                    <label className="text-sm font-semibold text-gray-700 block mb-2">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Enter full name"
-                      value={assistantData.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
-                    />
-                  </div>
-                  {/* EMAIL */}
-                  <div>
-                    <label className="text-sm font-semibold text-gray-700 block mb-2">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Enter email"
-                      value={assistantData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
-                    />
-                  </div>
-                  {/* MOBILE */}
-                  <div>
-                    <label className="text-sm font-semibold text-gray-700 block mb-2">
-                      Mobile Number
-                    </label>
-                    <input
-                      type="text"
-                      name="mobile"
-                      placeholder="Enter mobile number"
-                      value={assistantData.mobile}
-                      onChange={handleChange}
-                      required
-                      className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
-                    />
-                  </div>
-                  {/* DOCUMENT */}
-                  <div>
-                    <label className="text-sm font-semibold text-gray-700 block mb-2">
-                      Verification Document
-                    </label>
-                    <input
-                      type="text"
-                      name="document"
-                      placeholder="Document URL"
-                      value={assistantData.document}
-                      onChange={handleChange}
-                      className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
-                    />
-                  </div>
-                  {/* PASSWORD */}
-                  <div>
-                    <label className="text-sm font-semibold text-gray-700 block mb-2">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Enter password"
-                      value={assistantData.password}
-                      onChange={handleChange}
-                      required
-                      className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition"
-                    />
-                  </div>
-                  {/* BUTTON */}
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 transition-all active:scale-[0.98] text-white py-4 rounded-2xl font-semibold text-lg shadow-lg shadow-blue-200">
-                    Create Assistant
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
+        <Modal
+          open={showAssistantForm}
+          onClose={() => setShowAssistantForm(false)}
+          title="Create Assistant"
+          subtitle="Add new laboratory assistant"
+          size="lg"
+        >
+          <form onSubmit={handleCreateAssistant} className="space-y-6">
+            <Input
+              label="Full Name"
+              type="text"
+              name="name"
+              placeholder="Enter full name"
+              value={assistantData.name}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              label="Email Address"
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              value={assistantData.email}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              label="Mobile Number"
+              type="text"
+              name="mobile"
+              placeholder="Enter mobile number"
+              value={assistantData.mobile}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              label="Verification Document"
+              type="text"
+              name="document"
+              placeholder="Document URL"
+              value={assistantData.document}
+              onChange={handleChange}
+            />
+            <Input
+              label="Password"
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              value={assistantData.password}
+              onChange={handleChange}
+              required
+            />
+            <Button type="submit" loading={creatingAssistant} fullWidth size="lg">
+              Create Assistant
+            </Button>
+          </form>
+        </Modal>
         {/* TABLE */}
         <div ref={tableRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
@@ -439,29 +386,30 @@ const LabOwnerDashboard = () => {
             </div>
             <div className="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
               <div className="relative flex-1 lg:w-96">
-                <input
+                <Input
                   type="text"
                   placeholder="Search patient, mobile, test, package..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+                  className="pl-12"
+                  containerClassName="relative"
                 />
                 <span className="absolute left-4 top-1/2 -translate-y-1/2">🔍</span>
               </div>
               <div className="bg-blue-50 px-5 py-3 rounded-2xl font-semibold text-blue-700 whitespace-nowrap">
                 {filteredBookings.length} Bookings
               </div>
-              <button
+              <Button
                 onClick={() => setShowAssistantForm(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl flex items-center justify-center gap-2 font-semibold"
+                className="flex items-center justify-center gap-2"
               >
                 <FaUserPlus />
                 Create Assistant
-              </button>
+              </Button>
             </div>
           </div>
           {loading ? (
-            <LoadingSpinner />
+            <Spinner />
           ) : filteredBookings.length === 0 ? (
             <EmptyState text="No Bookings Found" />
           ) : (
@@ -521,14 +469,9 @@ const LabOwnerDashboard = () => {
                               </p>
                             </div>
                           ) : (
-                            <select
+                            <Select
                               onChange={(e) => handleAssignAssistant(booking._id, e.target.value)}
-                              className="
-                border
-                rounded-xl
-                px-3
-                py-2
-                "
+                              containerClassName="max-w-[180px]"
                             >
                               <option value="">Assign</option>
                               {assistants.map((assistant) => (
@@ -536,36 +479,14 @@ const LabOwnerDashboard = () => {
                                   {assistant.name}
                                 </option>
                               ))}
-                            </select>
+                            </Select>
                           )}
                         </td>
                         <td className="px-4 py-4 truncate">
-                          <span
-                            className="
-            bg-blue-100
-            text-blue-700
-            px-3
-            py-1
-            rounded-full
-            text-xs
-            "
-                          >
-                            {booking.status}
-                          </span>
+                          <Badge status={booking.status}>{booking.status}</Badge>
                         </td>
                         <td className="px-4 py-4">
-                          <span
-                            className={`
-              px-3 py-1 rounded-full text-xs
-              ${
-                booking.paymentStatus === PAYMENT_STATUS.PAID
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-red-100 text-red-700'
-              }
-              `}
-                          >
-                            {booking.paymentStatus}
-                          </span>
+                          <Badge status={booking.paymentStatus}>{booking.paymentStatus}</Badge>
                         </td>
                         <td className="px-4 py-4">
                           {booking.sampleImages?.length > 0 ? (
@@ -607,16 +528,14 @@ const LabOwnerDashboard = () => {
                                 </a>
                               ))}
                               {booking.sampleImages.length > 3 && (
-                                <button
-                                  className="
-          w-14 h-14 rounded-xl
-          bg-blue-100 text-blue-700
-          font-bold text-sm
-          "
+                                <Button
+                                  size="icon-sm"
+                                  variant="primary"
+                                  className="w-14 h-14 text-sm"
                                   title={`${booking.sampleImages.length - 3} more images`}
                                 >
                                   +{booking.sampleImages.length - 3}
-                                </button>
+                                </Button>
                               )}
                             </div>
                           ) : (
@@ -625,24 +544,19 @@ const LabOwnerDashboard = () => {
                         </td>
                         <td className="px-4 py-4">
                           {booking.report ? (
-                            <a
-                              href={booking.report}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="
-    bg-green-600
-    text-white
-    px-4
-    py-2
-    rounded-xl
-    inline-block
-    "
-                            >
-                              View Report
-                            </a>
+                            <Button variant="success" size="sm">
+                              <a
+                                href={booking.report}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-white"
+                              >
+                                View Report
+                              </a>
+                            </Button>
                           ) : booking.paymentStatus === PAYMENT_STATUS.PAID ? (
                             <div className="space-y-2">
-                              <input
+                              <Input
                                 type="file"
                                 accept=".pdf"
                                 onChange={(e) =>
@@ -652,19 +566,13 @@ const LabOwnerDashboard = () => {
                                   })
                                 }
                               />
-                              <button
+                              <Button
                                 onClick={() => handleUploadReport(booking._id)}
-                                disabled={uploadingReport[booking._id]}
-                                className="
-      bg-blue-600
-      text-white
-      px-4
-      py-2
-      rounded-xl
-      "
+                                loading={uploadingReport[booking._id]}
+                                size="sm"
                               >
-                                {uploadingReport[booking._id] ? 'Uploading...' : 'Upload'}
-                              </button>
+                                Upload
+                              </Button>
                             </div>
                           ) : (
                             <span className="text-red-500">Payment Pending</span>
@@ -693,28 +601,8 @@ const LabOwnerDashboard = () => {
                           <p className="text-gray-500 mt-1">📞 {booking.phone}</p>
                         </div>
                         <div className="flex flex-col gap-2">
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold
-          ${
-            booking.paymentStatus === PAYMENT_STATUS.PAID
-              ? 'bg-green-100 text-green-700'
-              : 'bg-red-100 text-red-700'
-          }`}
-                          >
-                            {booking.paymentStatus}
-                          </span>
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold
-          ${
-            booking.status === BOOKING_STATUS.COMPLETED
-              ? 'bg-green-100 text-green-700'
-              : booking.status === BOOKING_STATUS.PENDING
-                ? 'bg-yellow-100 text-yellow-700'
-                : 'bg-blue-100 text-blue-700'
-          }`}
-                          >
-                            {booking.status}
-                          </span>
+                          <Badge status={booking.paymentStatus}>{booking.paymentStatus}</Badge>
+                          <Badge status={booking.status}>{booking.status}</Badge>
                         </div>
                       </div>
                       {/* Test Information */}
@@ -761,9 +649,7 @@ const LabOwnerDashboard = () => {
                         <div className="flex items-center justify-between mb-3">
                           <p className="text-xs font-medium text-gray-500">Assigned Assistant</p>
                           {booking.assignedLabAssistant && (
-                            <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">
-                              Assigned
-                            </span>
+                            <Badge variant="success">Assigned</Badge>
                           )}
                         </div>
                         {booking.assignedLabAssistant ? (
@@ -778,18 +664,8 @@ const LabOwnerDashboard = () => {
                         ) : (
                           <div>
                             <p className="text-sm text-red-500 mb-3">No Assistant Assigned</p>
-                            <select
+                            <Select
                               onChange={(e) => handleAssignAssistant(booking._id, e.target.value)}
-                              className="
-  w-full
-  border
-  border-purple-200
-  rounded-xl
-  px-4
-  py-3
-  text-sm
-  bg-white
-  "
                             >
                               <option value="">Select Assistant</option>
                               {assistants.map((assistant) => (
@@ -797,7 +673,7 @@ const LabOwnerDashboard = () => {
                                   {assistant.name}
                                 </option>
                               ))}
-                            </select>
+                            </Select>
                           </div>
                         )}
                       </div>
@@ -805,9 +681,7 @@ const LabOwnerDashboard = () => {
                       <div className="mt-4 bg-pink-50 rounded-2xl p-4">
                         <div className="flex justify-between items-center mb-3">
                           <p className="text-xs font-medium text-gray-500">Sample Images</p>
-                          <span className="bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">
-                            {booking.sampleImages?.length || 0} Images
-                          </span>
+                          <Badge variant="info">{booking.sampleImages?.length || 0} Images</Badge>
                         </div>
                         {booking.sampleImages?.length > 0 ? (
                           <div className="grid grid-cols-5 gap-3">
@@ -840,34 +714,19 @@ const LabOwnerDashboard = () => {
                         <div className="bg-white rounded-xl p-4 border border-green-100">
                           <div className="flex items-center justify-between">
                             <p className="font-semibold text-green-700">✅ Report Uploaded</p>
-                            <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">
-                              Ready
-                            </span>
+                            <Badge variant="success">Ready</Badge>
                           </div>
-                          <a
-                            href={booking.report}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="
-      mt-4
-      inline-flex
-      items-center
-      justify-center
-      gap-2
-      bg-green-600
-      hover:bg-green-700
-      text-white
-      px-4
-      py-3
-      rounded-xl
-      w-full
-      font-medium
-      transition
-      "
-                          >
-                            <FaDownload />
-                            View Report
-                          </a>
+                          <Button variant="success" fullWidth className="mt-4">
+                            <a
+                              href={booking.report}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-white flex items-center justify-center gap-2"
+                            >
+                              <FaDownload />
+                              View Report
+                            </a>
+                          </Button>
                         </div>
                       ) : booking.paymentStatus === PAYMENT_STATUS.PAID ? (
                         <div className="space-y-3">
@@ -881,7 +740,7 @@ const LabOwnerDashboard = () => {
       "
                           >
                             📄 Select Report
-                            <input
+                            <Input
                               type="file"
                               accept=".pdf"
                               hidden
@@ -891,6 +750,7 @@ const LabOwnerDashboard = () => {
                                   [booking._id]: e.target.files[0],
                                 })
                               }
+                              containerClassName="hidden"
                             />
                           </label>
                           {selectedReport[booking._id] && (
@@ -900,21 +760,13 @@ const LabOwnerDashboard = () => {
                               </p>
                             </div>
                           )}
-                          <button
+                          <Button
                             onClick={() => handleUploadReport(booking._id)}
-                            disabled={uploadingReport[booking._id]}
-                            className="
-      w-full
-      bg-blue-600
-      hover:bg-blue-700
-      text-white
-      rounded-2xl
-      py-3
-      disabled:bg-gray-400
-      "
+                            loading={uploadingReport[booking._id]}
+                            fullWidth
                           >
-                            {uploadingReport[booking._id] ? 'Uploading...' : 'Upload Report'}
-                          </button>
+                            Upload Report
+                          </Button>
                         </div>
                       ) : (
                         <div className="bg-yellow-50 rounded-xl p-4 text-center">

@@ -12,10 +12,16 @@ import {
   DashboardStatsCard,
   DashboardSectionHeader,
   DashboardSidePanel,
-  LoadingSpinner,
   BookingsTable,
   EmptyState,
 } from '@/components/Dashboard'
+import { Spinner } from '@/components/ui/Loader'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
+import Textarea from '@/components/ui/Textarea'
+import Select from '@/components/ui/Select'
+import Modal from '@/components/ui/Modal'
+import Badge from '@/components/ui/Badge'
 import LocationPicker from '@/components/LocationPicker'
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState([])
@@ -398,64 +404,58 @@ const AdminDashboard = () => {
           onClose={() => setActivePanel('')}
         >
           <form onSubmit={handleCreateTest} className="space-y-5">
-            <input
+            <Input
               required
               type="text"
               name="title"
               placeholder="Test Title"
               value={testData.title}
               onChange={handleTestChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
-            <input
+            <Input
               required
               type="text"
               name="category"
               placeholder="Category"
               value={testData.category}
               onChange={handleTestChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
             <div className="grid md:grid-cols-2 gap-5">
-              <input
+              <Input
                 required
                 type="number"
                 name="price"
                 placeholder="Price"
                 value={testData.price}
                 onChange={handleTestChange}
-                className="w-full border rounded-2xl px-5 py-4 outline-none"
               />
-              <input
+              <Input
                 required
                 type="text"
                 name="reportTime"
                 placeholder="Report Time"
                 value={testData.reportTime}
                 onChange={handleTestChange}
-                className="w-full border rounded-2xl px-5 py-4 outline-none"
               />
             </div>
-            <textarea
+            <Textarea
               rows="4"
               name="description"
               placeholder="Description"
               value={testData.description}
               onChange={handleTestChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
-            <input
+            <Input
               required
               type="text"
               name="image"
               placeholder="Image URL"
               value={testData.image}
               onChange={handleTestChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
-            <button className="bg-blue-600 hover:bg-blue-700 text-white w-full py-4 rounded-2xl font-semibold">
+            <Button type="submit" loading={creatingAssistant} fullWidth>
               Create Test
-            </button>
+            </Button>
           </form>
         </DashboardSidePanel>
         {/* PACKAGE PANEL */}
@@ -472,26 +472,24 @@ const AdminDashboard = () => {
                 <label className="text-sm font-semibold text-gray-700 block mb-2">
                   Package Title
                 </label>
-                <input
+                <Input
                   required
                   type="text"
                   name="title"
                   placeholder="Enter package title"
                   value={packageData.title}
                   onChange={handlePackageChange}
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
                 />
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-700 block mb-2">Category</label>
-                <input
+                <Input
                   required
                   type="text"
                   name="category"
                   placeholder="Enter category"
                   value={packageData.category}
                   onChange={handlePackageChange}
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
                 />
               </div>
             </div>
@@ -507,8 +505,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
               {/* DROPDOWN */}
-              <select
-                className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
+              <Select
                 onChange={(e) => {
                   const selectedId = e.target.value
                   if (selectedId && !packageData.testsIncluded.includes(selectedId)) {
@@ -525,7 +522,7 @@ const AdminDashboard = () => {
                     {test.title} — ₹{test.price}
                   </option>
                 ))}
-              </select>
+              </Select>
               {/* SELECTED TESTS */}
               <div className="flex flex-wrap gap-3 mt-6 pt-2">
                 {packageData.testsIncluded.map((id) => {
@@ -562,45 +559,42 @@ const AdminDashboard = () => {
               <label className="text-sm font-semibold text-gray-700 block mb-2">
                 Package Price
               </label>
-              <input
+              <Input
                 required
                 type="number"
                 name="price"
                 placeholder="Enter package price"
                 value={packageData.price}
                 onChange={handlePackageChange}
-                className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-purple-500"
               />
             </div>
             {/* DESCRIPTION */}
             <div>
               <label className="text-sm font-semibold text-gray-700 block mb-2">Description</label>
-              <textarea
+              <Textarea
                 rows="5"
                 name="description"
                 placeholder="Write package description"
                 value={packageData.description}
                 onChange={handlePackageChange}
-                className="w-full border border-gray-200 rounded-[30px] px-5 py-4 text-sm md:text-base outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition resize-none"
               />
             </div>
             {/* IMAGE */}
             <div>
               <label className="text-sm font-semibold text-gray-700 block mb-2">Image URL</label>
-              <input
+              <Input
                 required
                 type="text"
                 name="image"
                 placeholder="Enter image URL"
                 value={packageData.image}
                 onChange={handlePackageChange}
-                className="w-full border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-purple-500"
               />
             </div>
             {/* BUTTON */}
-            <button className="bg-purple-600 hover:bg-purple-700 active:scale-[0.99] transition-all text-white w-full py-4 rounded-2xl font-semibold text-base md:text-lg shadow-lg shadow-purple-200">
+            <Button type="submit" loading={creatingAssistant} fullWidth>
               Create Package
-            </button>
+            </Button>
           </form>
         </DashboardSidePanel>
         {/* LAB OWNER PANEL */}
@@ -611,41 +605,37 @@ const AdminDashboard = () => {
           onClose={() => setActivePanel('')}
         >
           <form onSubmit={handleCreateLabOwner} className="space-y-5">
-            <input
+            <Input
               required
               type="text"
               name="name"
               placeholder="Full Name"
               value={labOwnerData.name}
               onChange={handleLabOwnerChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
-            <input
+            <Input
               required
               type="email"
               name="email"
               placeholder="Email"
               value={labOwnerData.email}
               onChange={handleLabOwnerChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
-            <input
+            <Input
               required
               type="password"
               name="password"
               placeholder="Password"
               value={labOwnerData.password}
               onChange={handleLabOwnerChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
-            <input
+            <Input
               required
               type="text"
               name="servicePincodes"
               placeholder="411033, 411044"
               value={labOwnerData.servicePincodes}
               onChange={handleLabOwnerChange}
-              className="w-full border rounded-2xl px-5 py-4 outline-none"
             />
             <div>
               {labOwnerData.labAddress && (
@@ -661,51 +651,50 @@ const AdminDashboard = () => {
               >
                 🗺️ Select Lab Location On Map
               </button>
-              {showLabMap && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                  <div className="bg-white w-full max-w-4xl rounded-3xl p-5">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-bold text-xl">Select Lab Location</h3>
-                      <button onClick={() => setShowLabMap(false)}>✕</button>
-                    </div>
-                    <LocationPicker
-                      location={{
-                        lat: Number(labOwnerData.latitude) || 18.5204,
-                        lng: Number(labOwnerData.longitude) || 73.8567,
-                      }}
-                      setLocation={(loc) => {
-                        setLabOwnerData((prev) => ({
-                          ...prev,
-                          latitude: loc.lat,
-                          longitude: loc.lng,
-                        }))
-                      }}
-                      onLocationSelect={async (lat, lng) => {
-                        const response = await fetch(
-                          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
-                        )
-                        const data = await response.json()
-                        setLabOwnerData((prev) => ({
-                          ...prev,
-                          labAddress: data.display_name,
-                          latitude: lat,
-                          longitude: lng,
-                        }))
-                      }}
-                    />
-                    <button
-                      onClick={() => setShowLabMap(false)}
-                      className="w-full mt-5 bg-green-600 text-white py-4 rounded-2xl"
-                    >
-                      Confirm Location
-                    </button>
-                  </div>
-                </div>
-              )}
+              <Modal
+                open={showLabMap}
+                onClose={() => setShowLabMap(false)}
+                title="Select Lab Location"
+                size="lg"
+              >
+                <LocationPicker
+                  location={{
+                    lat: Number(labOwnerData.latitude) || 18.5204,
+                    lng: Number(labOwnerData.longitude) || 73.8567,
+                  }}
+                  setLocation={(loc) => {
+                    setLabOwnerData((prev) => ({
+                      ...prev,
+                      latitude: loc.lat,
+                      longitude: loc.lng,
+                    }))
+                  }}
+                  onLocationSelect={async (lat, lng) => {
+                    const response = await fetch(
+                      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+                    )
+                    const data = await response.json()
+                    setLabOwnerData((prev) => ({
+                      ...prev,
+                      labAddress: data.display_name,
+                      latitude: lat,
+                      longitude: lng,
+                    }))
+                  }}
+                />
+                <Button
+                  onClick={() => setShowLabMap(false)}
+                  fullWidth
+                  variant="success"
+                  className="mt-5"
+                >
+                  Confirm Location
+                </Button>
+              </Modal>
             </div>
-            <button className="bg-green-600 hover:bg-green-700 text-white w-full py-4 rounded-2xl font-semibold">
+            <Button type="submit" loading={creatingAssistant} fullWidth>
               Create Lab Owner
-            </button>
+            </Button>
           </form>
         </DashboardSidePanel>
         {/* Recent Bookings */}
@@ -715,7 +704,7 @@ const AdminDashboard = () => {
             subtitle="Latest patient booking activity"
           />
           {loading ? (
-            <LoadingSpinner />
+            <Spinner />
           ) : filteredBookings.length === 0 ? (
             <EmptyState text="No Bookings Found" />
           ) : (
@@ -743,20 +732,7 @@ const AdminDashboard = () => {
                           <h2 className="font-bold text-lg text-slate-900">{item.patientName}</h2>
                           <p className="text-gray-500 text-sm mt-1">📞 {item.phone}</p>
                         </div>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold
-            ${
-              item.status === BOOKING_STATUS.COMPLETED
-                ? 'bg-green-100 text-green-700'
-                : item.status === BOOKING_STATUS.PENDING
-                  ? 'bg-yellow-100 text-yellow-700'
-                  : item.status === BOOKING_STATUS.CANCELLED
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-blue-100 text-blue-700'
-            }`}
-                        >
-                          {item.status}
-                        </span>
+                        <Badge status={item.status}>{item.status}</Badge>
                       </div>
                       {/* Assigned Lab */}
                       <div className="mt-4 bg-purple-50 rounded-2xl p-4">
@@ -804,16 +780,7 @@ const AdminDashboard = () => {
                       {/* Payment */}
                       <div className="mt-4 bg-green-50 rounded-2xl p-4 flex justify-between items-center">
                         <p className="text-xs text-gray-500">Payment Status</p>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold
-            ${
-              item.paymentStatus === PAYMENT_STATUS.PAID
-                ? 'bg-green-100 text-green-700'
-                : 'bg-red-100 text-red-700'
-            }`}
-                        >
-                          {item.paymentStatus}
-                        </span>
+                        <Badge status={item.paymentStatus}>{item.paymentStatus}</Badge>
                       </div>
                       {/* User */}
                       {/* <div className="mt-4 bg-blue-50 rounded-2xl p-4">
@@ -830,12 +797,9 @@ const AdminDashboard = () => {
                             ✅ Booking Completed
                           </div>
                         ) : (
-                          <button
-                            onClick={() => openEditModal(item)}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold"
-                          >
+                          <Button onClick={() => openEditModal(item)} fullWidth>
                             ✏️ Edit Assigned Lab
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -911,32 +875,29 @@ const AdminDashboard = () => {
               </table>
             </div>
           )}
-          {showEditModal && selectedBooking && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-3xl p-6 w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-5">Edit Assigned Lab</h2>
-                <select
-                  value={selectedLab}
-                  onChange={(e) => setSelectedLab(e.target.value)}
-                  className="w-full border rounded-xl p-3"
-                >
-                  <option value="">Select Lab Owner</option>
-                  {labOwners.map((lab) => (
-                    <option key={lab._id} value={lab._id}>
-                      {lab.name}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={handleUpdateLab}
-                  disabled={!selectedLab}
-                  className="w-full mt-5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-3 rounded-xl"
-                >
-                  Save Changes
-                </button>
-              </div>
+          <Modal
+            open={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            title="Edit Assigned Lab"
+          >
+            <div className="space-y-4">
+              <Select
+                value={selectedLab}
+                onChange={(e) => setSelectedLab(e.target.value)}
+                label="Lab Owner"
+              >
+                <option value="">Select Lab Owner</option>
+                {labOwners.map((lab) => (
+                  <option key={lab._id} value={lab._id}>
+                    {lab.name}
+                  </option>
+                ))}
+              </Select>
+              <Button onClick={handleUpdateLab} disabled={!selectedLab} fullWidth>
+                Save Changes
+              </Button>
             </div>
-          )}
+          </Modal>
         </div>
       </div>
     </div>

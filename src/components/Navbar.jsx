@@ -4,6 +4,7 @@ import { FaFlask, FaBars, FaTimes, FaUserCircle, FaSignOutAlt } from 'react-icon
 import { AuthContext } from '@/context/AuthContext'
 import { ROUTES } from '@/constants/routes'
 import { ROLES } from '@/constants/roles'
+import Button from '@/components/ui/Button'
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext)
   const navigate = useNavigate()
@@ -88,44 +89,32 @@ const Navbar = () => {
           {!user ? (
             <>
               <Link to={ROUTES.LOGIN}>
-                <button className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition px-5 py-2 rounded-xl">
-                  Login
-                </button>
+                <Button variant="outline">Login</Button>
               </Link>
               <Link to={ROUTES.SIGNUP}>
-                <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-xl">
-                  Signup
-                </button>
+                <Button>Signup</Button>
               </Link>
             </>
           ) : (
             <div className="flex items-center gap-4">
               {user.role === ROLES.ADMIN && (
                 <Link to={ROUTES.ADMIN}>
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl transition">
-                    Admin Panel
-                  </button>
+                  <Button>Admin Panel</Button>
                 </Link>
               )}
               {user.role === ROLES.PATIENT && (
                 <Link to={ROUTES.DASHBOARD}>
-                  <button className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl transition">
-                    Dashboard
-                  </button>
+                  <Button>Dashboard</Button>
                 </Link>
               )}
               {user.role === ROLES.LAB_OWNER && (
                 <Link to={ROUTES.LAB_OWNER}>
-                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl transition">
-                    Lab Owner Dashboard
-                  </button>
+                  <Button>Lab Owner Dashboard</Button>
                 </Link>
               )}
               {user.role === ROLES.LAB_ASSISTANT && (
                 <Link to={ROUTES.LAB_ASSISTANT}>
-                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl transition">
-                    Lab Dashboard
-                  </button>
+                  <Button>Lab Dashboard</Button>
                 </Link>
               )}
               {/* User */}
@@ -137,19 +126,26 @@ const Navbar = () => {
                 </div>
               </div>
               {/* Logout */}
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={handleLogout}
-                className="bg-gray-200 hover:bg-red-500 hover:text-white transition p-3 rounded-xl"
+                className="bg-gray-200 hover:bg-red-500 hover:text-white transition"
               >
                 <FaSignOutAlt />
-              </button>
+              </Button>
             </div>
           )}
         </div>
         {/* Mobile Button */}
-        <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden text-3xl text-blue-950">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="lg:hidden text-3xl text-blue-950"
+        >
           {menuOpen ? <FaTimes /> : <FaBars />}
-        </button>
+        </Button>
       </div>
       {/* Mobile Sidebar */}
       {menuOpen && (
@@ -164,9 +160,14 @@ const Navbar = () => {
                 <h2 className="text-3xl font-bold text-blue-950">Checked Up</h2>
                 <p className="text-gray-500 text-sm">Health First</p>
               </div>
-              <button onClick={() => setMenuOpen(false)} className="text-3xl text-blue-950">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMenuOpen(false)}
+                className="text-3xl text-blue-950"
+              >
                 <FaTimes />
-              </button>
+              </Button>
             </div>
             {/* Links */}
             <div className="flex flex-col gap-6 mt-8 text-lg font-medium text-gray-700">
@@ -194,30 +195,22 @@ const Navbar = () => {
             <div className="mt-6 flex flex-col gap-4">
               {user?.role === ROLES.PATIENT && (
                 <Link to={ROUTES.DASHBOARD} onClick={() => setMenuOpen(false)}>
-                  <button className="w-full bg-green-500 text-white py-3 rounded-xl">
-                    Dashboard
-                  </button>
+                  <Button fullWidth>Dashboard</Button>
                 </Link>
               )}
               {user?.role === ROLES.ADMIN && (
                 <Link to={ROUTES.ADMIN} onClick={() => setMenuOpen(false)}>
-                  <button className="w-full bg-red-500 text-white py-3 rounded-xl">
-                    Admin Panel
-                  </button>
+                  <Button fullWidth>Admin Panel</Button>
                 </Link>
               )}
               {user?.role === ROLES.LAB_ASSISTANT && (
                 <Link to={ROUTES.LAB_ASSISTANT} onClick={() => setMenuOpen(false)}>
-                  <button className="w-full bg-yellow-500 text-white py-3 rounded-xl">
-                    Lab Dashboard
-                  </button>
+                  <Button fullWidth>Lab Dashboard</Button>
                 </Link>
               )}
               {user?.role === ROLES.LAB_OWNER && (
                 <Link to={ROUTES.LAB_OWNER} onClick={() => setMenuOpen(false)}>
-                  <button className="w-full bg-yellow-500 text-white py-3 rounded-xl">
-                    Lab Owner Dashboard
-                  </button>
+                  <Button fullWidth>Lab Owner Dashboard</Button>
                 </Link>
               )}
             </div>
@@ -226,23 +219,18 @@ const Navbar = () => {
               {!user ? (
                 <div className="flex flex-col gap-4">
                   <Link to={ROUTES.LOGIN} onClick={() => setMenuOpen(false)}>
-                    <button className="border border-blue-600 text-blue-600 py-3 rounded-xl w-full">
+                    <Button variant="outline" fullWidth>
                       Login
-                    </button>
+                    </Button>
                   </Link>
                   <Link to={ROUTES.SIGNUP} onClick={() => setMenuOpen(false)}>
-                    <button className="bg-blue-600 text-white py-3 rounded-xl w-full">
-                      Signup
-                    </button>
+                    <Button fullWidth>Signup</Button>
                   </Link>
                 </div>
               ) : (
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-500 text-white py-3 rounded-xl w-full"
-                >
+                <Button fullWidth onClick={handleLogout}>
                   Logout
-                </button>
+                </Button>
               )}
             </div>
           </div>

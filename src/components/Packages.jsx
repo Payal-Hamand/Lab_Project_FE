@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import API from '@/services/api'
 import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import { InlineLoader } from '@/components/ui/Loader'
 const Packages = () => {
   const navigate = useNavigate()
   const [packages, setPackages] = useState([])
@@ -52,7 +54,9 @@ const Packages = () => {
         </div>
         {/* Loading */}
         {loading ? (
-          <div className="text-center text-xl md:text-2xl font-semibold">Loading...</div>
+          <div className="text-center text-xl md:text-2xl font-semibold">
+            <InlineLoader />
+          </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
             {packages.map((item) => (
@@ -103,12 +107,7 @@ const Packages = () => {
                         ₹{item.price}
                       </h2>
                     </div>
-                    <button
-                      onClick={() => handleBookNow(item, 'package')}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-semibold"
-                    >
-                      Book Now
-                    </button>
+                    <Button onClick={() => handleBookNow(item, 'package')}>Book Now</Button>
                   </div>
                 </div>
               </div>

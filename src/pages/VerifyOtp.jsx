@@ -4,6 +4,8 @@ import { toast } from 'react-toastify'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
+import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
 const VerifyOtp = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -18,17 +20,9 @@ const VerifyOtp = () => {
   }, [])
   const handleVerify = async () => {
     try {
-      await API.post(API_ENDPOINTS.PASSWORD.VERIFY_OTP, {
-        email,
-        otp,
-      })
+      await API.post(API_ENDPOINTS.PASSWORD.VERIFY_OTP, { email, otp })
       toast.success('OTP Verified')
-      navigate(ROUTES.RESET_PASSWORD, {
-        state: {
-          email,
-          otp,
-        },
-      })
+      navigate(ROUTES.RESET_PASSWORD, { state: { email, otp } })
     } catch (error) {
       toast.error(error?.response?.data?.message)
     }
@@ -37,23 +31,19 @@ const VerifyOtp = () => {
     <div className="min-h-screen flex items-center justify-center bg-slate-100">
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center">Verify OTP</h1>
-        <input
-          type="text"
+        <Input
           maxLength={6}
           placeholder="Enter OTP"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          className="w-full border p-4 rounded-xl mt-6"
+          containerClassName="mt-6"
         />
         <p className="text-center text-red-600 mt-4">
           OTP Expires In {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
         </p>
-        <button
-          onClick={handleVerify}
-          className="w-full mt-5 bg-green-600 text-white py-3 rounded-xl"
-        >
+        <Button onClick={handleVerify} fullWidth className="mt-5" variant="success">
           Verify OTP
-        </button>
+        </Button>
       </div>
     </div>
   )

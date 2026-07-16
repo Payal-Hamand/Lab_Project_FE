@@ -1,4 +1,5 @@
 import React from 'react'
+import Button from '@/components/ui/Button'
 const DashboardSectionHeader = ({ title, subtitle, button, buttonText, buttonIcon, onClick }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -7,13 +8,10 @@ const DashboardSectionHeader = ({ title, subtitle, button, buttonText, buttonIco
         {subtitle && <p className="text-gray-500 mt-2 text-sm md:text-base">{subtitle}</p>}
       </div>
       {button && (
-        <button
-          onClick={onClick}
-          className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 py-3 rounded-2xl font-semibold flex items-center gap-2"
-        >
+        <Button onClick={onClick} className="flex items-center gap-2">
           {buttonIcon}
           {buttonText}
-        </button>
+        </Button>
       )}
     </div>
   )
