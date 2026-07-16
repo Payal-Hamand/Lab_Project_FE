@@ -1,8 +1,6 @@
 import React from 'react'
-
 // Checked Up — Footer
 // Fonts: Plus Jakarta Sans (display) + Inter (body)
-
 const linkGroups = [
   {
     title: 'Product',
@@ -40,16 +38,13 @@ const linkGroups = [
     ],
   },
 ]
-
 const socials = [
   { label: 'Instagram', href: 'https://instagram.com' },
   { label: 'LinkedIn', href: 'https://linkedin.com' },
   { label: 'Twitter', href: 'https://twitter.com' },
 ]
-
 export default function Footer() {
   const year = new Date().getFullYear()
-
   return (
     <footer style={{ background: '#172554', fontFamily: "'Inter', sans-serif" }}>
       <div
@@ -117,7 +112,6 @@ export default function Footer() {
               ))}
             </div>
           </div>
-
           {/* Link columns */}
           {linkGroups.map((group) => (
             <div key={group.title}>
@@ -151,7 +145,6 @@ export default function Footer() {
             </div>
           ))}
         </div>
-
         {/* Bottom bar */}
         <div
           style={{

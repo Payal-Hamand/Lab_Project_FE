@@ -1,7 +1,5 @@
 import React from 'react'
-
 import { FaDownload } from 'react-icons/fa'
-
 const BookingsTable = ({
   bookings,
   showPatient = true,
@@ -18,57 +16,38 @@ const BookingsTable = ({
         <thead className="bg-blue-50">
           <tr>
             <th className="text-left px-6 py-4">Test</th>
-
             {showPatient && <th className="text-left px-6 py-4">Patient</th>}
-
             <th className="text-left px-6 py-4">Date</th>
-
             <th className="text-left px-6 py-4">Time</th>
-
             <th className="text-left px-6 py-4">Status</th>
             {isAdmin && <th className="py-5 px-4 font-semibold">Assigned Lab</th>}
-
             {showPayment && <th className="text-left px-6 py-4">Payment</th>}
-
             {showAssistant && <th className="text-left px-6 py-4">Assistant</th>}
-
             {showReport && <th className="text-left px-6 py-4">Report</th>}
-
             <th className="text-left px-6 py-4">{isAdmin ? 'Edit' : 'Actions'}</th>
           </tr>
         </thead>
-
         <tbody>
           {bookings.map((item) => (
             <tr key={item._id} className="border-b">
               {/* Test */}
-
               <td className="px-6 py-5 font-semibold text-blue-950 truncate">
                 {item?.test?.title || item?.package?.title}
               </td>
-
               {/* Patient */}
-
               {showPatient && (
                 <td className="px-6 py-5">
                   <div>
                     <h3 className="font-semibold truncate text-gray-800">{item.patientName}</h3>
-
                     <p className="text-sm text-gray-500">{item.phone}</p>
                   </div>
                 </td>
               )}
-
               {/* Date */}
-
               <td className="px-6 py-5 truncate">{item.bookingDate}</td>
-
               {/* Time */}
-
               <td className="px-6 py-5 truncate">{item.bookingTime}</td>
-
               {/* Status */}
-
               <td className="px-6 py-5 truncate">
                 <span
                   className={`px-4 py-2 rounded-full text-xs font-semibold
@@ -88,7 +67,6 @@ const BookingsTable = ({
                   {item.status}
                 </span>
               </td>
-
               {/* Assign Lab */}
               {isAdmin && (
                 <td className="py-5 px-4">
@@ -96,12 +74,10 @@ const BookingsTable = ({
                     <h3 className="font-semibold text-blue-950">
                       {item.labOwner?.name || 'Not Assigned'}
                     </h3>
-
                     <div className="group relative w-[220px]">
                       <p className="text-sm text-gray-600 mt-2 truncate cursor-pointer">
                         📍 {item.labOwner?.labAddress || 'No Address'}
                       </p>
-
                       <div className="absolute hidden group-hover:block z-50 bg-gray-900 text-white text-xs rounded-xl p-3 w-72 left-0 top-8 shadow-lg">
                         {item.labOwner?.labAddress}
                       </div>
@@ -110,12 +86,10 @@ const BookingsTable = ({
                 </td>
               )}
               {/* Payment */}
-
               {showPayment && (
                 <td className="px-6 py-5">
                   <span
                     className={`px-4 py-2 rounded-full text-xs font-semibold
-
                           ${
                             item.paymentStatus === 'Paid'
                               ? 'bg-blue-100 text-blue-700'
@@ -127,15 +101,12 @@ const BookingsTable = ({
                   </span>
                 </td>
               )}
-
               {/* Assistant */}
-
               {showAssistant && (
                 <td className="px-6 py-5">
                   {item.assignedLabAssistant ? (
                     <div>
                       <p className="font-semibold">{item.assignedLabAssistant.name}</p>
-
                       <p className="text-sm text-gray-500">{item.assignedLabAssistant.email}</p>
                     </div>
                   ) : (
@@ -143,9 +114,7 @@ const BookingsTable = ({
                   )}
                 </td>
               )}
-
               {/* Report */}
-
               {showReport && (
                 <td className="px-6 py-5">
                   {item.report ? (
@@ -163,7 +132,6 @@ const BookingsTable = ({
                   )}
                 </td>
               )}
-
               <td className="px-6 py-5">
                 {isAdmin ? (
                   <button
@@ -189,7 +157,6 @@ const BookingsTable = ({
                         ⚙️ Manage
                       </button>
                     )}
-
                     {item.status === 'Cancelled' && (
                       <span className="bg-red-100 text-red-700 px-3 py-2 rounded-xl text-xs font-semibold">
                         Cancelled
@@ -205,5 +172,4 @@ const BookingsTable = ({
     </div>
   )
 }
-
 export default BookingsTable

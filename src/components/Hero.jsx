@@ -4,7 +4,6 @@ import { FaSearch, FaShieldAlt, FaTruck, FaClock, FaFlask, FaTimes } from 'react
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '@/context/AuthContext'
 import API from '@/services/api'
-
 const Hero = () => {
   const navigate = useNavigate()
   const { user } = useContext(AuthContext)
@@ -14,7 +13,6 @@ const Hero = () => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownStyle, setDropdownStyle] = useState({})
   const inputWrapperRef = useRef(null)
-
   // Fetch tests & packages once
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +26,6 @@ const Hero = () => {
     }
     fetchData()
   }, [])
-
   // Position the portal dropdown under the input
   const openDropdown = () => {
     if (inputWrapperRef.current) {
@@ -43,7 +40,6 @@ const Hero = () => {
     }
     setShowDropdown(true)
   }
-
   // Close on outside click
   useEffect(() => {
     const handler = (e) => {
@@ -58,7 +54,6 @@ const Hero = () => {
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
-
   // Close on scroll
   useEffect(() => {
     const handleScroll = (e) => {
@@ -70,17 +65,14 @@ const Hero = () => {
     window.addEventListener('scroll', handleScroll, true)
     return () => window.removeEventListener('scroll', handleScroll, true)
   }, [])
-
   const allItems = [
     ...tests.map((t) => ({ ...t, type: 'test' })),
     ...packages.map((p) => ({ ...p, type: 'package' })),
   ]
-
   const displayedItems =
     search.trim() === ''
       ? allItems
       : allItems.filter((item) => item.title?.toLowerCase().includes(search.toLowerCase()))
-
   const goToBooking = (item, type) => {
     setShowDropdown(false)
     setSearch('')
@@ -97,13 +89,11 @@ const Hero = () => {
     }
     navigate('/booking', { state: { selectedItem: item, bookingType: type } })
   }
-
   // Popular search quick-fill
   const fillSearch = (term) => {
     setSearch(term)
     openDropdown()
   }
-
   return (
     <section className="bg-[#f4f8ff]">
       <div className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-10 items-center">
@@ -114,19 +104,16 @@ const Hero = () => {
             <FaShieldAlt />
             India's Most Trusted Lab
           </div>
-
           {/* Heading */}
           <h1 className="text-5xl lg:text-6xl font-bold leading-tight text-blue-950">
             Trusted Lab Tests <br />
             for a <span className="text-blue-600">Healthier You</span>
           </h1>
-
           {/* Paragraph */}
           <p className="text-gray-600 text-lg mt-6 leading-8">
             Book lab tests online with ease and get accurate reports from certified labs with home
             sample collection.
           </p>
-
           {/* Features */}
           <div className="flex flex-wrap gap-6 mt-8 text-blue-700 font-medium">
             <div className="flex items-center gap-2">
@@ -139,7 +126,6 @@ const Hero = () => {
               <FaClock /> Fast Delivery
             </div>
           </div>
-
           {/* ── Search Box ── */}
           <div
             ref={inputWrapperRef}
@@ -177,7 +163,6 @@ const Hero = () => {
               Search
             </button>
           </div>
-
           {/* Popular Searches */}
           <div className="mt-5 flex flex-wrap gap-3 items-center">
             <p className="text-gray-500 font-medium">Popular:</p>
@@ -192,7 +177,6 @@ const Hero = () => {
             ))}
           </div>
         </div>
-
         {/* Right Side */}
         <div className="relative">
           <img
@@ -217,7 +201,6 @@ const Hero = () => {
           </div> */}
         </div>
       </div>
-
       {/* ── Portal Dropdown (renders at document.body level) ── */}
       {showDropdown &&
         createPortal(
@@ -240,7 +223,6 @@ const Hero = () => {
                 <FaTimes size={12} />
               </button>
             </div>
-
             {displayedItems.length === 0 ? (
               <div className="p-8 text-center text-gray-400">
                 <FaFlask className="mx-auto text-3xl mb-3 text-gray-200" />
@@ -275,5 +257,4 @@ const Hero = () => {
     </section>
   )
 }
-
 export default Hero

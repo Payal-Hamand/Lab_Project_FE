@@ -1,5 +1,4 @@
 import React from 'react'
-
 const LoadingSpinner = () => {
   return (
     <div className="flex items-center justify-center py-20">
@@ -7,5 +6,4 @@ const LoadingSpinner = () => {
     </div>
   )
 }
-
 export default LoadingSpinner

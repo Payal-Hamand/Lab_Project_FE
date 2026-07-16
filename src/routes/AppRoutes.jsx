@@ -1,15 +1,11 @@
 import React from 'react'
-
 import { Routes, Route } from 'react-router-dom'
-
 import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Signup from '@/pages/Signup'
 import Dashboard from '@/pages/Dashboard'
 import Booking from '@/pages/Booking'
-
 import PackagesPage from '@/pages/PackagesPage'
-
 import ProtectedRoute from './ProtectedRoutes'
 import TestsPage from '@/pages/TestsPage'
 import AdminDashboard from '@/pages/AdminDashboard'
@@ -19,12 +15,10 @@ import ForgotPassword from '@/pages/ForgotPassword'
 import VerifyOtp from '@/pages/VerifyOtp'
 import ResetPassword from '@/pages/ResetPassword'
 import AboutUs from '@/pages/AboutUs'
-
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-
       <Route path="/login" element={<Login />} />
       <Route
         path="/lab-owner"
@@ -35,7 +29,6 @@ const AppRoutes = () => {
         }
       />
       <Route path="/about" element={<AboutUs />} />
-
       <Route path="/signup" element={<Signup />} />
       <Route path="/packages" element={<PackagesPage />} />
       <Route
@@ -55,9 +48,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-
       <Route path="/booking" element={<Booking />} />
-
       <Route
         path="/dashboard"
         element={
@@ -67,12 +58,9 @@ const AppRoutes = () => {
         }
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-
       <Route path="/verify-otp" element={<VerifyOtp />} />
-
       <Route path="/reset-password" element={<ResetPassword />} />
     </Routes>
   )
 }
-
 export default AppRoutes

@@ -1,13 +1,8 @@
 // Firebase SDK
-
 import { initializeApp } from 'firebase/app'
-
 import { getStorage } from 'firebase/storage'
-
 import { getAnalytics } from 'firebase/analytics'
-
 // Firebase Config
-
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -17,17 +12,10 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
-
 // Initialize Firebase
-
 const app = initializeApp(firebaseConfig)
-
 // Analytics
-
 getAnalytics(app)
-
 // Storage
-
 const storage = getStorage(app)
-
 export { storage }

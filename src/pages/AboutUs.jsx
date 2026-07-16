@@ -1,11 +1,9 @@
 import React from 'react'
 import Navbar from '@/components/Navbar'
 import Footer from './Footer'
-
 // Checked Up — About page
 // Fonts: Plus Jakarta Sans (display) + Inter (body) — load these in index.html:
 // <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
 const values = [
   {
     title: 'Clarity over jargon',
@@ -23,14 +21,12 @@ const values = [
     accent: 'green',
   },
 ]
-
 const stats = [
   { value: '40+', label: 'cities served' },
   { value: '120+', label: 'tests & packages' },
   { value: '18k+', label: 'reports delivered' },
   { value: '<24h', label: 'avg. turnaround' },
 ]
-
 const steps = [
   {
     n: '01',
@@ -48,13 +44,11 @@ const steps = [
     body: 'Secure, encrypted PDF report in your dashboard as soon as the lab signs off, with a plain-language summary attached.',
   },
 ]
-
 const accentMap = {
   blue: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', chip: '#DBEAFE' },
   yellow: { bg: '#FFFBEB', border: '#FDE68A', text: '#B45309', chip: '#FEF3C7' },
   green: { bg: '#F0FDF4', border: '#BBF7D0', text: '#15803D', chip: '#DCFCE7' },
 }
-
 function ValueCard({ title, body, accent }) {
   const c = accentMap[accent]
   return (
@@ -100,7 +94,6 @@ function ValueCard({ title, body, accent }) {
     </div>
   )
 }
-
 export default function AboutUs() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", color: '#0F172A', background: '#FFFFFF' }}>
@@ -156,7 +149,6 @@ export default function AboutUs() {
           Checked Up connects you to accredited labs for booking, home sample collection, and
           reports — all in one place, without the phone calls, paperwork, or waiting rooms.
         </p>
-
         {/* stat row */}
         <div
           style={{
@@ -184,7 +176,6 @@ export default function AboutUs() {
           ))}
         </div>
       </section>
-
       {/* STORY */}
       <section style={{ padding: '80px 24px', maxWidth: '980px', margin: '0 auto' }}>
         <div
@@ -273,7 +264,6 @@ export default function AboutUs() {
           </div>
         </div>
       </section>
-
       {/* VALUES */}
       <section style={{ background: '#F8FAFC', padding: '80px 24px' }}>
         <div style={{ maxWidth: '980px', margin: '0 auto' }}>
@@ -314,7 +304,6 @@ export default function AboutUs() {
           </div>
         </div>
       </section>
-
       {/* CTA */}
       <section style={{ padding: '72px 24px', textAlign: 'center' }}>
         <h2
