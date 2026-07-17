@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import LocationPicker from '@/components/LocationPicker'
 import PublicLayout from '@/components/layout/PublicLayout'
-import API from '@/services/api'
+import { getAllTests } from '@/services/test.service'
+import { getAllPackages } from '@/services/package.service'
+import { createBooking } from '@/services/booking.service'
 import { useLocation, useNavigate } from 'react-router-dom'
 import BookingDateTime from '@/components/BookingDateTime'
 import { toast } from 'react-toastify'
@@ -17,7 +19,6 @@ import {
   FaFlask,
 } from 'react-icons/fa'
 import { ROUTES } from '@/constants/routes'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
@@ -65,10 +66,7 @@ const Booking = () => {
   // Fetch Tests and Packages
   const fetchTests = async () => {
     try {
-      const [testsRes, packagesRes] = await Promise.all([
-        API.get(API_ENDPOINTS.TESTS),
-        API.get(API_ENDPOINTS.PACKAGES),
-      ])
+      const [testsRes, packagesRes] = await Promise.all([getAllTests(), getAllPackages()])
       setTests(testsRes.data)
       setPackages(packagesRes.data)
     } catch (error) {
@@ -144,7 +142,7 @@ const Booking = () => {
         latitude: mapLocation?.lat,
         longitude: mapLocation?.lng,
       }
-      await API.post(API_ENDPOINTS.BOOKINGS.BASE, payload)
+      await createBooking(payload)
       toast.success('Booking Created Successfully')
       navigate(ROUTES.DASHBOARD)
     } catch (error) {

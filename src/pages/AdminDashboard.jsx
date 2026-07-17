@@ -2,12 +2,13 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import API from '@/services/api'
+import { getAllTests, createTest } from '@/services/test.service'
+import { getAllPackages, createPackage } from '@/services/package.service'
+import { getAllLabOwners, getBookingLabOwners, createLabOwner } from '@/services/user.service'
+import { getAllBookings, updateBookingLab } from '@/services/booking.service'
 import { FaUsers, FaFlask, FaClipboardList, FaVial, FaBoxOpen } from 'react-icons/fa'
 import { ROUTES } from '@/constants/routes'
-import { ROLES } from '@/constants/roles'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
-import { API_ENDPOINTS } from '@/constants/api'
 import {
   DashboardStatsCard,
   DashboardSectionHeader,
@@ -90,7 +91,7 @@ const AdminDashboard = () => {
   }
   const fetchLabOwners = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.LAB_OWNERS)
+      const { data } = await getBookingLabOwners()
       setLabOwners(data)
     } catch (error) {
       console.log(error)
@@ -102,9 +103,9 @@ const AdminDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       const [testsRes, packagesRes, labOwnersRes] = await Promise.all([
-        API.get(API_ENDPOINTS.TESTS),
-        API.get(API_ENDPOINTS.PACKAGES),
-        API.get(API_ENDPOINTS.ADMIN.LAB_OWNERS),
+        getAllTests(),
+        getAllPackages(),
+        getAllLabOwners(),
       ])
       setTests(testsRes.data)
       setAllTests(testsRes.data)
@@ -129,7 +130,7 @@ const AdminDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      await API.post(API_ENDPOINTS.TESTS, testData)
+      await createTest(testData)
       toast.success('Test Created Successfully')
       fetchDashboardData()
       setActivePanel('')
@@ -149,9 +150,7 @@ const AdminDashboard = () => {
   }
   const handleUpdateLab = async () => {
     try {
-      await API.put(API_ENDPOINTS.BOOKINGS.UPDATE_LAB(selectedBooking._id), {
-        labOwnerId: selectedLab,
-      })
+      await updateBookingLab(selectedBooking._id, selectedLab)
       toast.success('Lab Updated Successfully')
       fetchBookings()
       setShowEditModal(false)
@@ -174,7 +173,7 @@ const AdminDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      await API.post(API_ENDPOINTS.PACKAGES, {
+      await createPackage({
         ...packageData,
         testsIncluded: packageData.testsIncluded,
       })
@@ -211,7 +210,7 @@ const AdminDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      await API.post(API_ENDPOINTS.ADMIN.CREATE_LAB_OWNER, {
+      await createLabOwner({
         ...labOwnerData,
         servicePincodes: labOwnerData.servicePincodes.split(',').map((item) => item.trim()),
       })
@@ -235,7 +234,7 @@ const AdminDashboard = () => {
   }
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.ALL)
+      const { data } = await getAllBookings()
       setBookings(data)
     } catch (error) {
       console.log(error)

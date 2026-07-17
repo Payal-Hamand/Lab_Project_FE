@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import API from '@/services/api'
+import { resetPassword } from '@/services/auth.service'
 import { toast } from 'react-toastify'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import AuthLayout from '@/components/layout/AuthLayout'
@@ -19,7 +18,7 @@ const ResetPassword = () => {
       return toast.error('Passwords do not match')
     }
     try {
-      const { data } = await API.post(API_ENDPOINTS.PASSWORD.RESET, { email, otp, password })
+      const { data } = await resetPassword(email, otp, password)
       toast.success(data.message)
       navigate(ROUTES.LOGIN)
     } catch (error) {

@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useContext, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import BookingDateTime from '@/components/BookingDateTime'
 import { toast } from 'react-toastify'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import API from '@/services/api'
-import { AuthContext } from '@/context/AuthContext'
+import useAuth from '@/hooks/useAuth'
+import { getMyBookings, manageBooking } from '@/services/booking.service'
 import { FaUser, FaCalendarAlt, FaFileMedical, FaCheckCircle, FaClock } from 'react-icons/fa'
 import { DashboardStatsCard, BookingsTable, EmptyState } from '@/components/Dashboard'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
@@ -18,7 +17,7 @@ import Modal from '@/components/ui/Modal'
 import Badge from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Loader'
 const Dashboard = () => {
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const [selectedBooking, setSelectedBooking] = useState(null)
   const [showManageModal, setShowManageModal] = useState(false)
   const [action, setAction] = useState('')
@@ -35,7 +34,7 @@ const Dashboard = () => {
   })
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.MY_BOOKINGS)
+      const { data } = await getMyBookings()
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -66,7 +65,7 @@ const Dashboard = () => {
       return
     }
     try {
-      await API.put(API_ENDPOINTS.BOOKINGS.MANAGE(selectedBooking._id), {
+      await manageBooking(selectedBooking._id, {
         action: 'cancel',
         reason: reason === 'Other' ? customReason : reason,
       })
@@ -87,7 +86,7 @@ const Dashboard = () => {
       return
     }
     try {
-      await API.put(API_ENDPOINTS.BOOKINGS.MANAGE(selectedBooking._id), {
+      await manageBooking(selectedBooking._id, {
         action: 'reschedule',
         bookingDate: rescheduleData.bookingDate,
         bookingTime: rescheduleData.bookingTime,

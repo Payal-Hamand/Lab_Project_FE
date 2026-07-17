@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import PublicLayout from '@/components/layout/PublicLayout'
-import API from '@/services/api'
+import { getAllTests } from '@/services/test.service'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaSearch, FaClock, FaFlask, FaArrowRight } from 'react-icons/fa'
 import { ROUTES } from '@/constants/routes'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { InlineLoader } from '@/components/ui/Loader'
@@ -17,7 +16,7 @@ const TestsPage = () => {
   // Fetch Tests
   const fetchTests = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.TESTS)
+      const { data } = await getAllTests()
       setTests(data)
       setFilteredTests(data)
     } catch (error) {

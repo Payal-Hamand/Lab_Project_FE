@@ -1,29 +1,28 @@
-import React, { useContext, useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { FaSearch, FaShieldAlt, FaTruck, FaClock, FaFlask, FaTimes } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import { AuthContext } from '@/context/AuthContext'
-import API from '@/services/api'
+import useAuth from '@/hooks/useAuth'
+import useClickOutside from '@/hooks/useClickOutside'
+import { getAllTests } from '@/services/test.service'
+import { getAllPackages } from '@/services/package.service'
 import { ROUTES } from '@/constants/routes'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 const Hero = () => {
   const navigate = useNavigate()
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const [search, setSearch] = useState('')
   const [tests, setTests] = useState([])
   const [packages, setPackages] = useState([])
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownStyle, setDropdownStyle] = useState({})
   const inputWrapperRef = useRef(null)
+  const dropdownRef = useClickOutside(() => setShowDropdown(false))
   // Fetch tests & packages once
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [testsRes, packagesRes] = await Promise.all([
-          API.get(API_ENDPOINTS.TESTS),
-          API.get(API_ENDPOINTS.PACKAGES),
-        ])
+        const [testsRes, packagesRes] = await Promise.all([getAllTests(), getAllPackages()])
         setTests(testsRes.data)
         setPackages(packagesRes.data)
       } catch (err) {
@@ -46,20 +45,6 @@ const Hero = () => {
     }
     setShowDropdown(true)
   }
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (
-        inputWrapperRef.current &&
-        !inputWrapperRef.current.contains(e.target) &&
-        !document.getElementById('hero-search-dropdown')?.contains(e.target)
-      ) {
-        setShowDropdown(false)
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
   // Close on scroll
   useEffect(() => {
     const handleScroll = (e) => {
@@ -194,6 +179,7 @@ const Hero = () => {
         createPortal(
           <div
             id="hero-search-dropdown"
+            ref={dropdownRef}
             style={dropdownStyle}
             className="bg-white rounded-2xl shadow-2xl border border-blue-100 max-h-80 overflow-y-auto"
           >

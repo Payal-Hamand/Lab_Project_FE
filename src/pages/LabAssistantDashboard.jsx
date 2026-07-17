@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import API from '@/services/api'
+import {
+  getAssignedBookings,
+  searchAssignedBookings,
+  markReached,
+  uploadSample,
+  updatePaymentStatus,
+} from '@/services/booking.service'
+import { createPaymentOrder, verifyPayment } from '@/services/user.service'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
-import { API_ENDPOINTS } from '@/constants/api'
 import {
   FaMapMarkedAlt,
   FaMicroscope,
@@ -39,7 +45,7 @@ const LabAssistantDashboard = () => {
   const [showSampleModal, setShowSampleModal] = useState(false)
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.ASSIGNED)
+      const { data } = await getAssignedBookings()
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -65,7 +71,7 @@ const LabAssistantDashboard = () => {
   }, [])
   const handleReached = async (bookingId) => {
     try {
-      await API.put(API_ENDPOINTS.BOOKINGS.REACHED(bookingId))
+      await markReached(bookingId)
       fetchBookings()
     } catch (error) {
       console.log(error)
@@ -89,11 +95,7 @@ const LabAssistantDashboard = () => {
         formData.append('sampleImages', image)
       })
       formData.append('assistantNotes', assistantNotes)
-      await API.put(API_ENDPOINTS.BOOKINGS.SAMPLE(selectedBooking._id), formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      await uploadSample(selectedBooking._id, formData)
       toast.success('Sample uploaded successfully')
       setShowSampleModal(false)
       setSampleImages([])
@@ -115,7 +117,7 @@ const LabAssistantDashboard = () => {
   }
   const handlePayment = async (booking) => {
     try {
-      const { data } = await API.post(API_ENDPOINTS.PAYMENT.CREATE, {
+      const { data } = await createPaymentOrder({
         bookingId: booking._id,
         amount: booking?.test?.price || booking?.package?.price,
       })
@@ -128,7 +130,7 @@ const LabAssistantDashboard = () => {
         order_id: data.order.id,
         handler: async function (response) {
           try {
-            const verify = await API.post(API_ENDPOINTS.PAYMENT.VERIFY, {
+            const verify = await verifyPayment({
               ...response,
               bookingId: booking._id,
             })
@@ -146,9 +148,7 @@ const LabAssistantDashboard = () => {
         modal: {
           ondismiss: async function () {
             toast.info('Payment Cancelled')
-            await API.put(API_ENDPOINTS.BOOKINGS.PAYMENT_STATUS(booking._id), {
-              paymentStatus: 'Failed',
-            })
+            await updatePaymentStatus(booking._id, 'Failed')
             fetchBookings()
           },
         },
@@ -163,9 +163,7 @@ const LabAssistantDashboard = () => {
       const razorpay = new window.Razorpay(options)
       razorpay.on('payment.failed', async function (response) {
         toast.error(response.error.description || 'Payment Failed')
-        await API.put(API_ENDPOINTS.BOOKINGS.PAYMENT_STATUS(booking._id), {
-          paymentStatus: 'Failed',
-        })
+        await updatePaymentStatus(booking._id, 'Failed')
         fetchBookings()
       })
       razorpay.open()
@@ -177,7 +175,7 @@ const LabAssistantDashboard = () => {
   const searchBookings = async (value) => {
     setSearchTerm(value)
     try {
-      const { data } = await API.get(`${API_ENDPOINTS.BOOKINGS.ASSIGNED_SEARCH}?search=${value}`)
+      const { data } = await searchAssignedBookings(value)
       setBookings(data)
     } catch (error) {
       console.log(error)

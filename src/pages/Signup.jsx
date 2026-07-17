@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa'
-import API from '@/services/api'
-import { AuthContext } from '@/context/AuthContext'
+import { registerUser } from '@/services/auth.service'
+import useAuth from '@/hooks/useAuth'
 import { ROUTES } from '@/constants/routes'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import AuthLayout from '@/components/layout/AuthLayout'
 const Signup = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { login } = useContext(AuthContext)
+  const { login } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({ name: '', email: '', password: '' })
   const [loading, setLoading] = useState(false)
@@ -29,7 +28,7 @@ const Signup = () => {
     e.preventDefault()
     try {
       setLoading(true)
-      const { data } = await API.post(API_ENDPOINTS.AUTH.REGISTER, formData)
+      const { data } = await registerUser(formData)
       login(data)
       toast.success('Account Created Successfully')
       if (location.state?.redirectTo) {

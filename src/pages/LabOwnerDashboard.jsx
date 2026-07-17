@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { toast } from 'react-toastify'
-import API from '@/services/api'
+import {
+  getLabOwnerBookings,
+  searchLabOwnerBookings,
+  assignAssistant,
+  uploadReport,
+} from '@/services/booking.service'
+import { getMyAssistants, createLabAssistant } from '@/services/user.service'
 import {
   FaClipboardList,
   FaClock,
@@ -18,7 +24,6 @@ import {
 } from '@/components/Dashboard'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
@@ -46,7 +51,7 @@ const LabOwnerDashboard = () => {
   })
   const fetchBookings = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.BOOKINGS.LAB_OWNER)
+      const { data } = await getLabOwnerBookings()
       setBookings(data)
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to fetch bookings')
@@ -56,7 +61,7 @@ const LabOwnerDashboard = () => {
   }
   const fetchAssistants = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.USERS.MY_ASSISTANTS)
+      const { data } = await getMyAssistants()
       setAssistants(data)
     } catch (error) {
       console.log(error)
@@ -96,7 +101,7 @@ const LabOwnerDashboard = () => {
     }
     try {
       setCreatingAssistant(true)
-      const { data } = await API.post(API_ENDPOINTS.ADMIN.CREATE_LAB_ASSISTANT, assistantData)
+      const { data } = await createLabAssistant(assistantData)
       toast.success(data?.message || 'Assistant created successfully')
       fetchAssistants()
       setAssistantData({
@@ -118,10 +123,7 @@ const LabOwnerDashboard = () => {
       return toast.error('Please select an assistant')
     }
     try {
-      const { data } = await API.put(API_ENDPOINTS.BOOKINGS.ASSIGN_ASSISTANT, {
-        bookingId,
-        assistantId,
-      })
+      const { data } = await assignAssistant(bookingId, assistantId)
       toast.success(data?.message || 'Assistant assigned successfully')
       fetchBookings()
     } catch (error) {
@@ -131,7 +133,7 @@ const LabOwnerDashboard = () => {
   const searchBookings = async (value) => {
     setSearchTerm(value)
     try {
-      const { data } = await API.get(`${API_ENDPOINTS.BOOKINGS.LAB_OWNER_SEARCH}?search=${value}`)
+      const { data } = await searchLabOwnerBookings(value)
       setBookings(data)
     } catch (error) {
       console.log(error)
@@ -148,11 +150,7 @@ const LabOwnerDashboard = () => {
       }))
       const formData = new FormData()
       formData.append('report', selectedReport[bookingId])
-      await API.put(API_ENDPOINTS.BOOKINGS.UPLOAD_REPORT(bookingId), formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      await uploadReport(bookingId, formData)
       toast.success('Report Uploaded Successfully')
       fetchBookings()
     } catch (error) {

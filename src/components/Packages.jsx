@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { FaHeartbeat } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import API from '@/services/api'
+import { getAllPackages } from '@/services/package.service'
 import { ROUTES } from '@/constants/routes'
-import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import { InlineLoader } from '@/components/ui/Loader'
 const Packages = () => {
@@ -12,7 +11,7 @@ const Packages = () => {
   const [loading, setLoading] = useState(true)
   const fetchPackages = async () => {
     try {
-      const { data } = await API.get(API_ENDPOINTS.PACKAGES)
+      const { data } = await getAllPackages()
       setPackages(data)
     } catch (error) {
       console.log(error)

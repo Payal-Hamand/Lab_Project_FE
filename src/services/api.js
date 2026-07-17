@@ -1,10 +1,10 @@
 import axios from 'axios'
-// const API = axios.create({
-//   baseURL: 'https://lab-project-be.vercel.app/api'
-// })
+import { ROUTES } from '@/constants/routes'
+
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 })
+
 API.interceptors.request.use(
   (config) => {
     const userInfo = sessionStorage.getItem('user')
@@ -18,4 +18,23 @@ API.interceptors.request.use(
     return Promise.reject(error)
   }
 )
+
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status
+
+    if (status === 401) {
+      sessionStorage.removeItem('user')
+      window.location.href = ROUTES.LOGIN
+    }
+
+    if (status === 500) {
+      console.error('Server error:', error.response?.data?.message || 'Internal server error')
+    }
+
+    return Promise.reject(error)
+  }
+)
+
 export default API
