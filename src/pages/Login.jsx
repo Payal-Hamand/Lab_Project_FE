@@ -9,6 +9,7 @@ import { ROLES } from '@/constants/roles'
 import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import AuthLayout from '@/components/layout/AuthLayout'
 const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -49,7 +50,7 @@ const Login = () => {
     }
   }
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center px-4 sm:px-6 py-6 md:py-10">
+    <AuthLayout>
       <div className="bg-white rounded-3xl md:rounded-[40px] shadow-xl overflow-hidden grid lg:grid-cols-2 max-w-6xl w-full">
         <div className="hidden lg:block relative">
           <img
@@ -138,7 +139,7 @@ const Login = () => {
           </p>
         </div>
       </div>
-    </div>
+    </AuthLayout>
   )
 }
 export default Login

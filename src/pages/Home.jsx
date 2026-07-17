@@ -1,18 +1,16 @@
 import React from 'react'
-import Navbar from '@/components/Navbar'
+import PublicLayout from '@/components/layout/PublicLayout'
 import Hero from '@/components/Hero'
 import Features from '@/components/Features'
 import Packages from '@/components/Packages'
-import Footer from './Footer'
+
 const Home = () => {
   return (
-    <div>
-      <Navbar />
+    <PublicLayout>
       <Hero />
       <Features />
       <Packages />
-      <Footer />
-    </div>
+    </PublicLayout>
   )
 }
 export default Home

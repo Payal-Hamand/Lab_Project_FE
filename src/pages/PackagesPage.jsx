@@ -1,11 +1,10 @@
 import React from 'react'
-import Navbar from '@/components/Navbar'
+import PublicLayout from '@/components/layout/PublicLayout'
 import Packages from '@/components/Packages'
-import Footer from './Footer'
+
 const PackagesPage = () => {
   return (
-    <div className="bg-surface min-h-screen">
-      <Navbar />
+    <PublicLayout>
       {/* Header */}
       <div className="bg-blue-950 py-20">
         <div className="max-w-7xl mx-auto px-6 text-center text-white">
@@ -15,8 +14,7 @@ const PackagesPage = () => {
       </div>
       {/* Packages */}
       <Packages />
-      <Footer />
-    </div>
+    </PublicLayout>
   )
 }
 export default PackagesPage

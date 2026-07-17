@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import LocationPicker from '@/components/LocationPicker'
-import Navbar from '@/components/Navbar'
+import PublicLayout from '@/components/layout/PublicLayout'
 import API from '@/services/api'
 import { useLocation, useNavigate } from 'react-router-dom'
 import BookingDateTime from '@/components/BookingDateTime'
@@ -234,8 +234,7 @@ const Booking = () => {
     }
   }
   return (
-    <div className="bg-surface min-h-screen">
-      <Navbar />
+    <PublicLayout>
       {/* Header */}
       <div className="bg-blue-950 pt-8 pb-10 md:pt-12 md:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
@@ -468,7 +467,7 @@ const Booking = () => {
           </form>
         </div>
       </div>
-    </div>
+    </PublicLayout>
   )
 }
 export default Booking

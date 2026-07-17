@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants/routes'
 import { API_ENDPOINTS } from '@/constants/api'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import AuthLayout from '@/components/layout/AuthLayout'
 const VerifyOtp = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -28,7 +29,7 @@ const VerifyOtp = () => {
     }
   }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
+    <AuthLayout>
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center">Verify OTP</h1>
         <Input
@@ -45,7 +46,7 @@ const VerifyOtp = () => {
           Verify OTP
         </Button>
       </div>
-    </div>
+    </AuthLayout>
   )
 }
 export default VerifyOtp
