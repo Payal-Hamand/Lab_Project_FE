@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { FaSearch, FaShieldAlt, FaTruck, FaClock, FaFlask, FaTimes } from 'react-icons/fa'
+import { Search, ShieldCheck, Truck, Clock, FlaskConical, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '@/hooks/useAuth'
 import useClickOutside from '@/hooks/useClickOutside'
@@ -92,7 +92,7 @@ const Hero = () => {
         <div>
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <FaShieldAlt />
+            <ShieldCheck />
             India's Most Trusted Lab
           </div>
           {/* Heading */}
@@ -108,13 +108,13 @@ const Hero = () => {
           {/* Features */}
           <div className="flex flex-wrap gap-6 mt-8 text-blue-700 font-medium">
             <div className="flex items-center gap-2">
-              <FaShieldAlt /> Accurate Reports
+              <ShieldCheck /> Accurate Reports
             </div>
             <div className="flex items-center gap-2">
-              <FaTruck /> Home Collection
+              <Truck /> Home Collection
             </div>
             <div className="flex items-center gap-2">
-              <FaClock /> Fast Delivery
+              <Clock /> Fast Delivery
             </div>
           </div>
           {/* ── Search Box ── */}
@@ -123,7 +123,7 @@ const Hero = () => {
             className="bg-white rounded-2xl shadow-lg mt-10 flex items-center border-2 border-transparent focus-within:border-blue-400 transition"
           >
             <div className="flex items-center flex-1 px-4 gap-2">
-              <FaSearch className="text-gray-400 flex-shrink-0" />
+              <Search className="text-gray-400 flex-shrink-0" />
               <input
                 type="text"
                 value={search}
@@ -145,7 +145,7 @@ const Hero = () => {
                   }}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  <FaTimes />
+                  <X />
                 </Button>
               )}
             </div>
@@ -194,12 +194,12 @@ const Hero = () => {
                 onClick={() => setShowDropdown(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <FaTimes size={12} />
+                <X size={12} />
               </button>
             </div>
             {displayedItems.length === 0 ? (
               <div className="p-8 text-center text-gray-400">
-                <FaFlask className="mx-auto text-3xl mb-3 text-gray-200" />
+                <FlaskConical className="mx-auto text-3xl mb-3 text-gray-200" />
                 No tests found for "{search}"
               </div>
             ) : (
@@ -211,7 +211,7 @@ const Hero = () => {
                   className="w-full flex items-center gap-4 px-5 py-3 hover:bg-blue-50 transition border-b border-gray-50 last:border-0 group text-left"
                 >
                   <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition">
-                    <FaFlask />
+                    <FlaskConical />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-800 truncate">{item.title}</p>

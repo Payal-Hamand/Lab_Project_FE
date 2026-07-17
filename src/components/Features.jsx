@@ -1,24 +1,24 @@
 import React from 'react'
-import { FaHome, FaCheckCircle, FaClock, FaHeadset } from 'react-icons/fa'
+import { Home, CircleCheckBig, Clock, Headphones } from 'lucide-react'
 const Features = () => {
   const data = [
     {
-      icon: <FaHome />,
+      icon: <Home />,
       title: 'Free Home Collection',
       desc: 'On orders above ₹999',
     },
     {
-      icon: <FaCheckCircle />,
+      icon: <CircleCheckBig />,
       title: 'Accurate Reports',
       desc: 'NABL Certified Labs',
     },
     {
-      icon: <FaClock />,
+      icon: <Clock />,
       title: 'Fast Reports',
       desc: 'Reports in 6-24 Hours',
     },
     {
-      icon: <FaHeadset />,
+      icon: <Headphones />,
       title: '24/7 Support',
       desc: 'We are always available',
     },

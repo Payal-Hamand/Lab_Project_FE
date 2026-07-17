@@ -4,7 +4,16 @@ import { toast } from 'react-toastify'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import useAuth from '@/hooks/useAuth'
 import { getMyBookings, manageBooking } from '@/services/booking.service'
-import { FaUser, FaCalendarAlt, FaFileMedical, FaCheckCircle, FaClock } from 'react-icons/fa'
+import {
+  User,
+  CalendarDays,
+  FileText,
+  CircleCheckBig,
+  Clock,
+  Phone,
+  Settings,
+  X,
+} from 'lucide-react'
 import { DashboardStatsCard, BookingsTable, EmptyState } from '@/components/Dashboard'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
@@ -25,6 +34,7 @@ const Dashboard = () => {
   const [bookings, setBookings] = useState([])
   const [activeSection, setActiveSection] = useState('all')
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
   const tableRef = useRef(null)
   const navigate = useNavigate()
   const [customReason, setCustomReason] = useState('')
@@ -34,10 +44,11 @@ const Dashboard = () => {
   })
   const fetchBookings = async () => {
     try {
+      setFetchError(null)
       const { data } = await getMyBookings()
       setBookings(data)
-    } catch (error) {
-      console.log(error)
+    } catch {
+      setFetchError('Failed to load bookings. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -142,7 +153,7 @@ const Dashboard = () => {
             <DashboardStatsCard
               title="Total Bookings"
               value={bookings.length}
-              icon={<FaCalendarAlt />}
+              icon={<CalendarDays />}
               color="blue"
               bgColor="bg-blue-100 text-blue-600"
               active={activeSection === 'all'}
@@ -154,7 +165,7 @@ const Dashboard = () => {
             <DashboardStatsCard
               title="Completed"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
-              icon={<FaCheckCircle />}
+              icon={<CircleCheckBig />}
               color="green"
               bgColor="bg-green-100 text-green-600"
               active={activeSection === 'completed'}
@@ -166,7 +177,7 @@ const Dashboard = () => {
             <DashboardStatsCard
               title="Pending"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
-              icon={<FaClock />}
+              icon={<Clock />}
               color="yellow"
               bgColor="bg-yellow-100 text-yellow-600"
               active={activeSection === 'pending'}
@@ -178,7 +189,7 @@ const Dashboard = () => {
             <DashboardStatsCard
               title="Reports"
               value={bookings.filter((item) => item.report).length}
-              icon={<FaFileMedical />}
+              icon={<FileText />}
               color="purple"
               bgColor="bg-purple-100 text-purple-600"
               active={activeSection === 'reports'}
@@ -206,6 +217,13 @@ const Dashboard = () => {
             </div>
             {loading ? (
               <Spinner />
+            ) : fetchError ? (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                <p className="text-red-600 font-medium">{fetchError}</p>
+                <Button onClick={fetchBookings} variant="outline" className="mt-4">
+                  Retry
+                </Button>
+              </div>
             ) : filteredBookings.length === 0 ? (
               <EmptyState text="No Bookings Found" />
             ) : (
@@ -227,7 +245,9 @@ const Dashboard = () => {
                             <h2 className="font-bold text-xl text-slate-900">
                               {booking.patientName}
                             </h2>
-                            <p className="text-gray-500 mt-1">📞 {booking.phone}</p>
+                            <p className="text-gray-500 mt-1 flex items-center gap-1">
+                              <Phone size={14} /> {booking.phone}
+                            </p>
                           </div>
                           <Badge status={booking.status}>{booking.status}</Badge>
                         </div>
@@ -301,7 +321,8 @@ const Dashboard = () => {
             font-medium
             "
                           >
-                            📄 Download Report
+                            <FileText className="inline mr-2" size={16} />
+                            Download Report
                           </a>
                         )}
                         {/* Manage */}
@@ -312,7 +333,8 @@ const Dashboard = () => {
                               fullWidth
                               variant="warning"
                             >
-                              ⚙️ Manage Booking
+                              <Settings className="inline mr-2" size={16} />
+                              Manage Booking
                             </Button>
                           )}
                       </div>
@@ -333,10 +355,12 @@ const Dashboard = () => {
             {action === '' && (
               <>
                 <Button onClick={() => setAction('reschedule')} fullWidth>
-                  📅 Reschedule Booking
+                  <CalendarDays className="inline mr-2" size={16} />
+                  Reschedule Booking
                 </Button>
                 <Button onClick={() => setAction('cancel')} variant="danger" fullWidth>
-                  ❌ Cancel Booking
+                  <X className="inline mr-2" size={16} />
+                  Cancel Booking
                 </Button>
               </>
             )}

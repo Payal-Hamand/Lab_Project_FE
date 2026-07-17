@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaDownload } from 'react-icons/fa'
+import { Download, MapPin, Pencil, Settings } from 'lucide-react'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -63,7 +63,8 @@ const BookingsTable = ({
                     </h3>
                     <div className="group relative w-[220px]">
                       <p className="text-sm text-gray-600 mt-2 truncate cursor-pointer">
-                        📍 {item.labOwner?.labAddress || 'No Address'}
+                        <MapPin size={14} className="inline mr-1" />{' '}
+                        {item.labOwner?.labAddress || 'No Address'}
                       </p>
                       <div className="absolute hidden group-hover:block z-50 bg-gray-900 text-white text-xs rounded-xl p-3 w-72 left-0 top-8 shadow-lg">
                         {item.labOwner?.labAddress}
@@ -101,7 +102,7 @@ const BookingsTable = ({
                         size="sm"
                         className="inline-flex items-center gap-2"
                       >
-                        <FaDownload />
+                        <Download />
                         Download
                       </Button>
                     </a>
@@ -123,14 +124,16 @@ const BookingsTable = ({
     }
   `}
                   >
-                    ✏️ Edit Lab
+                    <Pencil size={14} className="inline mr-1" />
+                    Edit Lab
                   </Button>
                 ) : (
                   <>
                     {item.status !== BOOKING_STATUS.COMPLETED &&
                       item.status !== BOOKING_STATUS.CANCELLED && (
                         <Button onClick={() => openManageModal && openManageModal(item)}>
-                          ⚙️ Manage
+                          <Settings size={14} className="inline mr-1" />
+                          Manage
                         </Button>
                       )}
                     {item.status === BOOKING_STATUS.CANCELLED && (

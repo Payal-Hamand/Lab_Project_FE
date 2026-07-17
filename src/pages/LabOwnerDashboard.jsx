@@ -9,13 +9,16 @@ import {
 } from '@/services/booking.service'
 import { getMyAssistants, createLabAssistant } from '@/services/user.service'
 import {
-  FaClipboardList,
-  FaClock,
-  FaCheckCircle,
-  FaUsers,
-  FaUserPlus,
-  FaDownload,
-} from 'react-icons/fa'
+  ClipboardList,
+  Clock,
+  CircleCheckBig,
+  Users,
+  UserPlus,
+  Download,
+  Search,
+  Phone,
+  FileText,
+} from 'lucide-react'
 import {
   DashboardStatsCard,
   DashboardSectionHeader,
@@ -38,6 +41,7 @@ const LabOwnerDashboard = () => {
   const [selectedReport, setSelectedReport] = useState({})
   const [uploadingReport, setUploadingReport] = useState({})
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
   const [activeSection, setActiveSection] = useState('all')
   const [selectedAssistant, setSelectedAssistant] = useState(null)
   const [showAssistantForm, setShowAssistantForm] = useState(false)
@@ -51,10 +55,11 @@ const LabOwnerDashboard = () => {
   })
   const fetchBookings = async () => {
     try {
+      setFetchError(null)
       const { data } = await getLabOwnerBookings()
       setBookings(data)
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Failed to fetch bookings')
+    } catch {
+      setFetchError('Failed to load bookings. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -209,7 +214,7 @@ const LabOwnerDashboard = () => {
             <DashboardStatsCard
               title="Total Bookings"
               value={bookings.length}
-              icon={<FaClipboardList />}
+              icon={<ClipboardList />}
               color="blue"
               bgColor="bg-blue-100 text-blue-600"
               active={activeSection === 'all'}
@@ -222,7 +227,7 @@ const LabOwnerDashboard = () => {
             <DashboardStatsCard
               title="Pending"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
-              icon={<FaClock />}
+              icon={<Clock />}
               color="yellow"
               bgColor="bg-yellow-100 text-yellow-600"
               active={activeSection === 'pending'}
@@ -235,7 +240,7 @@ const LabOwnerDashboard = () => {
             <DashboardStatsCard
               title="Completed"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
-              icon={<FaCheckCircle />}
+              icon={<CircleCheckBig />}
               color="green"
               bgColor="bg-green-100 text-green-600"
               active={activeSection === 'completed'}
@@ -248,7 +253,7 @@ const LabOwnerDashboard = () => {
             <DashboardStatsCard
               title="Assistants"
               value={assistants.length}
-              icon={<FaUsers />}
+              icon={<Users />}
               color="purple"
               bgColor="bg-purple-100 text-purple-600"
               active={activeSection === 'assistants'}
@@ -265,7 +270,7 @@ const LabOwnerDashboard = () => {
                 subtitle="Manage your assistants"
                 button
                 buttonText="Create Assistant"
-                buttonIcon={<FaUserPlus />}
+                buttonIcon={<UserPlus />}
                 onClick={() => setShowAssistantForm(true)}
               />
               {/* ASSISTANT CARDS */}
@@ -291,7 +296,7 @@ const LabOwnerDashboard = () => {
                           `}
                     >
                       <div className="bg-purple-100 text-purple-600 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl">
-                        <FaUsers />
+                        <Users />
                       </div>
                       <h3 className="text-xl font-bold text-blue-950 mt-5">{assistant.name}</h3>
                       <p className="text-gray-500 mt-2 break-all">{assistant.email}</p>
@@ -393,7 +398,10 @@ const LabOwnerDashboard = () => {
                     className="pl-12"
                     containerClassName="relative"
                   />
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2">🔍</span>
+                  <Search
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
                 </div>
                 <div className="bg-blue-50 px-5 py-3 rounded-2xl font-semibold text-blue-700 whitespace-nowrap">
                   {filteredBookings.length} Bookings
@@ -402,13 +410,20 @@ const LabOwnerDashboard = () => {
                   onClick={() => setShowAssistantForm(true)}
                   className="flex items-center justify-center gap-2"
                 >
-                  <FaUserPlus />
+                  <UserPlus />
                   Create Assistant
                 </Button>
               </div>
             </div>
             {loading ? (
               <Spinner />
+            ) : fetchError ? (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                <p className="text-red-600 font-medium">{fetchError}</p>
+                <Button onClick={fetchBookings} variant="outline" className="mt-4">
+                  Retry
+                </Button>
+              </div>
             ) : filteredBookings.length === 0 ? (
               <EmptyState text="No Bookings Found" />
             ) : (
@@ -597,7 +612,9 @@ const LabOwnerDashboard = () => {
                             <h2 className="font-bold text-xl text-slate-900">
                               {booking.patientName}
                             </h2>
-                            <p className="text-gray-500 mt-1">📞 {booking.phone}</p>
+                            <p className="text-gray-500 mt-1 flex items-center gap-1">
+                              <Phone size={14} /> {booking.phone}
+                            </p>
                           </div>
                           <div className="flex flex-col gap-2">
                             <Badge status={booking.paymentStatus}>{booking.paymentStatus}</Badge>
@@ -712,7 +729,9 @@ const LabOwnerDashboard = () => {
                         {booking.report ? (
                           <div className="bg-white rounded-xl p-4 border border-green-100">
                             <div className="flex items-center justify-between">
-                              <p className="font-semibold text-green-700">✅ Report Uploaded</p>
+                              <p className="font-semibold text-green-700 flex items-center gap-2">
+                                <CircleCheckBig size={18} /> Report Uploaded
+                              </p>
                               <Badge variant="success">Ready</Badge>
                             </div>
                             <Button variant="success" fullWidth className="mt-4">
@@ -722,7 +741,7 @@ const LabOwnerDashboard = () => {
                                 rel="noreferrer"
                                 className="text-white flex items-center justify-center gap-2"
                               >
-                                <FaDownload />
+                                <Download />
                                 View Report
                               </a>
                             </Button>
@@ -738,7 +757,8 @@ const LabOwnerDashboard = () => {
       hover:bg-blue-50
       "
                             >
-                              📄 Select Report
+                              <FileText size={18} className="inline mr-2" />
+                              Select Report
                               <Input
                                 type="file"
                                 accept=".pdf"

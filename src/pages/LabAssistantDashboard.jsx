@@ -12,20 +12,23 @@ import { createPaymentOrder, verifyPayment } from '@/services/user.service'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 import {
-  FaMapMarkedAlt,
-  FaMicroscope,
-  FaMoneyCheckAlt,
-  FaFileMedical,
-  FaUserCircle,
-  FaFlask,
-  FaClipboardList,
-  FaCheckCircle,
-  FaVial,
-  FaMoneyBillWave,
-  FaFileUpload,
-  FaMapMarkerAlt,
-  FaRoute,
-} from 'react-icons/fa'
+  MapPinCheck,
+  Microscope,
+  Banknote,
+  FileText,
+  CircleUser,
+  FlaskConical,
+  ClipboardList,
+  CircleCheckBig,
+  TestTubeDiagonal,
+  Upload,
+  MapPin,
+  Route,
+  Search,
+  Phone,
+  Camera,
+  Image,
+} from 'lucide-react'
 import { DashboardStatsCard, EmptyState } from '@/components/Dashboard'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -38,6 +41,7 @@ const LabAssistantDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [uploadingSample, setUploadingSample] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
   const [activeSection, setActiveSection] = useState('all')
   const [selectedBooking, setSelectedBooking] = useState(null)
   const [sampleImages, setSampleImages] = useState([])
@@ -45,10 +49,11 @@ const LabAssistantDashboard = () => {
   const [showSampleModal, setShowSampleModal] = useState(false)
   const fetchBookings = async () => {
     try {
+      setFetchError(null)
       const { data } = await getAssignedBookings()
       setBookings(data)
-    } catch (error) {
-      console.log(error)
+    } catch {
+      setFetchError('Failed to load bookings. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -214,7 +219,7 @@ const LabAssistantDashboard = () => {
             <DashboardStatsCard
               title="Total Tests"
               value={bookings.length}
-              icon={<FaFlask />}
+              icon={<FlaskConical />}
               color="blue"
               bgColor="bg-blue-100 text-blue-600"
               active={activeSection === 'all'}
@@ -223,7 +228,7 @@ const LabAssistantDashboard = () => {
             <DashboardStatsCard
               title="Pending Reports"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
-              icon={<FaClipboardList />}
+              icon={<ClipboardList />}
               color="yellow"
               bgColor="bg-yellow-100 text-yellow-600"
               active={activeSection === 'pending'}
@@ -232,7 +237,7 @@ const LabAssistantDashboard = () => {
             <DashboardStatsCard
               title="Completed"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
-              icon={<FaCheckCircle />}
+              icon={<CircleCheckBig />}
               color="green"
               bgColor="bg-green-100 text-green-600"
               active={activeSection === 'completed'}
@@ -249,7 +254,10 @@ const LabAssistantDashboard = () => {
                   onChange={(e) => searchBookings(e.target.value)}
                   className="pl-12"
                 />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                <Search
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                />
               </div>
               <div className="bg-blue-50 px-5 py-3 rounded-2xl font-semibold text-blue-700">
                 {bookings.length} Bookings
@@ -257,6 +265,13 @@ const LabAssistantDashboard = () => {
             </div>
             {loading ? (
               <Spinner />
+            ) : fetchError ? (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                <p className="text-red-600 font-medium">{fetchError}</p>
+                <Button onClick={fetchBookings} variant="outline" className="mt-4">
+                  Retry
+                </Button>
+              </div>
             ) : bookings.length === 0 ? (
               <EmptyState text="No Assigned Bookings" />
             ) : (
@@ -281,7 +296,7 @@ const LabAssistantDashboard = () => {
                           <td className="px-4 py-5 truncate">
                             <div className="flex items-center gap-3">
                               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                <FaUserCircle className="text-blue-600 text-2xl" />
+                                <CircleUser className="text-blue-600 text-2xl" />
                               </div>
                               <div>
                                 <h3 className="font-semibold">{item.patientName}</h3>
@@ -305,7 +320,7 @@ const LabAssistantDashboard = () => {
                           </td>
                           <td className="px-4 py-5 max-w-xs truncate">
                             <div className="flex gap-2">
-                              <FaMapMarkerAlt className="text-red-500 mt-1" />
+                              <MapPin className="text-red-500 mt-1" />
                               <span className="text-sm text-gray-600">{item.address}</span>
                             </div>
                           </td>
@@ -323,7 +338,7 @@ const LabAssistantDashboard = () => {
                                   variant="danger"
                                   onClick={() => openNavigation(item)}
                                 >
-                                  <FaRoute />
+                                  <Route />
                                 </Button>
                                 <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
                                   Navigation
@@ -338,7 +353,7 @@ const LabAssistantDashboard = () => {
                                   onClick={() => handleReached(item._id)}
                                   disabled={item.status !== BOOKING_STATUS.ASSIGNED}
                                 >
-                                  <FaMapMarkedAlt />
+                                  <MapPinCheck />
                                 </Button>
                                 <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
                                   Mark Reached
@@ -353,7 +368,7 @@ const LabAssistantDashboard = () => {
                                   onClick={() => openSampleModal(item)}
                                   disabled={item.status !== BOOKING_STATUS.REACHED}
                                 >
-                                  <FaMicroscope />
+                                  <Microscope />
                                 </Button>
                                 <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
                                   Collect Sample
@@ -374,7 +389,7 @@ const LabAssistantDashboard = () => {
                                     item.paymentStatus === PAYMENT_STATUS.PAID
                                   }
                                 >
-                                  <FaMoneyCheckAlt />
+                                  <Banknote />
                                 </Button>
                                 <span className="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap z-50">
                                   Collect Payment
@@ -417,11 +432,13 @@ const LabAssistantDashboard = () => {
                       <div className="p-5">
                         <div className="flex items-center gap-4">
                           <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
-                            <FaUserCircle className="text-blue-600 text-3xl" />
+                            <CircleUser className="text-blue-600 text-3xl" />
                           </div>
                           <div className="flex-1">
                             <h2 className="font-bold text-slate-800 text-lg">{item.patientName}</h2>
-                            <p className="text-sm text-gray-500">📞 {item.phone}</p>
+                            <p className="text-sm text-gray-500 flex items-center gap-1">
+                              <Phone size={14} /> {item.phone}
+                            </p>
                           </div>
                         </div>
                         <div className="mt-4 bg-slate-50 rounded-2xl p-4">
@@ -447,7 +464,7 @@ const LabAssistantDashboard = () => {
                         </div>
                         <div className="mt-4 bg-slate-50 rounded-xl p-4">
                           <div className="flex gap-3">
-                            <FaMapMarkerAlt className="text-red-500 mt-1" />
+                            <MapPin className="text-red-500 mt-1" />
                             <div>
                               <p className="text-xs text-gray-500">Address</p>
                               <p className="text-sm text-slate-700 mt-1">{item.address}</p>
@@ -465,7 +482,7 @@ const LabAssistantDashboard = () => {
                             className="h-12"
                             onClick={() => openNavigation(item)}
                           >
-                            <FaRoute className="mx-auto" />
+                            <Route className="mx-auto" />
                           </Button>
                           <Button
                             size="icon"
@@ -474,7 +491,7 @@ const LabAssistantDashboard = () => {
                             onClick={() => handleReached(item._id)}
                             disabled={item.status !== BOOKING_STATUS.ASSIGNED}
                           >
-                            <FaMapMarkedAlt className="mx-auto" />
+                            <MapPinCheck className="mx-auto" />
                           </Button>
                           <Button
                             size="icon"
@@ -483,7 +500,7 @@ const LabAssistantDashboard = () => {
                             onClick={() => openSampleModal(item)}
                             disabled={item.status !== BOOKING_STATUS.REACHED}
                           >
-                            <FaMicroscope className="mx-auto" />
+                            <Microscope className="mx-auto" />
                           </Button>
                           <Button
                             size="icon"
@@ -500,7 +517,7 @@ const LabAssistantDashboard = () => {
                               item.paymentStatus === PAYMENT_STATUS.PAID
                             }
                           >
-                            <FaMoneyCheckAlt className="mx-auto" />
+                            <Banknote className="mx-auto" />
                           </Button>
                         </div>
                         <div className="mt-5">
@@ -522,7 +539,7 @@ const LabAssistantDashboard = () => {
       py-3
       "
                             >
-                              <FaFileMedical />
+                              <FileText />
                               View Report
                             </a>
                           ) : item.paymentStatus !== PAYMENT_STATUS.PAID ? (
@@ -588,7 +605,7 @@ transition
                   }}
                 />
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-[28px] bg-blue-100 group-hover:bg-blue-600 transition flex items-center justify-center text-4xl">
-                  📷
+                  <Camera size={32} />
                 </div>
                 <h2 className="text-lg md:text-xl font-bold text-blue-950 mt-6">Capture Sample</h2>
                 <p className="text-gray-500 text-center mt-2 text-sm leading-6">
@@ -620,7 +637,7 @@ transition
                   }}
                 />
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-[28px] bg-pink-100 group-hover:bg-pink-600 transition flex items-center justify-center text-4xl">
-                  🖼️
+                  <Image size={32} />
                 </div>
                 <h2 className="text-lg md:text-xl font-bold text-blue-950 mt-6">Upload Images</h2>
                 <p className="text-gray-500 text-center mt-2 text-sm leading-6">

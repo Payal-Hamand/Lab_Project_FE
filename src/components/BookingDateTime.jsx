@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { FaCalendarAlt, FaClock } from 'react-icons/fa'
+import { CalendarDays, Clock } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 const BookingDateTime = ({ formData, handleChange }) => {
@@ -75,7 +75,7 @@ const BookingDateTime = ({ formData, handleChange }) => {
       <Input
         label={
           <span className="flex items-center gap-2">
-            <FaCalendarAlt /> Booking Date
+            <CalendarDays /> Booking Date
           </span>
         }
         type="date"
@@ -89,7 +89,7 @@ const BookingDateTime = ({ formData, handleChange }) => {
       <Select
         label={
           <span className="flex items-center gap-2">
-            <FaClock /> Booking Time
+            <Clock /> Booking Time
           </span>
         }
         name="bookingTime"

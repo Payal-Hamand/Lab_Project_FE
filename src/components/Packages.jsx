@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FaHeartbeat } from 'react-icons/fa'
+import { HeartPulse } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { getAllPackages } from '@/services/package.service'
 import { ROUTES } from '@/constants/routes'
@@ -72,7 +72,7 @@ const Packages = () => {
                 {/* Content */}
                 <div className="p-5 md:p-8">
                   <div className="bg-blue-100 text-blue-600 w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl">
-                    <FaHeartbeat />
+                    <HeartPulse />
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold text-blue-950 mt-5 md:mt-6">
                     {item.title}

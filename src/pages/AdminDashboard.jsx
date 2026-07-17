@@ -6,7 +6,18 @@ import { getAllTests, createTest } from '@/services/test.service'
 import { getAllPackages, createPackage } from '@/services/package.service'
 import { getAllLabOwners, getBookingLabOwners, createLabOwner } from '@/services/user.service'
 import { getAllBookings, updateBookingLab } from '@/services/booking.service'
-import { FaUsers, FaFlask, FaClipboardList, FaVial, FaBoxOpen } from 'react-icons/fa'
+import {
+  Users,
+  FlaskConical,
+  ClipboardList,
+  TestTubeDiagonal,
+  PackageOpen,
+  MapPin,
+  Map,
+  Phone,
+  CircleCheckBig,
+  Pencil,
+} from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 import {
@@ -36,6 +47,7 @@ const AdminDashboard = () => {
   const [packages, setPackages] = useState([])
   const [labOwners, setLabOwners] = useState([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
   const [selectedBooking, setSelectedBooking] = useState(null)
   const [selectedLab, setSelectedLab] = useState('')
   const [showEditModal, setShowEditModal] = useState(false)
@@ -102,6 +114,7 @@ const AdminDashboard = () => {
   }, [])
   const fetchDashboardData = async () => {
     try {
+      setFetchError(null)
       const [testsRes, packagesRes, labOwnersRes] = await Promise.all([
         getAllTests(),
         getAllPackages(),
@@ -111,8 +124,8 @@ const AdminDashboard = () => {
       setAllTests(testsRes.data)
       setPackages(packagesRes.data)
       setLabOwners(labOwnersRes.data)
-    } catch (error) {
-      console.log(error)
+    } catch {
+      setFetchError('Failed to load dashboard data. Please try again.')
     }
   }
   const handleCreateTest = async (e) => {
@@ -236,8 +249,8 @@ const AdminDashboard = () => {
     try {
       const { data } = await getAllBookings()
       setBookings(data)
-    } catch (error) {
-      console.log(error)
+    } catch {
+      setFetchError('Failed to load bookings. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -290,7 +303,7 @@ const AdminDashboard = () => {
             <DashboardStatsCard
               title="Bookings"
               value={bookings.length}
-              icon={<FaClipboardList />}
+              icon={<ClipboardList />}
               color="blue"
               bgColor="bg-blue-100 text-blue-600"
               active={activeSection === 'all'}
@@ -302,7 +315,7 @@ const AdminDashboard = () => {
             <DashboardStatsCard
               title="Tests"
               value={tests.length}
-              icon={<FaFlask />}
+              icon={<FlaskConical />}
               color="green"
               bgColor="bg-green-100 text-green-600"
               onClick={() => navigate(ROUTES.TESTS)}
@@ -310,7 +323,7 @@ const AdminDashboard = () => {
             <DashboardStatsCard
               title="Pending"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
-              icon={<FaVial />}
+              icon={<TestTubeDiagonal />}
               color="yellow"
               bgColor="bg-yellow-100 text-yellow-600"
               active={activeSection === 'pending'}
@@ -322,7 +335,7 @@ const AdminDashboard = () => {
             <DashboardStatsCard
               title="Completed"
               value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
-              icon={<FaBoxOpen />}
+              icon={<PackageOpen />}
               color="purple"
               bgColor="bg-purple-100 text-purple-600"
               active={activeSection === 'completed'}
@@ -334,7 +347,7 @@ const AdminDashboard = () => {
             <DashboardStatsCard
               title="Packages"
               value={packages.length}
-              icon={<FaBoxOpen />}
+              icon={<PackageOpen />}
               color="purple"
               bgColor="bg-purple-100 text-purple-600"
               onClick={() => navigate(ROUTES.PACKAGES)}
@@ -342,7 +355,7 @@ const AdminDashboard = () => {
             <DashboardStatsCard
               title="Lab Owners"
               value={labOwners.length}
-              icon={<FaUsers />}
+              icon={<Users />}
               color="green"
               bgColor="bg-green-100 text-green-600"
               onClick={scrollToLabOwners}
@@ -357,7 +370,7 @@ const AdminDashboard = () => {
             >
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
-                  <FaFlask className="text-2xl" />
+                  <FlaskConical className="text-2xl" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-bold text-lg">Create Test</h3>
@@ -372,7 +385,7 @@ const AdminDashboard = () => {
             >
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
-                  <FaBoxOpen className="text-2xl" />
+                  <PackageOpen className="text-2xl" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-bold text-lg">Create Package</h3>
@@ -387,7 +400,7 @@ const AdminDashboard = () => {
             >
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
-                  <FaUsers className="text-2xl" />
+                  <Users className="text-2xl" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-bold text-lg">Create Lab Owner</h3>
@@ -643,7 +656,9 @@ const AdminDashboard = () => {
               <div>
                 {labOwnerData.labAddress && (
                   <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
-                    <div className="font-semibold text-green-700">📍 Lab Location Selected</div>
+                    <div className="font-semibold text-green-700 flex items-center gap-2">
+                      <MapPin size={16} /> Lab Location Selected
+                    </div>
                     <div className="text-sm text-gray-600 mt-2">{labOwnerData.labAddress}</div>
                   </div>
                 )}
@@ -652,7 +667,8 @@ const AdminDashboard = () => {
                   onClick={() => setShowLabMap(true)}
                   className="w-full bg-blue-100 text-blue-700 py-4 rounded-2xl font-semibold"
                 >
-                  🗺️ Select Lab Location On Map
+                  <Map size={18} className="inline mr-2" />
+                  Select Lab Location On Map
                 </button>
                 <Modal
                   open={showLabMap}
@@ -708,6 +724,20 @@ const AdminDashboard = () => {
             />
             {loading ? (
               <Spinner />
+            ) : fetchError ? (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                <p className="text-red-600 font-medium">{fetchError}</p>
+                <Button
+                  onClick={() => {
+                    fetchBookings()
+                    fetchDashboardData()
+                  }}
+                  variant="outline"
+                  className="mt-4"
+                >
+                  Retry
+                </Button>
+              </div>
             ) : filteredBookings.length === 0 ? (
               <EmptyState text="No Bookings Found" />
             ) : (
@@ -733,7 +763,9 @@ const AdminDashboard = () => {
                         <div className="flex justify-between items-start">
                           <div>
                             <h2 className="font-bold text-lg text-slate-900">{item.patientName}</h2>
-                            <p className="text-gray-500 text-sm mt-1">📞 {item.phone}</p>
+                            <p className="text-gray-500 text-sm mt-1 flex items-center gap-1">
+                              <Phone size={14} /> {item.phone}
+                            </p>
                           </div>
                           <Badge status={item.status}>{item.status}</Badge>
                         </div>
@@ -747,7 +779,8 @@ const AdminDashboard = () => {
                             title={item.labOwner?.labAddress}
                             className="text-sm text-gray-600 mt-2 truncate"
                           >
-                            📍 {item.labOwner?.labAddress || 'No Address'}
+                            <MapPin size={14} className="inline mr-1" />{' '}
+                            {item.labOwner?.labAddress || 'No Address'}
                           </p>
                         </div>
                         {/* Test / Package */}
@@ -801,11 +834,13 @@ const AdminDashboard = () => {
                         <div className="mt-4">
                           {item.status === BOOKING_STATUS.COMPLETED ? (
                             <div className="w-full bg-green-100 text-green-700 py-3 rounded-2xl text-center font-semibold">
-                              ✅ Booking Completed
+                              <CircleCheckBig size={16} className="inline mr-1" />
+                              Booking Completed
                             </div>
                           ) : (
                             <Button onClick={() => openEditModal(item)} fullWidth>
-                              ✏️ Edit Assigned Lab
+                              <Pencil size={14} className="inline mr-1" />
+                              Edit Assigned Lab
                             </Button>
                           )}
                         </div>

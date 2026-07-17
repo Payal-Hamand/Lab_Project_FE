@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PublicLayout from '@/components/layout/PublicLayout'
 import { getAllTests } from '@/services/test.service'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaSearch, FaClock, FaFlask, FaArrowRight } from 'react-icons/fa'
+import { Search, Clock, FlaskConical, ArrowRight } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -69,7 +69,7 @@ const TestsPage = () => {
         {/* Search */}
         <div className="max-w-7xl mx-auto px-6 mt-10">
           <div className="bg-white rounded-3xl shadow-sm p-4 flex items-center">
-            <FaSearch className="text-gray-400 text-xl ml-4" />
+            <Search className="text-gray-400 text-xl ml-4" />
             <Input
               type="text"
               value={search}
@@ -110,11 +110,11 @@ const TestsPage = () => {
                     {/* Info */}
                     <div className="flex items-center justify-between mt-8">
                       <div className="flex items-center gap-2 text-gray-600">
-                        <FaClock />
+                        <Clock />
                         {item.reportTime}
                       </div>
                       <div className="flex items-center gap-2 text-blue-600">
-                        <FaFlask />
+                        <FlaskConical />
                         Lab Certified
                       </div>
                     </div>

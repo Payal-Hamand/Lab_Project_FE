@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaFlask, FaBars, FaTimes, FaUserCircle, FaSignOutAlt } from 'react-icons/fa'
+import { FlaskConical, Menu, X, CircleUser, LogOut, Phone, Mail } from 'lucide-react'
 import { AuthContext } from '@/context/AuthContext'
 import { ROUTES } from '@/constants/routes'
 import { ROLES } from '@/constants/roles'
@@ -29,8 +29,12 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
           <p className="hidden md:block">Trusted Diagnostic Lab Platform</p>
           <div className="flex items-center gap-6">
-            <p>📞 913-050-1863</p>
-            <p className="hidden md:block">✉ support@medilab.com</p>
+            <p className="flex items-center gap-2">
+              <Phone size={14} /> 913-050-1863
+            </p>
+            <p className="hidden md:block flex items-center gap-2">
+              <Mail size={14} /> support@medilab.com
+            </p>
           </div>
         </div>
       </div>
@@ -119,7 +123,7 @@ const Navbar = () => {
               )}
               {/* User */}
               <div className="flex items-center gap-3 bg-gray-100 px-4 py-2 rounded-2xl">
-                <FaUserCircle className="text-2xl text-blue-600" />
+                <CircleUser className="text-2xl text-blue-600" />
                 <div>
                   <h3 className="font-semibold text-sm">{user.name}</h3>
                   <p className="text-xs text-gray-500 capitalize">{user.role}</p>
@@ -132,7 +136,7 @@ const Navbar = () => {
                 onClick={handleLogout}
                 className="bg-gray-200 hover:bg-red-500 hover:text-white transition"
               >
-                <FaSignOutAlt />
+                <LogOut />
               </Button>
             </div>
           )}
@@ -144,7 +148,7 @@ const Navbar = () => {
           onClick={() => setMenuOpen(!menuOpen)}
           className="lg:hidden text-3xl text-blue-950"
         >
-          {menuOpen ? <FaTimes /> : <FaBars />}
+          {menuOpen ? <X /> : <Menu />}
         </Button>
       </div>
       {/* Mobile Sidebar */}
@@ -166,7 +170,7 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="text-3xl text-blue-950"
               >
-                <FaTimes />
+                <X />
               </Button>
             </div>
             {/* Links */}

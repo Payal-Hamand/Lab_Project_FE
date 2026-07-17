@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { FaTimes } from 'react-icons/fa'
+import { X } from 'lucide-react'
 
 const Modal = ({ open, onClose, title, subtitle, children, size = 'md', className = '' }) => {
   useEffect(() => {
@@ -39,7 +39,7 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
                 onClick={onClose}
                 className="text-2xl text-gray-400 hover:text-red-500 transition"
               >
-                <FaTimes />
+                <X />
               </button>
             )}
           </div>

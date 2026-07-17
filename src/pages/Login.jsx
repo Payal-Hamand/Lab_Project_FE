@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa'
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
 import { loginUser } from '@/services/auth.service'
 import { ROUTES } from '@/constants/routes'
@@ -75,7 +75,7 @@ const Login = () => {
               size="sm"
               className="flex items-center gap-2"
             >
-              <FaArrowLeft /> Home
+              <ArrowLeft /> Home
             </Button>
             <div className="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-xs md:text-sm font-medium">
               Login
@@ -114,7 +114,7 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-2 top-9 text-gray-400 hover:text-blue-600"
                 >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  {showPassword ? <EyeOff /> : <Eye />}
                 </Button>
               </div>
               <div className="flex justify-end mt-2">
