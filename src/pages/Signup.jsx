@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { toast } from 'react-toastify'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import { registerUser } from '@/services/auth.service'
@@ -8,28 +11,35 @@ import { ROUTES } from '@/constants/routes'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import AuthLayout from '@/components/layout/AuthLayout'
+
+const signupSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Please enter a valid email'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+})
+
 const Signup = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { login } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' })
-  const [loading, setLoading] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(signupSchema),
+  })
   useEffect(() => {
     if (location.state?.message) {
       toast.info(location.state.message)
       window.history.replaceState({}, document.title)
     }
   }, [])
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const onSubmit = async (data) => {
     try {
-      setLoading(true)
-      const { data } = await registerUser(formData)
-      login(data)
+      const { data: response } = await registerUser(data)
+      login(response)
       toast.success('Account Created Successfully')
       if (location.state?.redirectTo) {
         navigate(location.state.redirectTo, {
@@ -43,8 +53,6 @@ const Signup = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Signup Failed')
-    } finally {
-      setLoading(false)
     }
   }
   return (
@@ -87,32 +95,29 @@ const Signup = () => {
               Signup to continue your healthcare journey.
             </p>
           </div>
-          <form onSubmit={handleSubmit} className="mt-8 md:mt-10 space-y-5 md:space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 md:mt-10 space-y-5 md:space-y-6">
             <Input
               label="Full Name"
               type="text"
-              name="name"
               placeholder="Enter your full name"
-              onChange={handleChange}
-              required
+              error={errors.name?.message}
+              {...register('name')}
             />
             <Input
               label="Email Address"
               type="email"
-              name="email"
               placeholder="Enter your email"
-              onChange={handleChange}
-              required
+              error={errors.email?.message}
+              {...register('email')}
             />
             <div className="relative">
               <Input
                 label="Password"
                 type={showPassword ? 'text' : 'password'}
-                name="password"
                 placeholder="Create password"
-                onChange={handleChange}
-                required
+                error={errors.password?.message}
                 className="pr-14"
+                {...register('password')}
               />
               <Button
                 type="button"
@@ -124,7 +129,7 @@ const Signup = () => {
                 {showPassword ? <EyeOff /> : <Eye />}
               </Button>
             </div>
-            <Button type="submit" loading={loading} fullWidth size="lg">
+            <Button type="submit" loading={isSubmitting} fullWidth size="lg">
               Create Account
             </Button>
           </form>

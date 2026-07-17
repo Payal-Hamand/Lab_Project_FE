@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { toast } from 'react-toastify'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
@@ -9,22 +12,28 @@ import { ROLES } from '@/constants/roles'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import AuthLayout from '@/components/layout/AuthLayout'
+
+const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+})
+
 const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({ email: '', password: '' })
-  const [loading, setLoading] = useState(false)
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  })
+  const onSubmit = async (data) => {
     try {
-      setLoading(true)
-      const { data } = await loginUser(formData)
-      login(data)
+      const { data: response } = await loginUser(data)
+      login(response)
       toast.success('Login Successful')
       if (location.state?.redirectTo) {
         navigate(location.state.redirectTo, {
@@ -33,19 +42,17 @@ const Login = () => {
             bookingType: location.state?.bookingType,
           },
         })
-      } else if (data.role === ROLES.ADMIN) {
+      } else if (response.role === ROLES.ADMIN) {
         navigate(ROUTES.ADMIN)
-      } else if (data.role === ROLES.LAB_ASSISTANT) {
+      } else if (response.role === ROLES.LAB_ASSISTANT) {
         navigate(ROUTES.LAB_ASSISTANT)
-      } else if (data.role === ROLES.LAB_OWNER) {
+      } else if (response.role === ROLES.LAB_OWNER) {
         navigate(ROUTES.LAB_OWNER)
       } else {
         navigate(ROUTES.DASHBOARD)
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login Failed')
-    } finally {
-      setLoading(false)
     }
   }
   return (
@@ -87,25 +94,23 @@ const Login = () => {
               Login to continue your healthcare journey.
             </p>
           </div>
-          <form onSubmit={handleSubmit} className="mt-8 md:mt-10 space-y-5 md:space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 md:mt-10 space-y-5 md:space-y-6">
             <Input
               label="Email Address"
               type="email"
-              name="email"
               placeholder="Enter your email"
-              onChange={handleChange}
-              required
+              error={errors.email?.message}
+              {...register('email')}
             />
             <div>
               <div className="relative">
                 <Input
                   label="Password"
                   type={showPassword ? 'text' : 'password'}
-                  name="password"
                   placeholder="Enter your password"
-                  onChange={handleChange}
-                  required
+                  error={errors.password?.message}
                   className="pr-14"
+                  {...register('password')}
                 />
                 <Button
                   type="button"
@@ -126,7 +131,7 @@ const Login = () => {
                 </Link>
               </div>
             </div>
-            <Button type="submit" loading={loading} fullWidth size="lg">
+            <Button type="submit" loading={isSubmitting} fullWidth size="lg">
               Login
             </Button>
           </form>

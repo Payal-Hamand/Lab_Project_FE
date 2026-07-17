@@ -7,12 +7,20 @@ const Select = ({
   children,
   className = '',
   containerClassName = '',
+  name,
+  id: idProp,
   ...props
 }) => {
+  const selectId =
+    idProp ||
+    (label ? `select-${(name || label || '').toLowerCase().replace(/\s+/g, '-')}` : undefined)
   return (
     <div className={containerClassName}>
       {label && (
-        <label className="font-medium text-gray-700 text-sm md:text-base block mb-2">
+        <label
+          htmlFor={selectId}
+          className="font-medium text-gray-700 text-sm md:text-base block mb-2"
+        >
           {Icon ? (
             <span className="flex items-center gap-2">
               <Icon />
@@ -24,6 +32,8 @@ const Select = ({
         </label>
       )}
       <select
+        id={selectId}
+        name={name}
         className={`
           w-full border rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4
           outline-none focus:border-blue-500 text-sm md:text-base bg-white

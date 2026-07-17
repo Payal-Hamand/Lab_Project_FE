@@ -1,16 +1,80 @@
-# React + Vite
+# Checked Up
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern diagnostic lab booking platform built with React 19, Vite 7, and Tailwind CSS 4.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Multi-role system**: Patient, Admin, Lab Owner, Lab Assistant dashboards
+- **Lab test booking** with home sample collection
+- **Health packages** with bundled tests
+- **Real-time booking management** with status tracking
+- **Payment integration** via Razorpay
+- **Report management** with PDF upload/download
+- **Geolocation** for patient address and lab location selection
+- **Responsive design** for mobile and desktop
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19, Vite 7, Tailwind CSS 4
+- **State**: React Context, TanStack Query
+- **Forms**: React Hook Form + Zod validation
+- **Routing**: React Router DOM 7
+- **HTTP**: Axios with interceptors
+- **Icons**: Lucide React
+- **Maps**: React Leaflet + OpenStreetMap
+- **Payments**: Razorpay
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+git clone <repo-url>
+cd lab-project-fe
+npm install
+cp .env.example .env
+npm run dev
+```
+
+## Environment Variables
+
+```env
+VITE_API_URL=https://lab-project-be.vercel.app
+```
+
+## Folder Structure
+
+```
+src/
+├── components/         # Shared UI components
+│   ├── ui/            # Button, Input, Modal, DataTable, etc.
+│   ├── Dashboard/     # Dashboard-specific components
+│   ├── layout/        # PublicLayout, AuthLayout, DashboardLayout
+│   └── *.jsx          # Shared components (Hero, Navbar, etc.)
+├── features/          # Feature-based modules
+│   ├── admin/         # Admin dashboard components
+│   ├── booking/       # Booking form & hook
+│   ├── lab-owner/     # Lab owner dashboard components
+│   ├── lab-assistant/ # Lab assistant dashboard components
+│   └── patient/       # Patient dashboard components
+├── services/          # API service modules
+├── hooks/             # Custom React hooks
+├── context/           # React context providers
+├── constants/         # App constants (routes, roles, status)
+├── pages/             # Page components
+└── routes/            # Route configuration
+```
+
+## Scripts
+
+```bash
+npm run dev          # Start dev server
+npm run build        # Production build
+npm run lint         # Run ESLint
+```
+
+## Backend
+
+The API server lives in a separate repository.
+
+## License
+
+MIT

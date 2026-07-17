@@ -6,14 +6,26 @@ const Textarea = ({
   rows = 4,
   className = '',
   containerClassName = '',
+  name,
+  id: idProp,
   ...props
 }) => {
+  const textareaId =
+    idProp ||
+    (label ? `textarea-${(name || label || '').toLowerCase().replace(/\s+/g, '-')}` : undefined)
   return (
     <div className={containerClassName}>
       {label && (
-        <label className="font-medium text-gray-700 text-sm md:text-base block mb-2">{label}</label>
+        <label
+          htmlFor={textareaId}
+          className="font-medium text-gray-700 text-sm md:text-base block mb-2"
+        >
+          {label}
+        </label>
       )}
       <textarea
+        id={textareaId}
+        name={name}
         rows={rows}
         className={`
           w-full border rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4

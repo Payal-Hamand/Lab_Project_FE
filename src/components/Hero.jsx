@@ -143,6 +143,7 @@ const Hero = () => {
                     setSearch('')
                     setShowDropdown(false)
                   }}
+                  aria-label="Clear search"
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <X />
@@ -192,6 +193,7 @@ const Hero = () => {
               </span>
               <button
                 onClick={() => setShowDropdown(false)}
+                aria-label="Close dropdown"
                 className="text-gray-400 hover:text-gray-600"
               >
                 <X size={12} />

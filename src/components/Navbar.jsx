@@ -134,6 +134,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
+                aria-label="Logout"
                 className="bg-gray-200 hover:bg-red-500 hover:text-white transition"
               >
                 <LogOut />
@@ -146,6 +147,7 @@ const Navbar = () => {
           variant="ghost"
           size="icon"
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           className="lg:hidden text-3xl text-blue-950"
         >
           {menuOpen ? <X /> : <Menu />}
@@ -168,6 +170,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setMenuOpen(false)}
+                aria-label="Close menu"
                 className="text-3xl text-blue-950"
               >
                 <X />
