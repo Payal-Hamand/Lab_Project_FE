@@ -45,7 +45,8 @@ useState(false)
 
       email: '',
 
-      password: ''
+      password: '',
+      phone: '',
 
     })
 
@@ -280,6 +281,27 @@ if (
                 type="email"
                 name="email"
                 placeholder="Enter your email"
+                onChange={handleChange}
+                required
+                className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"
+              />
+
+            </div>
+
+            {/* Phone Number */}
+
+            <div>
+
+              <label className="font-medium text-gray-700 text-sm md:text-base">
+
+                Phone Number
+
+              </label>
+
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Enter your phone number"
                 onChange={handleChange}
                 required
                 className="w-full border mt-2 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 outline-none focus:border-blue-500 text-sm md:text-base"

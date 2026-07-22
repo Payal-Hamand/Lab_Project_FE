@@ -100,6 +100,127 @@ const openEditModal = booking => {
     image: ''
 
   })
+
+  const [payment, setPayment] =
+useState(null);
+
+const [form, setForm] =
+useState({
+
+  accountName: "",
+
+  upiId: ""
+
+});
+
+const [qrImage, setQrImage] =
+useState(null);
+
+useEffect(() => {
+
+  fetchPayment();
+
+}, []);
+
+const fetchPayment = async () => {
+
+  try {
+
+    const { data } =
+      await API.get(
+        "/payment-setting"
+      );
+
+    if (data.data) {
+
+      setPayment(data.data);
+
+      setForm({
+
+        accountName:
+          data.data.accountName,
+
+        upiId:
+          data.data.upiId
+
+      });
+
+    }
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+};
+const handleSubmit = async () => {
+
+  try {
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "accountName",
+      form.accountName
+    );
+
+    formData.append(
+      "upiId",
+      form.upiId
+    );
+
+    if (qrImage) {
+
+      formData.append(
+        "qrImage",
+        qrImage
+      );
+
+    }
+
+    if (payment) {
+
+      await API.put(
+
+        "/payment-setting",
+
+        formData
+
+      );
+
+    } else {
+
+      await API.post(
+
+        "/payment-setting",
+
+        formData
+
+      );
+
+    }
+
+    toast.success(
+      "Saved Successfully"
+    );
+
+    fetchPayment();
+
+  } catch (error) {
+
+    toast.error(
+
+      error.response?.data?.message ||
+
+      "Something went wrong"
+
+    );
+
+  }
+
+};
   const [packageData,
   setPackageData
 ] = useState({
@@ -821,11 +942,12 @@ const getLabLocation = () => {
   }
 />
 
+
 </div>
 
 {/* ACTION CARDS */}
 
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
 
   {/* Create Test */}
 
@@ -881,7 +1003,7 @@ const getLabLocation = () => {
 
   <button
     onClick={() => setActivePanel("lab-owner")}
-    className="bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-3xl p-5 shadow-lg hover:scale-[1.02] transition"
+    className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-white rounded-3xl p-5 shadow-lg hover:scale-[1.02] transition"
   >
     <div className="flex items-center gap-4">
 
@@ -901,6 +1023,31 @@ const getLabLocation = () => {
 
     </div>
   </button>
+
+  {/* Upload Payment Receipt */}
+
+  <button
+  onClick={() => setActivePanel("payment")}
+  className="bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-3xl p-5 shadow-lg hover:scale-[1.02] transition"
+>
+  <div className="flex items-center gap-4">
+
+    <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+      💳
+    </div>
+
+    <div className="text-left">
+      <h3 className="font-bold text-lg">
+        Payment Settings
+      </h3>
+
+      <p className="text-green-100 text-sm">
+        Upload QR & UPI Details
+      </p>
+    </div>
+
+  </div>
+</button>
 
 </div>
 
@@ -1473,8 +1620,141 @@ const getLabLocation = () => {
       Create Lab Owner
 
     </button>
+    
 
   </form>
+
+</DashboardSidePanel>
+
+<DashboardSidePanel
+  open={activePanel === "payment"}
+  title="Payment Settings"
+  subtitle="Upload QR Code and UPI Details"
+  onClose={() => setActivePanel("")}
+>
+
+<form
+  onSubmit={(e) => {
+    e.preventDefault();
+    handleSubmit();
+  }}
+  className="space-y-6"
+>
+
+  <div>
+
+    <label className="block mb-2 font-semibold">
+      Account Holder Name
+    </label>
+
+    <input
+      type="text"
+      value={form.accountName}
+      onChange={(e)=>
+        setForm({
+          ...form,
+          accountName:e.target.value
+        })
+      }
+      className="w-full border rounded-2xl px-5 py-4"
+      placeholder="Enter Account Name"
+      required
+    />
+
+  </div>
+
+  <div>
+
+    <label className="block mb-2 font-semibold">
+      UPI ID
+    </label>
+
+    <input
+      type="text"
+      value={form.upiId}
+      onChange={(e)=>
+        setForm({
+          ...form,
+          upiId:e.target.value
+        })
+      }
+      className="w-full border rounded-2xl px-5 py-4"
+      placeholder="abc@okaxis"
+      required
+    />
+
+  </div>
+
+  <div>
+
+    <label className="block mb-2 font-semibold">
+      QR Code
+    </label>
+
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e)=>
+        setQrImage(
+          e.target.files[0]
+        )
+      }
+    />
+
+  </div>
+
+  {qrImage && (
+
+    <div className="bg-blue-50 rounded-2xl p-4">
+
+      <p className="font-medium text-blue-700">
+
+        Selected File
+
+      </p>
+
+      <p className="text-sm mt-2">
+
+        {qrImage.name}
+
+      </p>
+
+    </div>
+
+  )}
+
+  {payment?.qrImage && (
+
+    <div className="space-y-3">
+
+      <p className="font-semibold">
+
+        Current QR Code
+
+      </p>
+
+      <img
+        src={payment.qrImage}
+        alt=""
+        className="w-64 rounded-2xl border"
+      />
+
+    </div>
+
+  )}
+
+  <button
+    type="submit"
+    className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-semibold"
+  >
+
+    {payment
+      ? "Update Payment Settings"
+      : "Save Payment Settings"}
+
+  </button>
+
+</form>
 
 </DashboardSidePanel>
 
@@ -1648,17 +1928,6 @@ const getLabLocation = () => {
         </div>
 
         {/* User */}
-
-        {/* <div className="mt-4 bg-blue-50 rounded-2xl p-4">
-          <p className="text-xs text-gray-500">
-            User
-          </p>
-
-          <h3 className="font-semibold text-blue-700 mt-1">
-            {item.user?.name || "N/A"}
-          </h3>
-        </div> */}
-
 <div className="mt-4">
   {item.status === "Completed" ? (
     <div className="w-full bg-green-100 text-green-700 py-3 rounded-2xl text-center font-semibold">
@@ -1826,7 +2095,6 @@ const getLabLocation = () => {
           </tbody>
 
         </table>
-
       </div>
     )
   }

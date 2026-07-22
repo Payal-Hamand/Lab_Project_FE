@@ -45,11 +45,13 @@ const LabAssistantDashboard = () => {
   
   const [uploadingSample, setUploadingSample] = useState(false);
 const [creatingAssistant, setCreatingAssistant] = useState(false);
+const [paymentReceipt, setPaymentReceipt] = useState(null);
   const [loading, setLoading] =
     useState(true)
     const [activeSection,
   setActiveSection
 ] = useState('all')
+
 const [selectedBooking,
 setSelectedBooking] =
 useState(null)
@@ -65,6 +67,39 @@ useState('')
 const [showSampleModal,
 setShowSampleModal] =
 useState(false)
+const [paymentSetting, setPaymentSetting] = useState(null);
+
+const [showPaymentModal, setShowPaymentModal] =
+  useState(false);
+
+const [uploadingPayment, setUploadingPayment] =
+  useState(false);
+
+  const fetchPaymentSetting = async () => {
+  try {
+
+    const { data } = await API.get(
+      "/payment-setting"
+    );
+
+    setPaymentSetting(data.data);
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+};
+const handlePayment = async (booking) => {
+
+  setPaymentBooking(booking);
+
+  await fetchPaymentSetting();
+
+  setShowPaymentModal(true);
+
+};
+
 
     const tableRef = useRef(null)
 
@@ -235,129 +270,76 @@ const openNavigation = (booking) => {
     "_blank"
   );
 };
+const handlePaymentDone =
+async () => {
 
-const handlePayment =
-  async (booking) => {
+if (!paymentReceipt) {
 
-    try {
-
-      const { data } =
-        await API.post(
-          "/payment/create",
-          {
-            bookingId:
-              booking._id,
-
-            amount:
-              booking?.test?.price ||
-              booking?.package?.price,
-          }
-        );
-
-     const options = {
-  key: data.key,
-  amount: data.order.amount,
-  currency: data.order.currency,
-  name: "MediLab Healthcare",
-  description: "Lab Test Payment",
-  order_id: data.order.id,
-
-  handler: async function (response) {
-    try {
-      const verify = await API.post(
-        "/payment/verify",
-        {
-          ...response,
-          bookingId: booking._id,
-        }
-      );
-
-      if (verify.data.success) {
-        toast.success(
-          "Payment Successful"
-        );
-
-        fetchBookings();
-      } else {
-        toast.error(
-          "Payment Verification Failed"
-        );
-      }
-
-    } catch (error) {
-      console.log(error);
-      toast.error(
-        "Payment Verification Failed"
-      );
-    }
-  },
-
-  // Trigger when user closes popup
-  modal: {
-    ondismiss: async function () {
-
-      toast.info(
-        "Payment Cancelled"
-      );
-
-      await API.put(
-        `/bookings/${booking._id}/payment-status`,
-        {
-          paymentStatus: "Failed"
-        }
-      );
-
-      fetchBookings();
-    }
-  },
-
-  prefill: {
-    name: booking.patientName,
-    contact: booking.phone,
-  },
-
-  theme: {
-    color: "#2563eb",
-  }
-};
-
-const razorpay =
-  new window.Razorpay(options);
-
-// Handle payment failure
-razorpay.on(
-  "payment.failed",
-  async function (response) {
-    toast.error(
-      response.error.description ||
-      "Payment Failed"
-    );
-
-    await API.put(
-      `/bookings/${booking._id}/payment-status`,
-      {
-        paymentStatus: "Failed"
-      }
-    );
-
-    fetchBookings();
-  }
+toast.error(
+"Please upload payment receipt."
 );
 
-razorpay.open();
+return;
 
+}
 
-    } catch (error) {
+try {
 
-      console.log(error);
+setUploadingPayment(true);
 
-      toast.error(
-        "Payment Failed"
-      );
-    }
-  };
+const formData =
+new FormData();
 
+formData.append(
+"receipt",
+paymentReceipt
+);
 
+const res =
+await API.put(
+
+`/bookings/payment/${paymentBooking._id}`,
+
+formData,
+
+{
+headers:{
+"Content-Type":
+"multipart/form-data"
+}
+}
+
+);
+
+toast.success(
+res.data.message
+);
+
+setShowPaymentModal(false);
+
+setPaymentReceipt(null);
+
+fetchBookings();
+
+}
+catch(err){
+
+toast.error(
+
+err.response?.data?.message ||
+
+"Upload failed"
+
+);
+
+}
+finally{
+
+setUploadingPayment(false);
+
+}
+
+};
 useEffect(() => {
 
   const timer = setTimeout(() => {
@@ -1483,6 +1465,193 @@ transition
     </div>
   )
 }
+
+{
+showPaymentModal &&
+paymentSetting && (
+
+<div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+<div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+
+<h2 className="text-2xl font-bold mb-5">
+
+Collect Payment
+
+</h2>
+
+<div className="flex justify-center">
+
+<img
+src={paymentSetting.qrImage}
+className="w-64 rounded-2xl border"
+/>
+
+</div>
+
+<div className="mt-6 space-y-2">
+
+<p>
+
+<strong>Account Name :</strong>
+
+{paymentSetting.accountName}
+
+</p>
+
+<p>
+
+<strong>UPI ID :</strong>
+
+{paymentSetting.upiId}
+
+</p>
+
+<p>
+
+<strong>Amount :</strong>
+
+₹{
+paymentBooking?.test?.price ||
+paymentBooking?.package?.price
+}
+
+</p>
+
+</div>
+
+
+
+
+<div className="mt-5">
+
+  <h3 className="text-lg font-semibold text-blue-950 mb-3">
+    Upload Payment Receipt
+  </h3>
+
+  <div className="grid grid-cols-2 gap-3">
+
+    {/* Camera */}
+
+    <label className="border-2 border-dashed border-blue-300 rounded-2xl p-4 cursor-pointer hover:bg-blue-50 transition">
+
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+        onChange={(e) => {
+          if (e.target.files[0]) {
+            setPaymentReceipt(e.target.files[0]);
+          }
+        }}
+      />
+
+      <div className="flex flex-col items-center">
+
+        <div className="text-3xl">
+          📷
+        </div>
+
+        <p className="mt-2 text-sm font-semibold">
+          Capture
+        </p>
+
+      </div>
+
+    </label>
+
+    {/* Gallery */}
+
+    <label className="border-2 border-dashed border-green-300 rounded-2xl p-4 cursor-pointer hover:bg-green-50 transition">
+
+      <input
+        type="file"
+        accept="image/*,.pdf"
+        hidden
+        onChange={(e) => {
+          if (e.target.files[0]) {
+            setPaymentReceipt(e.target.files[0]);
+          }
+        }}
+      />
+
+      <div className="flex flex-col items-center">
+
+        <div className="text-3xl">
+          🖼️
+        </div>
+
+        <p className="mt-2 text-sm font-semibold">
+          Upload
+        </p>
+
+      </div>
+
+    </label>
+
+  </div>
+
+  {/* Preview */}
+
+  {paymentReceipt && (
+
+    <div className="mt-4 p-3 rounded-xl bg-blue-50 border">
+
+      <p className="text-sm font-semibold">
+        {paymentReceipt.name}
+      </p>
+
+      {paymentReceipt.type.startsWith("image/") && (
+
+        <img
+          src={URL.createObjectURL(paymentReceipt)}
+          alt=""
+          className="w-28 h-28 object-cover rounded-lg mt-3 border"
+        />
+
+      )}
+
+    </div>
+
+  )}
+
+</div>
+
+{/* Buttons */}
+
+<div className="flex gap-3 mt-5">
+
+  <button
+    onClick={() => {
+      setShowPaymentModal(false);
+      setPaymentReceipt(null);
+    }}
+    className="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300"
+  >
+    Cancel
+  </button>
+
+  <button
+    onClick={handlePaymentDone}
+    disabled={!paymentReceipt || uploadingPayment}
+    className={`flex-1 py-3 rounded-xl text-white font-semibold ${
+      !paymentReceipt || uploadingPayment
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-green-600 hover:bg-green-700"
+    }`}
+  >
+    {uploadingPayment ? "Uploading..." : "Payment Done"}
+  </button>
+
+</div>
+
+
+
+</div>
+
+</div>
+
+)}
     </div>
   )
 }
