@@ -8,14 +8,8 @@ import {
   toast
 } from 'react-toastify'
 
-import {
-  FaHeartbeat
-} from 'react-icons/fa'
-
-import {
-  useNavigate
-} from 'react-router-dom'
-
+import { FaHeartbeat } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import API from '../services/api'
 
 import {
