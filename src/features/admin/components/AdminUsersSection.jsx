@@ -1,0 +1,246 @@
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import { createLabOwner } from '@/services/user.service'
+import { updateBookingLab } from '@/services/booking.service'
+import { DashboardSidePanel, DashboardSectionHeader, EmptyState } from '@/components/Dashboard'
+import Input from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
+import Select from '@/components/ui/Select'
+import Modal from '@/components/ui/Modal'
+import LocationPicker from '@/components/LocationPicker'
+import { MapPin, Map } from 'lucide-react'
+
+const AdminUsersSection = ({
+  labOwners,
+  onRefresh,
+  showLabMap,
+  setShowLabMap,
+  showEditModal,
+  setShowEditModal,
+  selectedBooking,
+  selectedLab,
+  setSelectedLab,
+  labOwnersRef,
+  open,
+  onClose,
+}) => {
+  const [creating, setCreating] = useState(false)
+  const [labOwnerData, setLabOwnerData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    servicePincodes: '',
+    labAddress: '',
+    latitude: '',
+    longitude: '',
+  })
+
+  const handleChange = (e) => {
+    setLabOwnerData({
+      ...labOwnerData,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleCreateLabOwner = async (e) => {
+    e.preventDefault()
+    if (creating) return
+    if (
+      !labOwnerData.name ||
+      !labOwnerData.email ||
+      !labOwnerData.password ||
+      !labOwnerData.servicePincodes ||
+      !labOwnerData.labAddress ||
+      !labOwnerData.latitude ||
+      !labOwnerData.longitude
+    ) {
+      return toast.error('Please select lab location')
+    }
+    try {
+      setCreating(true)
+      await createLabOwner({
+        ...labOwnerData,
+        servicePincodes: labOwnerData.servicePincodes.split(',').map((item) => item.trim()),
+      })
+      toast.success('Lab Owner Created Successfully')
+      onRefresh()
+      onClose()
+      setLabOwnerData({
+        name: '',
+        email: '',
+        password: '',
+        servicePincodes: '',
+        labAddress: '',
+        latitude: '',
+        longitude: '',
+      })
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const handleUpdateLab = async () => {
+    try {
+      await updateBookingLab(selectedBooking._id, selectedLab)
+      toast.success('Lab Updated Successfully')
+      setShowEditModal(false)
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to Update Lab')
+    }
+  }
+
+  return (
+    <>
+      <DashboardSidePanel
+        open={open}
+        title="Create Lab Owner"
+        subtitle="Add new laboratory owner"
+        onClose={onClose}
+      >
+        <form onSubmit={handleCreateLabOwner} className="space-y-4">
+          <Input required type="text" name="name" placeholder="Full Name" value={labOwnerData.name} onChange={handleChange} />
+          <Input required type="email" name="email" placeholder="Email" value={labOwnerData.email} onChange={handleChange} />
+          <Input required type="password" name="password" placeholder="Password" value={labOwnerData.password} onChange={handleChange} />
+          <Input required type="text" name="servicePincodes" placeholder="411033, 411044" value={labOwnerData.servicePincodes} onChange={handleChange} />
+          <div>
+            {labOwnerData.labAddress && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-2">
+                <div className="text-xs font-medium text-green-700 flex items-center gap-1.5">
+                  <MapPin size={13} /> Lab Location Selected
+                </div>
+                <div className="text-[10px] text-[#4A6A8A] mt-1">{labOwnerData.labAddress}</div>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowLabMap(true)}
+              className="w-full bg-[#EEF6FF] text-[#1A6FD4] py-3 rounded-lg text-xs font-semibold hover:bg-[#C5DBF0] transition"
+            >
+              <Map size={14} className="inline mr-2" />
+              Select Lab Location On Map
+            </button>
+            <Modal
+              open={showLabMap}
+              onClose={() => setShowLabMap(false)}
+              title="Select Lab Location"
+              size="lg"
+            >
+              <LocationPicker
+                location={{
+                  lat: Number(labOwnerData.latitude) || 18.5204,
+                  lng: Number(labOwnerData.longitude) || 73.8567,
+                }}
+                setLocation={(loc) => {
+                  setLabOwnerData((prev) => ({
+                    ...prev,
+                    latitude: loc.lat,
+                    longitude: loc.lng,
+                  }))
+                }}
+                onLocationSelect={async (lat, lng) => {
+                  const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+                  )
+                  const data = await response.json()
+                  setLabOwnerData((prev) => ({
+                    ...prev,
+                    labAddress: data.display_name,
+                    latitude: lat,
+                    longitude: lng,
+                  }))
+                }}
+              />
+              <Button onClick={() => setShowLabMap(false)} fullWidth variant="success" className="mt-4">
+                Confirm Location
+              </Button>
+            </Modal>
+          </div>
+          <Button type="submit" loading={creating} fullWidth>
+            Create Lab Owner
+          </Button>
+        </form>
+      </DashboardSidePanel>
+
+      {/* Lab Owners Table */}
+      <div ref={labOwnersRef} className="bg-white border border-[#C5DBF0] rounded-xl shadow-card mt-8 p-5 md:p-6">
+        <DashboardSectionHeader title="Lab Owners" subtitle="Manage all laboratory owners" />
+        {labOwners.length === 0 ? (
+          <EmptyState text="No Lab Owners Found" />
+        ) : (
+          <div className="overflow-x-auto mt-4">
+            <table className="w-full min-w-[900px]">
+              <thead className="bg-[#E8F4FF]">
+                <tr>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Owner</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Email</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Role</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Service Areas</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {labOwners.map((owner) => (
+                  <tr key={owner._id} className="border-b border-[#E8F4FF] hover:bg-[#EEF6FF] transition">
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-[10px] bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm">
+                          {owner.name?.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="text-xs font-medium text-[#0A2240]">{owner.name}</h3>
+                          <p className="text-[10px] text-[#4A6A8A] mt-0.5">ID: {owner._id.slice(-6)}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-xs text-[#4A6A8A]">{owner.email}</td>
+                    <td className="py-4 px-4">
+                      <span className="bg-[#EEF6FF] text-[#0C447C] px-2.5 py-1 rounded-full text-[10px] font-semibold capitalize">
+                        {owner.role}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {owner.servicePincodes?.map((pin, index) => (
+                          <span key={index} className="bg-[#E8F4FF] border border-[#C5DBF0] px-2 py-0.5 rounded-full text-[10px] text-[#4A6A8A]">
+                            {pin}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                        Active
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        <Modal open={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Assigned Lab">
+          <div className="space-y-4">
+            <Select value={selectedLab} onChange={(e) => setSelectedLab(e.target.value)} label="Lab Owner">
+              <option value="">Select Lab Owner</option>
+              {labOwners.map((lab) => (
+                <option key={lab._id} value={lab._id}>
+                  {lab.name}
+                </option>
+              ))}
+            </Select>
+            <Button onClick={handleUpdateLab} disabled={!selectedLab} fullWidth>
+              Save Changes
+            </Button>
+          </div>
+        </Modal>
+      </div>
+    </>
+  )
+}
+
+export default AdminUsersSection

@@ -1,0 +1,137 @@
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ClipboardList, FlaskConical, TestTubeDiagonal, PackageOpen, Users } from 'lucide-react'
+import { ROUTES } from '@/constants/routes'
+import { BOOKING_STATUS } from '@/constants/status'
+import { DashboardStatsCard } from '@/components/Dashboard'
+
+const AdminStatsGrid = ({
+  bookings,
+  tests,
+  packages,
+  labOwners,
+  activeSection,
+  setActiveSection,
+  scrollToTable,
+  scrollToLabOwners,
+  setActivePanel,
+}) => {
+  const navigate = useNavigate()
+
+  return (
+    <>
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+        <DashboardStatsCard
+          title="Bookings"
+          value={bookings.length}
+          icon={<ClipboardList size={18} />}
+          color="blue"
+          bgColor="bg-[#EEF6FF] text-[#1A6FD4]"
+          active={activeSection === 'all'}
+          onClick={() => {
+            setActiveSection('all')
+            scrollToTable()
+          }}
+        />
+        <DashboardStatsCard
+          title="Tests"
+          value={tests.length}
+          icon={<FlaskConical size={18} />}
+          color="green"
+          bgColor="bg-green-100 text-green-600"
+          onClick={() => navigate(ROUTES.TESTS)}
+        />
+        <DashboardStatsCard
+          title="Pending"
+          value={bookings.filter((item) => item.status === BOOKING_STATUS.PENDING).length}
+          icon={<TestTubeDiagonal size={18} />}
+          color="yellow"
+          bgColor="bg-yellow-100 text-yellow-600"
+          active={activeSection === 'pending'}
+          onClick={() => {
+            setActiveSection('pending')
+            scrollToTable()
+          }}
+        />
+        <DashboardStatsCard
+          title="Completed"
+          value={bookings.filter((item) => item.status === BOOKING_STATUS.COMPLETED).length}
+          icon={<PackageOpen size={18} />}
+          color="purple"
+          bgColor="bg-purple-100 text-purple-600"
+          active={activeSection === 'completed'}
+          onClick={() => {
+            setActiveSection('completed')
+            scrollToTable()
+          }}
+        />
+        <DashboardStatsCard
+          title="Packages"
+          value={packages.length}
+          icon={<PackageOpen size={18} />}
+          color="purple"
+          bgColor="bg-purple-100 text-purple-600"
+          onClick={() => navigate(ROUTES.PACKAGES)}
+        />
+        <DashboardStatsCard
+          title="Lab Owners"
+          value={labOwners.length}
+          icon={<Users size={18} />}
+          color="green"
+          bgColor="bg-green-100 text-green-600"
+          onClick={scrollToLabOwners}
+        />
+      </div>
+
+      {/* Quick Action Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-6">
+        <button
+          onClick={() => setActivePanel('test')}
+          className="bg-[#0A2240] text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-[#0d2d4a] transition text-left"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-[10px] bg-[#1A6FD4]/30 flex items-center justify-center">
+              <FlaskConical size={20} />
+            </div>
+            <div>
+              <h3 className="font-serif text-base text-white">Create Test</h3>
+              <p className="text-white/50 text-[11px] mt-0.5">Add laboratory tests</p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={() => setActivePanel('package')}
+          className="bg-[#0A2240] text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-[#0d2d4a] transition text-left"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-[10px] bg-[#5BB8FF]/20 flex items-center justify-center">
+              <PackageOpen size={20} />
+            </div>
+            <div>
+              <h3 className="font-serif text-base text-white">Create Package</h3>
+              <p className="text-white/50 text-[11px] mt-0.5">Add health packages</p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={() => setActivePanel('lab-owner')}
+          className="bg-[#0A2240] text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-[#0d2d4a] transition text-left"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-[10px] bg-green-500/20 flex items-center justify-center">
+              <Users size={20} />
+            </div>
+            <div>
+              <h3 className="font-serif text-base text-white">Create Lab Owner</h3>
+              <p className="text-white/50 text-[11px] mt-0.5">Add laboratory owner</p>
+            </div>
+          </div>
+        </button>
+      </div>
+    </>
+  )
+}
+
+export default AdminStatsGrid
