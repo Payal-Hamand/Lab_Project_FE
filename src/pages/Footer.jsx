@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+import { FlaskConical } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 
 const linkGroups = [
@@ -48,19 +50,24 @@ const socials = [
 export default function Footer() {
   const year = new Date().getFullYear()
   return (
-    <footer className="bg-foreground">
+    <footer className="bg-tertiary">
       <div className="enterprise-container pt-12 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_repeat(4,1fr)] gap-8">
           {/* Brand column */}
           <div>
-            <div className="font-heading font-bold text-lg text-white mb-2 flex items-center gap-2">
-              <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center flex-shrink-0">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5">
-                  <polyline points="5,13 9,17 19,7" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+            <Link to={ROUTES.HOME} className="flex items-center gap-2.5 mb-4">
+              <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                <FlaskConical size={18} className="text-white" />
               </div>
-              Checked<span className="text-primary">+</span>Up
-            </div>
+              <div className="flex flex-col leading-none">
+                <span className="font-heading font-bold text-white text-lg leading-tight">
+                  Checked <span className="text-primary">Up</span>
+                </span>
+                <span className="text-[9px] text-primary font-semibold tracking-wider uppercase">
+                  LAB TESTS
+                </span>
+              </div>
+            </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px] mb-6">
               Book lab tests, arrange home sample collection, and get reports from accredited labs —
               all in one place.

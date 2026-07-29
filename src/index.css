@@ -30,6 +30,8 @@ body {
   --primary-foreground: #FFFFFF;
   --secondary: #046C9A;
   --secondary-foreground: #FFFFFF;
+  --tertiary: #1a2332;
+  --tertiary-foreground: #FFFFFF;
   
   --muted: #94A3B8;
   --muted-foreground: #64748B;
@@ -84,6 +86,8 @@ body {
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-tertiary: var(--tertiary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-hero-bg: var(--hero-bg);
