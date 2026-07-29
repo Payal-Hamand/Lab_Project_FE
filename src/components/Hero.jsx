@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { Search, ShieldCheck, FlaskConical, X, Phone, Mail, CheckCircle } from 'lucide-react'
+import { Search, ShieldCheck, FlaskConical, X, Clock, BadgeCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '@/hooks/useAuth'
 import useClickOutside from '@/hooks/useClickOutside'
@@ -103,82 +103,65 @@ const Hero = () => {
 
   return (
     <>
-      {/* Top Banner */}
-      <div className="bg-[#1a2332] text-white py-2">
-        <div className="enterprise-container flex items-center justify-between">
-          <p className="text-[11px] font-medium tracking-wide">Trusted Diagnostic Lab Platform</p>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-1.5 text-[11px]">
-              <Phone size={12} />
-              <span>913-050-1863</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[11px]">
-              <Mail size={12} />
-              <span>support@medilab.com</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Hero Section */}
-      <section className="bg-hero-bg relative py-12 lg:py-20 border-b border-border">
+      <section className="bg-background relative py-12 lg:py-20 border-b border-border">
         <div className="enterprise-container flex flex-col lg:flex-row gap-12 xl:gap-16 items-center">
           {/* Left Content */}
           <div className="w-full lg:w-[55%] xl:w-[60%]">
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-6">
-              <CheckCircle size={14} className="text-primary" />
+              <ShieldCheck size={14} className="text-primary" />
               <span className="text-primary text-[11px] font-semibold tracking-wide">India's Most Trusted Lab</span>
             </div>
 
             {/* Heading */}
             <h1 className="font-heading font-bold text-4xl lg:text-5xl text-foreground leading-tight mb-4">
-              Trusted Lab Tests
+              Book Lab Tests
               <br />
-              for a <span className="text-primary">Healthier</span> You
+              <span className="text-primary">Simple. Fast. Reliable.</span>
             </h1>
 
             {/* Subtext */}
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-md mt-4">
-              Book lab tests online with ease and get accurate reports from certified labs with home sample collection.
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mt-4">
+              Accurate reports from NABL accredited labs.<br/>
+              Home sample collection across 1200+ cities.
             </p>
 
-            {/* Feature Pills */}
-            <div className="flex flex-wrap gap-4 mt-8">
-              <div className="inline-flex items-center gap-1.5 text-primary text-[11px] font-semibold">
-                <CheckCircle size={14} />
-                Accurate Reports
+            {/* Stats Section */}
+            <div className="flex flex-wrap gap-8 mt-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <BadgeCheck size={20} className="text-primary" />
+                </div>
+                <div>
+                  <p className="font-heading font-bold text-foreground text-lg leading-tight">1500+</p>
+                  <p className="text-muted-foreground text-xs">Tests</p>
+                </div>
               </div>
-              <div className="inline-flex items-center gap-1.5 text-primary text-[11px] font-semibold">
-                <CheckCircle size={14} />
-                Home Collection
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <FlaskConical size={20} className="text-primary" />
+                </div>
+                <div>
+                  <p className="font-heading font-bold text-foreground text-lg leading-tight">100+</p>
+                  <p className="text-muted-foreground text-xs">Labs</p>
+                </div>
               </div>
-              <div className="inline-flex items-center gap-1.5 text-primary text-[11px] font-semibold">
-                <CheckCircle size={14} />
-                Fast Delivery
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Clock size={20} className="text-primary" />
+                </div>
+                <div>
+                  <p className="font-heading font-bold text-foreground text-lg leading-tight">Same Day</p>
+                  <p className="text-muted-foreground text-xs">Report Delivery*</p>
+                </div>
               </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex gap-4 mt-10">
-              <button
-                onClick={() => navigate(ROUTES.TESTS)}
-                className="bg-primary text-white text-sm font-semibold px-6 py-3 rounded-lg transition shadow-sm"
-              >
-                Book a Test
-              </button>
-              <button
-                onClick={() => navigate(ROUTES.PACKAGES)}
-                className="border-[1.5px] border-border text-foreground bg-white text-sm font-semibold px-6 py-3 rounded-lg hover:bg-accent transition"
-              >
-                View Packages
-              </button>
             </div>
           </div>
 
           {/* Right — Search Card */}
           <div className="w-full lg:w-[45%] xl:w-[40%] flex-shrink-0">
-            <div className="bg-card border border-border p-8 rounded-[12px] shadow-sm search-card-float">
+            <div className="bg-card border border-[#D6E4F0] p-8 rounded-[12px] shadow-sm search-card-float">
               <h3 className="font-heading font-bold text-foreground text-lg mb-6 tracking-wide">
                 Book a Lab Test
               </h3>
@@ -186,7 +169,7 @@ const Hero = () => {
               {/* Search Input */}
               <div
                 ref={inputWrapperRef}
-                className="border border-border bg-white rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition"
+                className="border border-border bg-white rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition"
               >
                 <Search size={16} className="text-muted-foreground flex-shrink-0" />
                 <input
@@ -216,13 +199,13 @@ const Hero = () => {
 
               {/* Popular Tags */}
               <div className="mt-8">
-                <p className="text-xs font-semibold text-foreground mb-3">Popular:</p>
+                <p className="text-xs font-semibold text-foreground mb-3">Popular Tests</p>
                 <div className="flex flex-wrap gap-2">
-                  {['CBC', 'Thyroid', 'Vitamin D', 'Diabetes'].map((term) => (
+                  {['CBC', 'Thyroid Profile', 'Vitamin D', 'Lipid Profile', 'HbA1c', 'Liver Function Test', 'Kidney Function Test'].map((term) => (
                     <span
                       key={term}
                       onClick={() => fillSearch(term)}
-                      className="text-xs font-semibold text-primary cursor-pointer hover:underline transition"
+                      className="text-xs font-medium border border-border rounded-lg px-3 py-1.5 text-primary bg-accent cursor-pointer hover:bg-primary hover:text-white hover:border-primary transition"
                     >
                       {term}
                     </span>
@@ -232,9 +215,9 @@ const Hero = () => {
               
               <button
                 onClick={() => navigate(ROUTES.TESTS)}
-                className="w-full h-10 mt-6 bg-primary text-white rounded-lg font-semibold text-sm transition"
+                className="w-full h-10 mt-6 bg-primary hover:bg-primary/90 text-white rounded-[8px] font-semibold text-sm transition"
               >
-                Search
+                Book Now
               </button>
             </div>
           </div>

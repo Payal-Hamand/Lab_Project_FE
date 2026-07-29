@@ -2,6 +2,7 @@ import React from 'react'
 import PublicLayout from '@/components/layout/PublicLayout'
 import Hero from '@/components/Hero'
 import Features from '@/components/Features'
+import PopularTests from '@/components/PopularTests'
 import Packages from '@/components/Packages'
 
 const Home = () => {
@@ -9,6 +10,7 @@ const Home = () => {
     <PublicLayout>
       <Hero />
       <Features />
+      <PopularTests />
       <Packages />
     </PublicLayout>
   )
