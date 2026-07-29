@@ -105,8 +105,8 @@ const AdminDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-[#E8F4FF] min-h-screen">
-        <div className="bg-[#0A2240]">
+      <div className="bg-background min-h-screen">
+        <div className="bg-tertiary">
           <div className="enterprise-container py-8 text-white">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-3 py-1 rounded-full text-[10px] mb-4">
               <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>

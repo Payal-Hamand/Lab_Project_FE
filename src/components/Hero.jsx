@@ -161,7 +161,7 @@ const Hero = () => {
 
           {/* Right — Search Card */}
           <div className="w-full lg:w-[45%] xl:w-[40%] flex-shrink-0">
-            <div className="bg-card border border-[#D6E4F0] p-8 rounded-[12px] shadow-sm search-card-float">
+            <div className="bg-card border border-border p-8 rounded-[12px] shadow-sm search-card-float">
               <h3 className="font-heading font-bold text-foreground text-lg mb-6 tracking-wide">
                 Book a Lab Test
               </h3>

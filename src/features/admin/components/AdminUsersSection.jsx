@@ -110,13 +110,13 @@ const AdminUsersSection = ({
                 <div className="text-xs font-medium text-green-700 flex items-center gap-1.5">
                   <MapPin size={13} /> Lab Location Selected
                 </div>
-                <div className="text-[10px] text-[#4A6A8A] mt-1">{labOwnerData.labAddress}</div>
+                <div className="text-[10px] text-muted-foreground mt-1">{labOwnerData.labAddress}</div>
               </div>
             )}
             <button
               type="button"
               onClick={() => setShowLabMap(true)}
-              className="w-full bg-[#EEF6FF] text-[#1A6FD4] py-3 rounded-lg text-xs font-semibold hover:bg-[#C5DBF0] transition"
+              className="w-full bg-primary/10 text-primary py-3 rounded-lg text-xs font-semibold hover:bg-primary/20 transition"
             >
               <Map size={14} className="inline mr-2" />
               Select Lab Location On Map
@@ -164,46 +164,46 @@ const AdminUsersSection = ({
       </DashboardSidePanel>
 
       {/* Lab Owners Table */}
-      <div ref={labOwnersRef} className="bg-white border border-[#C5DBF0] rounded-xl shadow-card mt-8 p-5 md:p-6">
+      <div ref={labOwnersRef} className="bg-white border border-border rounded-xl shadow-card mt-8 p-5 md:p-6">
         <DashboardSectionHeader title="Lab Owners" subtitle="Manage all laboratory owners" />
         {labOwners.length === 0 ? (
           <EmptyState text="No Lab Owners Found" />
         ) : (
           <div className="overflow-x-auto mt-4">
             <table className="w-full min-w-[900px]">
-              <thead className="bg-[#E8F4FF]">
+              <thead className="bg-primary/10">
                 <tr>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Owner</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Email</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Role</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Service Areas</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-[#4A6A8A]">Status</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Owner</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Email</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Role</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Service Areas</th>
+                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {labOwners.map((owner) => (
-                  <tr key={owner._id} className="border-b border-[#E8F4FF] hover:bg-[#EEF6FF] transition">
+                  <tr key={owner._id} className="border-b border-border hover:bg-accent transition">
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-[10px] bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm">
                           {owner.name?.charAt(0)}
                         </div>
                         <div>
-                          <h3 className="text-xs font-medium text-[#0A2240]">{owner.name}</h3>
-                          <p className="text-[10px] text-[#4A6A8A] mt-0.5">ID: {owner._id.slice(-6)}</p>
+                          <h3 className="text-xs font-medium text-foreground">{owner.name}</h3>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">ID: {owner._id.slice(-6)}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-xs text-[#4A6A8A]">{owner.email}</td>
+                    <td className="py-4 px-4 text-xs text-muted-foreground">{owner.email}</td>
                     <td className="py-4 px-4">
-                      <span className="bg-[#EEF6FF] text-[#0C447C] px-2.5 py-1 rounded-full text-[10px] font-semibold capitalize">
+                      <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[10px] font-semibold capitalize">
                         {owner.role}
                       </span>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex flex-wrap gap-1.5">
                         {owner.servicePincodes?.map((pin, index) => (
-                          <span key={index} className="bg-[#E8F4FF] border border-[#C5DBF0] px-2 py-0.5 rounded-full text-[10px] text-[#4A6A8A]">
+                          <span key={index} className="bg-primary/10 border border-border px-2 py-0.5 rounded-full text-[10px] text-muted-foreground">
                             {pin}
                           </span>
                         ))}

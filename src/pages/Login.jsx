@@ -204,13 +204,13 @@ const Login = () => {
   }
 
   return (
-    <div className="flex h-screen w-full bg-[#F5F7FA]">
+    <div className="flex h-screen w-full bg-background">
       {/* Left Panel */}
-      <div className="hidden md:flex flex-col w-[44%] bg-[#1A3C5E] px-[32px] py-[36px] relative overflow-hidden justify-between">
+      <div className="hidden md:flex flex-col w-[44%] bg-tertiary px-[32px] py-[36px] relative overflow-hidden justify-between">
         {/* Top: Logo */}
         <Link to={ROUTES.HOME} className="flex items-center gap-2 z-10">
           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-[#1A3C5E] font-bold text-xl leading-none">C</span>
+            <span className="text-tertiary font-bold text-xl leading-none">C</span>
           </div>
           <span className="font-heading font-bold text-xl text-white tracking-tight">Checked Up</span>
         </Link>
@@ -301,10 +301,10 @@ const Login = () => {
           <ArrowLeft size={14} /> Home
         </Button>
         
-        <div className="w-full max-w-[440px] bg-white p-[40px] border border-[#D6E4F0] rounded-[10px] shadow-sm relative z-10">
+        <div className="w-full max-w-[440px] bg-white p-[40px] border border-border rounded-[10px] shadow-sm relative z-10">
           <div className="flex justify-center mb-6 md:hidden">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-2xl leading-none">C</span>
+              <span className="text-primary-foreground font-bold text-2xl leading-none">C</span>
             </div>
           </div>
           
@@ -316,20 +316,20 @@ const Login = () => {
           </div>
 
           {/* 3-column trust micro-strip */}
-          <div className="flex items-center justify-between bg-[#F5F7FA] rounded-lg p-2.5 mb-6 border border-[#E8EEF4]">
+          <div className="flex items-center justify-between bg-background rounded-lg p-2.5 mb-6 border border-border">
             <div className="flex flex-col items-center flex-1">
-              <ShieldCheck size={16} className="text-[#0CADF3] mb-1" />
-              <span className="text-[11px] text-[#7A8A9A]">NABL labs</span>
+              <ShieldCheck size={16} className="text-secondary mb-1" />
+              <span className="text-[11px] text-muted-foreground">NABL labs</span>
             </div>
-            <div className="w-[1px] h-8 bg-[#E8EEF4]"></div>
+            <div className="w-[1px] h-8 bg-border"></div>
             <div className="flex flex-col items-center flex-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0CADF3] mb-1"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span className="text-[11px] text-[#7A8A9A]">24hr reports</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-secondary mb-1"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span className="text-[11px] text-muted-foreground">24hr reports</span>
             </div>
-            <div className="w-[1px] h-8 bg-[#E8EEF4]"></div>
+            <div className="w-[1px] h-8 bg-border"></div>
             <div className="flex flex-col items-center flex-1">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0CADF3] mb-1"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              <span className="text-[11px] text-[#7A8A9A]">Home collection</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-secondary mb-1"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span className="text-[11px] text-muted-foreground">Home collection</span>
             </div>
           </div>
 
@@ -370,15 +370,15 @@ const Login = () => {
                 </Link>
               </div>
             </div>
-            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-[#046C9A] hover:bg-[#035b82] text-white">
+            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-secondary hover:bg-secondary/90 text-white">
               Sign In
             </Button>
           </form>
 
           {/* SSL Note */}
-          <div className="mt-8 pt-4 border-t border-[#E8EEF4] flex items-center justify-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#9AAAB4]"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span className="text-[11px] text-[#9AAAB4]">Secured by 256-bit SSL encryption</span>
+          <div className="mt-8 pt-4 border-t border-border flex items-center justify-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span className="text-[11px] text-muted-foreground">Secured by 256-bit SSL encryption</span>
           </div>
 
           <p className="mt-6 text-muted-foreground text-center text-sm">

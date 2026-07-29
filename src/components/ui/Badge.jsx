@@ -3,27 +3,27 @@ import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 
 const statusStyles = {
   [BOOKING_STATUS.COMPLETED]: 'bg-green-50 text-green-700',
-  [BOOKING_STATUS.PENDING]: 'bg-[#EEF6FF] text-[#0C447C]',
+  [BOOKING_STATUS.PENDING]: 'bg-primary/10 text-primary',
   [BOOKING_STATUS.CANCELLED]: 'bg-red-100 text-red-700',
-  [BOOKING_STATUS.RESCHEDULED]: 'bg-[#EEF6FF] text-[#0C447C]',
-  [BOOKING_STATUS.ASSIGNED]: 'bg-[#EEF6FF] text-[#0C447C]',
-  [BOOKING_STATUS.REACHED]: 'bg-[#E6F1FB] text-[#185FA5]',
-  [BOOKING_STATUS.SAMPLE_COLLECTED]: 'bg-[#E6F1FB] text-[#185FA5]',
+  [BOOKING_STATUS.RESCHEDULED]: 'bg-primary/10 text-primary',
+  [BOOKING_STATUS.ASSIGNED]: 'bg-primary/10 text-primary',
+  [BOOKING_STATUS.REACHED]: 'bg-accent text-secondary',
+  [BOOKING_STATUS.SAMPLE_COLLECTED]: 'bg-accent text-secondary',
   [PAYMENT_STATUS.PAID]: 'bg-green-50 text-green-700',
   [PAYMENT_STATUS.UNPAID]: 'bg-red-100 text-red-700',
   [PAYMENT_STATUS.FAILED]: 'bg-red-100 text-red-700',
 }
 
 const Badge = ({ children, variant = 'default', status, className = '' }) => {
-  const statusClass = status ? statusStyles[status] || 'bg-[#EEF6FF] text-[#4A6A8A]' : ''
+  const statusClass = status ? statusStyles[status] || 'bg-primary/10 text-muted-foreground' : ''
 
   const variantStyles = {
-    default: 'bg-[#EEF6FF] text-[#4A6A8A]',
-    primary: 'bg-[#EEF6FF] text-[#0C447C]',
+    default: 'bg-primary/10 text-muted-foreground',
+    primary: 'bg-primary/10 text-primary',
     success: 'bg-green-50 text-green-700',
-    warning: 'bg-[#FFF7ED] text-orange-700',
+    warning: 'bg-accent text-orange-700',
     danger: 'bg-red-100 text-red-700',
-    info: 'bg-[#E6F1FB] text-[#185FA5]',
+    info: 'bg-accent text-secondary',
   }
 
   return (

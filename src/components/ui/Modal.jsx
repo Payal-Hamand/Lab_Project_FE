@@ -78,7 +78,7 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
 
   return (
     <div
-      className="fixed inset-0 bg-[#0A2240]/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-tertiary/50 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -86,18 +86,18 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
     >
       <div
         ref={modalRef}
-        className={`bg-white border border-[#C5DBF0] rounded-xl w-full ${sizeClasses[size] || sizeClasses.md} max-h-[90vh] overflow-y-auto ${className}`}
+        className={`bg-white border border-border rounded-xl w-full ${sizeClasses[size] || sizeClasses.md} max-h-[90vh] overflow-y-auto ${className}`}
       >
         {(title || onClose) && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#C5DBF0] bg-[#E8F4FF] rounded-t-xl">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-primary/10 rounded-t-xl">
             <div>
               {title && (
-                <h2 id={titleId} className="font-serif text-lg text-[#0A2240]">
+                <h2 id={titleId} className="font-serif text-lg text-foreground">
                   {title}
                 </h2>
               )}
               {subtitle && (
-                <p id={subtitleId} className="text-xs text-[#4A6A8A] mt-0.5">
+                <p id={subtitleId} className="text-xs text-muted-foreground mt-0.5">
                   {subtitle}
                 </p>
               )}
@@ -106,7 +106,7 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
               <button
                 onClick={onClose}
                 aria-label="Close modal"
-                className="text-[#4A6A8A] hover:text-red-500 transition p-1"
+                className="text-muted-foreground hover:text-red-500 transition p-1"
               >
                 <X size={16} />
               </button>

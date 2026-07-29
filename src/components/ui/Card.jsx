@@ -4,7 +4,7 @@ const Card = ({ children, className = '', padding = true, hover = false, ...prop
   return (
     <div
       className={`
-        bg-white rounded-xl border border-[#C5DBF0] shadow-card
+        bg-white rounded-xl border border-border shadow-card
         ${hover ? 'hover:shadow-card-hover transition duration-300' : ''}
         ${padding ? 'p-5 md:p-6' : ''}
         ${className}

@@ -18,7 +18,7 @@ const Textarea = ({
       {label && (
         <label
           htmlFor={textareaId}
-          className="text-[10px] text-[#4A6A8A] font-medium tracking-[0.3px] block mb-1.5"
+          className="text-[10px] text-muted-foreground font-medium tracking-[0.3px] block mb-1.5"
         >
           {label}
         </label>
@@ -28,8 +28,8 @@ const Textarea = ({
         name={name}
         rows={rows}
         className={`
-          w-full border border-[#C5DBF0] rounded-lg px-3 py-2.5
-          outline-none focus:border-[#1A6FD4] text-xs text-[#4A6A8A] resize-none
+          w-full border border-border rounded-lg px-3 py-2.5
+          outline-none focus:border-primary text-xs text-muted-foreground resize-none
           ${error ? 'border-red-500' : ''}
           ${className}
         `}

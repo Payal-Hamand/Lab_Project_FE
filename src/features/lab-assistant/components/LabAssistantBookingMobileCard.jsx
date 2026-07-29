@@ -25,59 +25,59 @@ const LabAssistantBookingMobileCard = ({
       {filteredBookings.map((item) => (
         <div
           key={item._id}
-          className="bg-white border border-[#C5DBF0] rounded-[10px] overflow-hidden"
+          className="bg-white border border-border rounded-[10px] overflow-hidden"
         >
           <div
             className={`h-1.5 ${
               item.status === BOOKING_STATUS.COMPLETED
                 ? 'bg-green-600'
                 : item.status === BOOKING_STATUS.SAMPLE_COLLECTED
-                ? 'bg-[#378ADD]'
-                : 'bg-[#1A6FD4]'
+                ? 'bg-primary'
+                : 'bg-primary'
             }`}
           />
           <div className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#EEF6FF] flex items-center justify-center flex-shrink-0">
-                <CircleUser className="text-[#1A6FD4]" size={18} />
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <CircleUser className="text-primary" size={18} />
               </div>
               <div className="flex-1">
-                <h2 className="text-xs font-medium text-[#0A2240]">{item.patientName}</h2>
-                <p className="text-[10px] text-[#4A6A8A] flex items-center gap-1 mt-0.5">
+                <h2 className="text-xs font-medium text-foreground">{item.patientName}</h2>
+                <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
                   <Phone size={11} /> {item.phone}
                 </p>
               </div>
             </div>
 
-            <div className="mt-3 bg-[#E8F4FF] rounded-lg p-3">
-              <p className="text-[10px] text-[#4A6A8A] mb-1">Test / Package</p>
+            <div className="mt-3 bg-accent rounded-lg p-3">
+              <p className="text-[10px] text-muted-foreground mb-1">Test / Package</p>
               <div className="flex justify-between items-center gap-3">
-                <h3 className="text-xs font-medium text-[#0A2240]">
+                <h3 className="text-xs font-medium text-foreground">
                   {item?.test?.title || item?.package?.title || 'N/A'}
                 </h3>
-                <p className="font-mono font-bold text-[#1A6FD4] text-sm whitespace-nowrap">
+                <p className="font-mono font-bold text-primary text-sm whitespace-nowrap">
                   ₹{item?.test?.price || item?.package?.price || 0}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 mt-2">
-              <div className="bg-[#EEF6FF] rounded-lg p-2.5">
-                <p className="text-[10px] text-[#4A6A8A]">Date</p>
-                <p className="text-xs font-medium text-[#0A2240] mt-0.5">{item.bookingDate}</p>
+              <div className="bg-primary/10 rounded-lg p-2.5">
+                <p className="text-[10px] text-muted-foreground">Date</p>
+                <p className="text-xs font-medium text-foreground mt-0.5">{item.bookingDate}</p>
               </div>
-              <div className="bg-[#EEF6FF] rounded-lg p-2.5">
-                <p className="text-[10px] text-[#4A6A8A]">Time</p>
-                <p className="text-xs font-medium text-[#0A2240] mt-0.5">{item.bookingTime}</p>
+              <div className="bg-primary/10 rounded-lg p-2.5">
+                <p className="text-[10px] text-muted-foreground">Time</p>
+                <p className="text-xs font-medium text-foreground mt-0.5">{item.bookingTime}</p>
               </div>
             </div>
 
-            <div className="mt-2 bg-[#E8F4FF] rounded-lg p-3">
+            <div className="mt-2 bg-accent rounded-lg p-3">
               <div className="flex gap-2 items-start">
                 <MapPin className="text-red-500 mt-0.5 flex-shrink-0" size={12} />
                 <div>
-                  <p className="text-[10px] text-[#4A6A8A]">Address</p>
-                  <p className="text-[11px] text-[#0A2240] mt-0.5">{item.address}</p>
+                  <p className="text-[10px] text-muted-foreground">Address</p>
+                  <p className="text-[11px] text-foreground mt-0.5">{item.address}</p>
                 </div>
               </div>
             </div>

@@ -200,8 +200,8 @@ const LabAssistantDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-[#E8F4FF] min-h-screen">
-        <div className="bg-[#0A2240]">
+      <div className="bg-accent min-h-screen">
+        <div className="bg-tertiary">
           <div className="enterprise-container py-8 text-white">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-3 py-1 rounded-full text-[10px] mb-4">
               <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
@@ -231,7 +231,7 @@ const LabAssistantDashboard = () => {
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                 />
               </div>
-              <div className="bg-[#EEF6FF] px-4 py-2.5 rounded-lg text-xs font-semibold text-[#1A6FD4]">
+              <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary">
                 Total Bookings: {filteredBookings.length}
               </div>
             </div>

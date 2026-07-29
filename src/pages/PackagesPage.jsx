@@ -15,7 +15,7 @@ export default function PackagesPage() {
         </div>
       </div>
       {/* Packages */}
-      <Packages />
+      <Packages showAllPackages={true} />
     </PublicLayout>
   )
 }

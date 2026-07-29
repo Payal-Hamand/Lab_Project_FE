@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react'
 import { Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Inbox } from 'lucide-react'
 
 const SkeletonRow = ({ columns }) => (
-  <tr className="border-b border-[#E8F4FF] animate-pulse">
+  <tr className="border-b border-border animate-pulse">
     {columns.map((col, i) => (
       <td key={i} className="px-6 py-4">
-        <div className="h-3 bg-[#E8F4FF] rounded-lg w-3/4" />
+        <div className="h-3 bg-border rounded-lg w-3/4" />
       </td>
     ))}
   </tr>
@@ -106,8 +106,8 @@ const DataTable = ({
                 onClick={() => handleFilterChange(f.key)}
                 className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
                   activeFilter === f.key
-                    ? 'bg-[#1A6FD4] text-white'
-                    : 'bg-[#EEF6FF] text-[#4A6A8A] hover:bg-[#C5DBF0]'
+                    ? 'bg-primary text-white'
+                    : 'bg-primary/10 text-muted-foreground hover:bg-primary/20'
                 }`}
               >
                 {f.label}
@@ -119,29 +119,29 @@ const DataTable = ({
         {/* Search */}
         {searchable && (
           <div className="relative w-full md:w-72">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4A6A8A]" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search..."
               value={search}
               onChange={handleSearchChange}
-              className="w-full border border-[#C5DBF0] rounded-lg pl-9 pr-4 py-2 text-xs text-[#4A6A8A] outline-none focus:border-[#1A6FD4] transition bg-white"
+              className="w-full border border-border rounded-lg pl-9 pr-4 py-2 text-xs text-muted-foreground outline-none focus:border-primary transition bg-white"
             />
           </div>
         )}
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-[#C5DBF0]">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full min-w-[800px]">
-          <thead className="bg-[#E8F4FF]">
+          <thead className="bg-primary/10">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
                   onClick={() => col.sortable && handleSort(col.key)}
-                  className={`text-left px-6 py-3.5 text-[11px] font-medium text-[#4A6A8A] ${
-                    col.sortable ? 'cursor-pointer select-none hover:bg-[#C5DBF0]/30 transition' : ''
+                  className={`text-left px-6 py-3.5 text-[11px] font-medium text-muted-foreground ${
+                    col.sortable ? 'cursor-pointer select-none hover:bg-primary/20 transition' : ''
                   }`}
                 >
                   <span className="inline-flex items-center gap-1.5">
@@ -149,15 +149,15 @@ const DataTable = ({
                     {col.sortable &&
                       sortConfig.key === col.key &&
                       (sortConfig.direction === 'asc' ? (
-                        <ArrowUp size={12} className="text-[#1A6FD4]" />
+                        <ArrowUp size={12} className="text-primary" />
                       ) : (
-                        <ArrowDown size={12} className="text-[#1A6FD4]" />
+                        <ArrowDown size={12} className="text-primary" />
                       ))}
                   </span>
                 </th>
               ))}
               {actions && (
-                <th className="text-left px-6 py-3.5 text-[11px] font-medium text-[#4A6A8A]">Actions</th>
+                <th className="text-left px-6 py-3.5 text-[11px] font-medium text-muted-foreground">Actions</th>
               )}
             </tr>
           </thead>
@@ -175,7 +175,7 @@ const DataTable = ({
                   colSpan={actions ? columns.length + 1 : columns.length}
                   className="px-6 py-16 text-center"
                 >
-                  <div className="flex flex-col items-center gap-3 text-[#4A6A8A]">
+                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <Inbox size={40} strokeWidth={1.5} />
                     <p className="text-xs font-medium">{emptyText}</p>
                   </div>
@@ -186,12 +186,12 @@ const DataTable = ({
                 <tr
                   key={row._id || row.id || rowIdx}
                   onClick={() => onRowClick?.(row)}
-                  className={`border-b border-[#E8F4FF] hover:bg-[#EEF6FF] transition ${
+                  className={`border-b border-border hover:bg-primary/10 transition ${
                     onRowClick ? 'cursor-pointer' : ''
                   }`}
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className="px-6 py-4 text-xs text-[#4A6A8A] truncate">
+                    <td key={col.key} className="px-6 py-4 text-xs text-muted-foreground truncate">
                       {col.render ? col.render(row) : row[col.key]}
                     </td>
                   ))}
@@ -212,8 +212,8 @@ const DataTable = ({
                                 : action.variant === 'success'
                                   ? 'bg-green-600 hover:bg-green-700 text-white'
                                   : action.variant === 'outline'
-                                    ? 'border border-[#1A6FD4] text-[#1A6FD4] hover:bg-[#1A6FD4] hover:text-white'
-                                    : 'bg-[#1A6FD4] hover:bg-[#155db8] text-white'
+                                    ? 'border border-primary text-primary hover:bg-primary hover:text-white'
+                                    : 'bg-primary hover:bg-primary/90 text-white'
                             }`}
                           >
                             {action.label}
@@ -232,7 +232,7 @@ const DataTable = ({
       {/* Pagination */}
       {sortedData.length > 0 && (
         <div className="flex items-center justify-between mt-4 px-2">
-          <p className="text-xs text-[#4A6A8A]">
+          <p className="text-xs text-muted-foreground">
             Showing {startIdx + 1}–{Math.min(startIdx + pageSize, sortedData.length)} of{' '}
             {sortedData.length}
           </p>
@@ -240,17 +240,17 @@ const DataTable = ({
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={safePage <= 1}
-              className="p-1.5 rounded-lg border border-[#C5DBF0] hover:bg-[#EEF6FF] transition disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-lg border border-border hover:bg-primary/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <ChevronLeft size={16} />
             </button>
-            <span className="text-xs font-medium text-[#4A6A8A] px-2">
+            <span className="text-xs font-medium text-muted-foreground px-2">
               {safePage} / {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage >= totalPages}
-              className="p-1.5 rounded-lg border border-[#C5DBF0] hover:bg-[#EEF6FF] transition disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-lg border border-border hover:bg-primary/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <ChevronRight size={16} />
             </button>

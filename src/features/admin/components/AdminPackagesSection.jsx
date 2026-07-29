@@ -72,23 +72,23 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-[10px] text-[#4A6A8A] font-medium block mb-1.5">Package Title</label>
+            <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Title</label>
             <Input required type="text" name="title" placeholder="Enter package title" value={packageData.title} onChange={handleChange} />
           </div>
           <div>
-            <label className="text-[10px] text-[#4A6A8A] font-medium block mb-1.5">Category</label>
+            <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Category</label>
             <Input required type="text" name="category" placeholder="Enter category" value={packageData.category} onChange={handleChange} />
           </div>
         </div>
 
         {/* Test selection box */}
-        <div className="bg-white border border-[#C5DBF0] rounded-xl p-5">
+        <div className="bg-white border border-border rounded-xl p-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
-              <h3 className="text-xs font-medium text-[#0A2240]">Select Tests</h3>
-              <p className="text-[10px] text-[#4A6A8A] mt-0.5">Choose tests to include in package</p>
+              <h3 className="text-xs font-medium text-foreground">Select Tests</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Choose tests to include in package</p>
             </div>
-            <div className="bg-[#EEF6FF] text-[#0C447C] px-3 py-1 rounded-full text-[10px] font-semibold w-fit">
+            <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-semibold w-fit">
               {packageData.testsIncluded.length} Tests Selected
             </div>
           </div>
@@ -117,11 +117,11 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
               return (
                 <div
                   key={id}
-                  className="bg-[#EEF6FF] border border-[#C5DBF0] rounded-lg px-3 py-2 flex items-center justify-between gap-3 min-w-[150px]"
+                  className="bg-primary/10 border border-border rounded-lg px-3 py-2 flex items-center justify-between gap-3 min-w-[150px]"
                 >
                   <div>
-                    <h4 className="text-xs font-medium text-[#0A2240]">{test.title}</h4>
-                    <p className="text-[10px] text-[#4A6A8A] mt-0.5">₹{test.price}</p>
+                    <h4 className="text-xs font-medium text-foreground">{test.title}</h4>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">₹{test.price}</p>
                   </div>
                   <button
                     type="button"
@@ -142,15 +142,15 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
         </div>
 
         <div>
-          <label className="text-[10px] text-[#4A6A8A] font-medium block mb-1.5">Package Price</label>
+          <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Price</label>
           <Input required type="number" name="price" placeholder="Enter package price" value={packageData.price} onChange={handleChange} />
         </div>
         <div>
-          <label className="text-[10px] text-[#4A6A8A] font-medium block mb-1.5">Description</label>
+          <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Description</label>
           <Textarea rows="5" name="description" placeholder="Write package description" value={packageData.description} onChange={handleChange} />
         </div>
         <div>
-          <label className="text-[10px] text-[#4A6A8A] font-medium block mb-1.5">Image URL</label>
+          <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Image URL</label>
           <Input required type="text" name="image" placeholder="Enter image URL" value={packageData.image} onChange={handleChange} />
         </div>
         <Button type="submit" loading={creating} fullWidth>

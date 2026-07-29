@@ -47,12 +47,12 @@ const LabAssistantBookingsTable = ({
 
   const SortHeader = ({ label, sortKey }) => (
     <th 
-      className="text-left px-5 py-4 text-xs font-semibold text-[#4A6A8A] cursor-pointer hover:bg-gray-100/50 transition-colors select-none group"
+      className="text-left px-5 py-4 text-xs font-semibold text-muted-foreground cursor-pointer hover:bg-gray-100/50 transition-colors select-none group"
       onClick={() => handleSort(sortKey)}
     >
       <div className="flex items-center gap-1.5">
         {label}
-        <span className="text-gray-400 group-hover:text-[#1A6FD4] transition-colors">
+        <span className="text-gray-400 group-hover:text-primary transition-colors">
           {sortConfig.key === sortKey ? (
             sortConfig.direction === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />
           ) : (
@@ -64,19 +64,19 @@ const LabAssistantBookingsTable = ({
   )
 
   return (
-    <div className="w-full bg-white rounded-xl border border-[#C5DBF0] shadow-sm overflow-hidden">
+    <div className="w-full bg-white rounded-xl border border-border shadow-sm overflow-hidden">
       <div className="overflow-x-auto custom-scrollbar">
         <table className="w-full min-w-[1300px] border-collapse">
-          <thead className="bg-[#EEF6FF]/60 border-b border-[#C5DBF0]">
+          <thead className="bg-primary/10 border-b border-border">
             <tr>
               <SortHeader label="Patient" sortKey="patientName" />
               <SortHeader label="Test" sortKey="testTitle" />
               <SortHeader label="Date" sortKey="bookingDate" />
-              <th className="text-left px-5 py-4 text-xs font-semibold text-[#4A6A8A]">Address</th>
+              <th className="text-left px-5 py-4 text-xs font-semibold text-muted-foreground">Address</th>
               <SortHeader label="Status" sortKey="status" />
               <SortHeader label="Payment" sortKey="paymentStatus" />
-              <th className="text-center px-5 py-4 text-xs font-semibold text-[#4A6A8A]">Actions</th>
-              <th className="text-center px-5 py-4 text-xs font-semibold text-[#4A6A8A]">Report</th>
+              <th className="text-center px-5 py-4 text-xs font-semibold text-muted-foreground">Actions</th>
+              <th className="text-center px-5 py-4 text-xs font-semibold text-muted-foreground">Report</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -84,33 +84,33 @@ const LabAssistantBookingsTable = ({
               <tr key={item._id} className="hover:bg-gray-50/50 transition-colors group">
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-[#EEF6FF] flex items-center justify-center flex-shrink-0">
-                      <CircleUser className="text-[#1A6FD4]" size={18} />
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <CircleUser className="text-primary" size={18} />
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-[#0A2240]">{item.patientName}</h3>
-                      <p className="text-[11px] text-[#4A6A8A]">{item.phone}</p>
+                      <h3 className="text-sm font-medium text-foreground">{item.patientName}</h3>
+                      <p className="text-[11px] text-muted-foreground">{item.phone}</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-5 py-4">
                   <div>
-                    <p className="text-sm font-medium text-[#0A2240]">
+                    <p className="text-sm font-medium text-foreground">
                       {item?.test?.title || item?.package?.title}
                     </p>
-                    <p className="font-mono text-xs font-bold text-[#1A6FD4] mt-0.5">
+                    <p className="font-mono text-xs font-bold text-primary mt-0.5">
                       ₹{item?.test?.price || item?.package?.price}
                     </p>
                   </div>
                 </td>
                 <td className="px-5 py-4">
-                  <p className="text-sm font-medium text-[#0A2240]">{item.bookingDate}</p>
-                  <p className="text-[11px] text-[#4A6A8A] mt-0.5">{item.bookingTime}</p>
+                  <p className="text-sm font-medium text-foreground">{item.bookingDate}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{item.bookingTime}</p>
                 </td>
                 <td className="px-5 py-4 max-w-[200px]">
                   <div className="flex gap-1.5 items-start">
                     <MapPin className="text-red-500 mt-0.5 flex-shrink-0" size={14} />
-                    <span className="text-[12px] text-[#4A6A8A] line-clamp-2">{item.address}</span>
+                    <span className="text-[12px] text-muted-foreground line-clamp-2">{item.address}</span>
                   </div>
                 </td>
                 <td className="px-5 py-4">

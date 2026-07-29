@@ -18,21 +18,21 @@ const LabOwnerBookingMobileCard = ({
   return (
     <div className="lg:hidden grid gap-3">
       {filteredBookings.map((booking) => (
-        <div key={booking._id} className="bg-white border border-[#C5DBF0] rounded-[10px] overflow-hidden">
+        <div key={booking._id} className="bg-white border border-border rounded-[10px] overflow-hidden">
           <div
             className={`h-1.5 ${
               booking.status === 'completed'
                 ? 'bg-green-600'
                 : booking.status === 'sample_collected'
-                ? 'bg-[#378ADD]'
-                : 'bg-[#1A6FD4]'
+                ? 'bg-primary'
+                : 'bg-primary'
             }`}
           />
           <div className="p-4">
             <div className="flex justify-between items-start gap-3">
               <div>
-                <h2 className="text-xs font-medium text-[#0A2240]">{booking.patientName}</h2>
-                <p className="text-[10px] text-[#4A6A8A] mt-0.5 flex items-center gap-1">
+                <h2 className="text-xs font-medium text-foreground">{booking.patientName}</h2>
+                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
                   <Phone size={11} /> {booking.phone}
                 </p>
               </div>
@@ -43,51 +43,51 @@ const LabOwnerBookingMobileCard = ({
             </div>
 
             <div className="grid grid-cols-2 gap-2 mt-3">
-              <div className="bg-[#E8F4FF] rounded-lg p-2.5">
-                <p className="text-[10px] text-[#4A6A8A]">Test / Package</p>
-                <h3 className="text-xs font-medium text-[#0A2240] mt-0.5">
+              <div className="bg-accent rounded-lg p-2.5">
+                <p className="text-[10px] text-muted-foreground">Test / Package</p>
+                <h3 className="text-xs font-medium text-foreground mt-0.5">
                   {booking?.test?.title || booking?.package?.title}
                 </h3>
               </div>
-              <div className="bg-[#EEF6FF] rounded-lg p-2.5">
-                <p className="text-[10px] text-[#4A6A8A]">Amount</p>
-                <h3 className="font-mono font-bold text-[#1A6FD4] text-sm mt-0.5">
+              <div className="bg-primary/10 rounded-lg p-2.5">
+                <p className="text-[10px] text-muted-foreground">Amount</p>
+                <h3 className="font-mono font-bold text-primary text-sm mt-0.5">
                   ₹{booking?.test?.price || booking?.package?.price}
                 </h3>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 mt-2">
-              <div className="bg-[#EEF6FF] rounded-lg p-2.5">
-                <p className="text-[10px] text-[#4A6A8A]">Date</p>
-                <h3 className="text-xs font-medium text-[#0A2240] mt-0.5">{booking.bookingDate}</h3>
+              <div className="bg-primary/10 rounded-lg p-2.5">
+                <p className="text-[10px] text-muted-foreground">Date</p>
+                <h3 className="text-xs font-medium text-foreground mt-0.5">{booking.bookingDate}</h3>
               </div>
-              <div className="bg-[#EEF6FF] rounded-lg p-2.5">
-                <p className="text-[10px] text-[#4A6A8A]">Time</p>
-                <h3 className="text-xs font-medium text-[#0A2240] mt-0.5">{booking.bookingTime}</h3>
+              <div className="bg-primary/10 rounded-lg p-2.5">
+                <p className="text-[10px] text-muted-foreground">Time</p>
+                <h3 className="text-xs font-medium text-foreground mt-0.5">{booking.bookingTime}</h3>
               </div>
             </div>
 
-            <div className="mt-2 bg-[#E8F4FF] rounded-lg p-3">
-              <p className="text-[10px] text-[#4A6A8A]">Patient Address</p>
-              <p className="text-[11px] text-[#0A2240] mt-1">
+            <div className="mt-2 bg-accent rounded-lg p-3">
+              <p className="text-[10px] text-muted-foreground">Patient Address</p>
+              <p className="text-[11px] text-foreground mt-1">
                 {booking.flatNo}, {booking.address}, {booking.city}
                 {' - '}
                 {booking.pincode}
               </p>
             </div>
 
-            <div className="mt-2 bg-[#EEF6FF] rounded-lg p-3">
+            <div className="mt-2 bg-primary/10 rounded-lg p-3">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[10px] font-medium text-[#4A6A8A]">Assigned Assistant</p>
+                <p className="text-[10px] font-medium text-muted-foreground">Assigned Assistant</p>
                 {booking.assignedLabAssistant && <Badge variant="success">Assigned</Badge>}
               </div>
               {booking.assignedLabAssistant ? (
-                <div className="bg-white rounded-lg p-2.5 border border-[#C5DBF0]">
-                  <h3 className="text-xs font-medium text-[#0A2240]">
+                <div className="bg-white rounded-lg p-2.5 border border-border">
+                  <h3 className="text-xs font-medium text-foreground">
                     {booking.assignedLabAssistant.name}
                   </h3>
-                  <p className="text-[10px] text-[#4A6A8A] mt-0.5">
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
                     {booking.assignedLabAssistant.email}
                   </p>
                 </div>
@@ -107,8 +107,8 @@ const LabOwnerBookingMobileCard = ({
             </div>
 
             {booking.sampleImages?.length > 0 && (
-              <div className="mt-2 bg-[#E8F4FF] rounded-lg p-3">
-                <p className="text-[10px] font-medium text-[#4A6A8A] mb-2">
+              <div className="mt-2 bg-accent rounded-lg p-3">
+                <p className="text-[10px] font-medium text-muted-foreground mb-2">
                   Sample Images ({booking.sampleImages.length})
                 </p>
                 <div className="grid grid-cols-5 gap-2">
@@ -117,7 +117,7 @@ const LabOwnerBookingMobileCard = ({
                       <img
                         src={image}
                         alt={`Sample ${index + 1}`}
-                        className="w-full h-14 object-cover rounded-lg border border-[#C5DBF0] hover:scale-105 transition"
+                        className="w-full h-14 object-cover rounded-lg border border-border hover:scale-105 transition"
                       />
                     </a>
                   ))}
@@ -145,7 +145,7 @@ const LabOwnerBookingMobileCard = ({
               </div>
             ) : booking.paymentStatus === PAYMENT_STATUS.PAID ? (
               <div className="mt-3 space-y-2">
-                <label className="flex items-center justify-center gap-2 border border-dashed border-[#C5DBF0] rounded-lg py-3 cursor-pointer hover:bg-[#EEF6FF] text-[#4A6A8A] text-xs transition">
+                <label className="flex items-center justify-center gap-2 border border-dashed border-border rounded-lg py-3 cursor-pointer hover:bg-primary/10 text-muted-foreground text-xs transition">
                   <FileText size={13} />
                   Select Report PDF
                   <Input
@@ -162,8 +162,8 @@ const LabOwnerBookingMobileCard = ({
                   />
                 </label>
                 {selectedReport[booking._id] && (
-                  <div className="bg-[#EEF6FF] rounded-lg p-2.5">
-                    <p className="text-[10px] text-[#1A6FD4] font-medium break-all">
+                  <div className="bg-primary/10 rounded-lg p-2.5">
+                    <p className="text-[10px] text-primary font-medium break-all">
                       Selected: {selectedReport[booking._id].name}
                     </p>
                   </div>
@@ -177,9 +177,9 @@ const LabOwnerBookingMobileCard = ({
                 </Button>
               </div>
             ) : (
-              <div className="mt-3 bg-[#FFF7ED] rounded-lg p-3 text-center">
+              <div className="mt-3 bg-accent rounded-lg p-3 text-center">
                 <p className="text-orange-700 text-xs font-medium">Payment Pending</p>
-                <p className="text-[#4A6A8A] text-[10px] mt-0.5">
+                <p className="text-muted-foreground text-[10px] mt-0.5">
                   Report can be uploaded only after payment.
                 </p>
               </div>

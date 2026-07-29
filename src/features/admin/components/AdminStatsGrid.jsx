@@ -26,7 +26,7 @@ const AdminStatsGrid = ({
           value={bookings.length}
           icon={<ClipboardList size={18} />}
           color="blue"
-          bgColor="bg-[#EEF6FF] text-[#1A6FD4]"
+          bgColor="bg-primary/10 text-primary"
           active={activeSection === 'all'}
           onClick={() => {
             setActiveSection('all')
@@ -87,11 +87,11 @@ const AdminStatsGrid = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-6">
         <button
           onClick={() => setActivePanel('test')}
-          className="bg-[#0A2240] text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-[#0d2d4a] transition text-left"
+          className="bg-tertiary text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-tertiary/90 transition text-left"
         >
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-[10px] bg-[#1A6FD4]/30 flex items-center justify-center">
-              <FlaskConical size={20} />
+            <div className="w-11 h-11 rounded-[10px] bg-primary/30 flex items-center justify-center">
+              <FlaskConical size={20} className="text-primary-foreground" />
             </div>
             <div>
               <h3 className="font-serif text-base text-white">Create Test</h3>
@@ -102,10 +102,10 @@ const AdminStatsGrid = ({
 
         <button
           onClick={() => setActivePanel('package')}
-          className="bg-[#0A2240] text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-[#0d2d4a] transition text-left"
+          className="bg-tertiary text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-tertiary/90 transition text-left"
         >
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-[10px] bg-[#5BB8FF]/20 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-[10px] bg-primary/20 flex items-center justify-center">
               <PackageOpen size={20} />
             </div>
             <div>
@@ -117,7 +117,7 @@ const AdminStatsGrid = ({
 
         <button
           onClick={() => setActivePanel('lab-owner')}
-          className="bg-[#0A2240] text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-[#0d2d4a] transition text-left"
+          className="bg-tertiary text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-tertiary/90 transition text-left"
         >
           <div className="flex items-center gap-4">
             <div className="w-11 h-11 rounded-[10px] bg-green-500/20 flex items-center justify-center">

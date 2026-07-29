@@ -204,13 +204,13 @@ const Signup = () => {
   }
 
   return (
-    <div className="flex h-screen w-full bg-[#F5F7FA]">
+    <div className="flex h-screen w-full bg-background">
       {/* Left Panel */}
-      <div className="hidden md:flex flex-col w-[44%] bg-[#1A3C5E] px-[32px] py-[36px] relative overflow-hidden justify-between">
+      <div className="hidden md:flex flex-col w-[44%] bg-tertiary px-[32px] py-[36px] relative overflow-hidden justify-between">
         {/* Top: Logo */}
         <Link to={ROUTES.HOME} className="flex items-center gap-2 z-10">
           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-[#1A3C5E] font-bold text-xl leading-none">C</span>
+            <span className="text-tertiary font-bold text-xl leading-none">C</span>
           </div>
           <span className="font-heading font-bold text-xl text-white tracking-tight">Checked Up</span>
         </Link>
@@ -306,17 +306,17 @@ const Signup = () => {
           <ArrowLeft size={14} /> Home
         </Button>
         
-        <div className="w-full max-w-[440px] bg-white p-[40px] border border-[#D6E4F0] rounded-[10px] shadow-sm relative z-10">
+        <div className="w-full max-w-[440px] bg-white p-[40px] border border-border rounded-[10px] shadow-sm relative z-10">
           <div className="flex items-center gap-2 mb-6 md:hidden justify-center">
-            <div className="w-8 h-8 bg-[#1A3C5E] rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-tertiary rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-xl leading-none">C</span>
             </div>
-            <span className="font-heading font-bold text-xl text-[#1A3C5E] tracking-tight">Checked Up</span>
+            <span className="font-heading font-bold text-xl text-tertiary tracking-tight">Checked Up</span>
           </div>
           
           <div className="text-center md:text-left mb-8">
-            <h2 className="font-heading font-bold text-[20px] text-[#1A3C5E]">Create your account</h2>
-            <p className="text-[12px] text-[#7A8A9A] mt-1">
+            <h2 className="font-heading font-bold text-[20px] text-tertiary">Create your account</h2>
+            <p className="text-[12px] text-muted-foreground mt-1">
               Start booking lab tests in minutes
             </p>
           </div>
@@ -385,19 +385,19 @@ const Signup = () => {
               )}
             </div>
             
-            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-[#046C9A] hover:bg-[#035b82] text-white mt-2">
+            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-secondary hover:bg-secondary/90 text-white mt-2">
               Create account
             </Button>
           </form>
 
-          <p className="mt-6 text-[#7A8A9A] text-center text-sm">
+          <p className="mt-6 text-muted-foreground text-center text-sm">
             Already have an account?{' '}
-            <Link to={ROUTES.LOGIN} className="text-[#0CADF3] font-bold hover:underline">
+            <Link to={ROUTES.LOGIN} className="text-secondary font-bold hover:underline">
               Sign in
             </Link>
           </p>
 
-          <p className="mt-6 text-center text-[10px] text-[#7A8A9A]">
+          <p className="mt-6 text-center text-[10px] text-muted-foreground">
             By registering you agree to our Terms of Service and Privacy Policy
           </p>
         </div>

@@ -11,8 +11,17 @@ const PackageItem = ({ item, handleBookNow }) => {
 
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex flex-col min-w-[280px] max-w-[300px] w-[280px] flex-shrink-0">
+      {/* Image */}
+      {item.image && (
+        <img 
+          src={item.image} 
+          alt={item.title} 
+          className="w-full h-40 object-cover"
+        />
+      )}
+
       {/* Dark Navy Header */}
-      <div className="bg-tertiary px-5 py-5">
+      <div className="bg-tertiary px-5 py-4">
         <h3 className="font-heading font-bold text-lg text-tertiary-foreground leading-snug">{item.title}</h3>
       </div>
 
@@ -67,7 +76,8 @@ const PackageItem = ({ item, handleBookNow }) => {
 
 const PackageSkeleton = () => (
   <div className="bg-card border border-border rounded-lg overflow-hidden min-w-[280px] max-w-[300px] w-[280px] flex-shrink-0 animate-pulse">
-    <div className="bg-tertiary/50 px-5 py-5">
+    <div className="h-40 bg-gray-200"></div>
+    <div className="bg-tertiary/50 px-5 py-4">
       <div className="h-5 bg-white/20 rounded w-3/4"></div>
     </div>
     <div className="p-5">
@@ -91,7 +101,7 @@ const PackageSkeleton = () => (
   </div>
 )
 
-const Packages = () => {
+const Packages = ({ showAllPackages = false }) => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [packages, setPackages] = useState([])
@@ -172,36 +182,54 @@ const Packages = () => {
         <div className="flex justify-between items-end mb-8">
           <div>
             <p className="text-xs text-primary font-bold tracking-wider uppercase mb-2">
-              Popular Packages
+              {showAllPackages ? 'All Packages' : 'Popular Packages'}
             </p>
             <h2 className="font-heading font-bold text-2xl lg:text-3xl text-foreground">
-              Explore Health Packages
+              {showAllPackages ? 'All Health Packages' : 'Explore Health Packages'}
             </h2>
           </div>
-          <button
-            onClick={() => navigate(ROUTES.PACKAGES)}
-            className="hidden sm:flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 transition"
-          >
-            View all packages
-            <ArrowRight size={16} />
-          </button>
+          {!showAllPackages && (
+            <button
+              onClick={() => navigate(ROUTES.PACKAGES)}
+              className="hidden sm:flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 transition"
+            >
+              View all packages
+              <ArrowRight size={16} />
+            </button>
+          )}
         </div>
 
         {/* Loading */}
         {loading ? (
-          <div className="relative group/scroll">
-            <div ref={scrollRef} className="flex gap-6 overflow-x-auto pb-4">
-              {[1, 2, 3, 4].map((i) => (
+          <div className={`${showAllPackages ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : 'relative group/scroll'}`}>
+            {showAllPackages ? (
+              [1, 2, 3, 4, 5, 6].map((i) => (
                 <PackageSkeleton key={i} />
-              ))}
-            </div>
+              ))
+            ) : (
+              <div ref={scrollRef} className="flex gap-6 overflow-x-auto pb-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <PackageSkeleton key={i} />
+                ))}
+              </div>
+            )}
           </div>
         ) : validPackages.length === 0 ? (
           <div className="bg-white/50 border border-border rounded-xl p-8 text-center text-muted-foreground">
             <p className="text-sm">No health packages are currently available.</p>
             <p className="text-xs mt-1 opacity-70">Check back later or contact support to configure packages.</p>
           </div>
+        ) : showAllPackages ? (
+          /* Grid layout for all packages page */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {validPackages.map((item) => (
+              <div key={item._id} className="flex justify-center">
+                <PackageItem item={item} handleBookNow={handleBookNow} />
+              </div>
+            ))}
+          </div>
         ) : (
+          /* Scroll layout for homepage */
           <div className="relative group/scroll">
             <div
               ref={scrollRef}
@@ -234,16 +262,18 @@ const Packages = () => {
           </div>
         )}
 
-        {/* Mobile View All */}
-        <div className="mt-6 sm:hidden">
-          <button
-            onClick={() => navigate(ROUTES.PACKAGES)}
-            className="flex items-center justify-center gap-1 w-full text-sm font-semibold text-primary border border-primary rounded-lg py-2 hover:bg-primary hover:text-white transition"
-          >
-            View all packages
-            <ArrowRight size={16} />
-          </button>
-        </div>
+        {/* Mobile View All - only show on homepage */}
+        {!showAllPackages && (
+          <div className="mt-6 sm:hidden">
+            <button
+              onClick={() => navigate(ROUTES.PACKAGES)}
+              className="flex items-center justify-center gap-1 w-full text-sm font-semibold text-primary border border-primary rounded-lg py-2 hover:bg-primary hover:text-white transition"
+            >
+              View all packages
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   )

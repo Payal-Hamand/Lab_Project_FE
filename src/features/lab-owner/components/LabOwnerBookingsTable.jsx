@@ -55,12 +55,12 @@ const LabOwnerBookingsTable = ({
 
   const SortHeader = ({ label, sortKey }) => (
     <th 
-      className="text-left px-5 py-4 text-xs font-semibold text-[#4A6A8A] cursor-pointer hover:bg-gray-100/50 transition-colors select-none group"
+      className="text-left px-5 py-4 text-xs font-semibold text-muted-foreground cursor-pointer hover:bg-gray-100/50 transition-colors select-none group"
       onClick={() => handleSort(sortKey)}
     >
       <div className="flex items-center gap-1.5">
         {label}
-        <span className="text-gray-400 group-hover:text-[#1A6FD4] transition-colors">
+        <span className="text-gray-400 group-hover:text-primary transition-colors">
           {sortConfig.key === sortKey ? (
             sortConfig.direction === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />
           ) : (
@@ -72,51 +72,51 @@ const LabOwnerBookingsTable = ({
   )
 
   return (
-    <div className="w-full bg-white rounded-xl border border-[#C5DBF0] shadow-sm overflow-hidden">
+    <div className="w-full bg-white rounded-xl border border-border shadow-sm overflow-hidden">
       <div className="overflow-x-auto custom-scrollbar">
         <table className="w-full min-w-[1200px] border-collapse">
-          <thead className="bg-[#EEF6FF]/60 border-b border-[#C5DBF0]">
+          <thead className="bg-primary/10 border-b border-border">
             <tr>
               <SortHeader label="Patient" sortKey="patientName" />
               <SortHeader label="Test / Package" sortKey="testTitle" />
               <SortHeader label="Amount" sortKey="amount" />
               <SortHeader label="Date" sortKey="bookingDate" />
-              <th className="text-left px-5 py-4 text-xs font-semibold text-[#4A6A8A]">Assistant</th>
+              <th className="text-left px-5 py-4 text-xs font-semibold text-muted-foreground">Assistant</th>
               <SortHeader label="Status" sortKey="status" />
               <SortHeader label="Payment" sortKey="paymentStatus" />
-              <th className="text-left px-5 py-4 text-xs font-semibold text-[#4A6A8A]">Samples</th>
-              <th className="text-left px-5 py-4 text-xs font-semibold text-[#4A6A8A]">Report</th>
+              <th className="text-left px-5 py-4 text-xs font-semibold text-muted-foreground">Samples</th>
+              <th className="text-left px-5 py-4 text-xs font-semibold text-muted-foreground">Report</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {sortedBookings.map((booking) => (
               <tr key={booking._id} className="hover:bg-gray-50/50 transition-colors group">
                 <td className="px-5 py-4">
-                  <div className="font-medium text-[#0A2240] text-sm">{booking.patientName}</div>
-                  <div className="text-[11px] text-[#4A6A8A] mt-0.5">{booking.phone}</div>
+                  <div className="font-medium text-foreground text-sm">{booking.patientName}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{booking.phone}</div>
                 </td>
                 <td className="px-5 py-4">
-                  <div className="font-medium text-[#0A2240] text-sm">
+                  <div className="font-medium text-foreground text-sm">
                     {booking?.test?.title || booking?.package?.title}
                   </div>
-                  <div className="text-[11px] text-[#4A6A8A] mt-0.5">{booking.city}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{booking.city}</div>
                 </td>
                 <td className="px-5 py-4">
-                  <span className="font-mono font-bold text-sm text-[#1A6FD4]">
+                  <span className="font-mono font-bold text-sm text-primary">
                     ₹{booking?.test?.price || booking?.package?.price}
                   </span>
                 </td>
                 <td className="px-5 py-4">
-                  <div className="text-sm text-[#0A2240]">{booking.bookingDate}</div>
-                  <div className="text-[11px] text-[#4A6A8A] mt-0.5">{booking.bookingTime}</div>
+                  <div className="text-sm text-foreground">{booking.bookingDate}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{booking.bookingTime}</div>
                 </td>
                 <td className="px-5 py-4">
                   {booking.assignedLabAssistant ? (
                     <div>
-                      <p className="text-sm font-medium text-[#0A2240]">
+                      <p className="text-sm font-medium text-foreground">
                         {booking.assignedLabAssistant.name}
                       </p>
-                      <p className="text-[11px] text-[#4A6A8A] mt-0.5">
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
                         {booking.assignedLabAssistant.email}
                       </p>
                     </div>
@@ -148,12 +148,12 @@ const LabOwnerBookingsTable = ({
                           <img
                             src={image}
                             alt={`Sample ${index + 1}`}
-                            className="w-10 h-10 rounded-md object-cover border border-[#C5DBF0]"
+                            className="w-10 h-10 rounded-md object-cover border border-border"
                           />
                         </a>
                       ))}
                       {booking.sampleImages.length > 3 && (
-                        <span className="w-10 h-10 bg-[#EEF6FF] border border-[#C5DBF0] rounded-md flex items-center justify-center text-[10px] font-medium text-[#1A6FD4]">
+                        <span className="w-10 h-10 bg-primary/10 border border-border rounded-md flex items-center justify-center text-[10px] font-medium text-primary">
                           +{booking.sampleImages.length - 3}
                         </span>
                       )}

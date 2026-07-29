@@ -1,11 +1,62 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { FlaskConical, Menu, X, CircleUser, LogOut, ChevronDown, MapPin } from 'lucide-react'
+import { 
+  FlaskConical, Menu, X, LogOut, ChevronDown, Bell, LayoutDashboard, 
+  Calendar, TestTube, Settings, User, FileText, ClipboardList, UserCog
+} from 'lucide-react'
 import { AuthContext } from '@/context/AuthContext'
 import { ROUTES } from '@/constants/routes'
 import { ROLES } from '@/constants/roles'
 import Button from '@/components/ui/Button'
 import { motion, AnimatePresence } from 'framer-motion'
+import useClickOutside from '@/hooks/useClickOutside'
+
+const roleConfig = {
+  [ROLES.PATIENT]: {
+    quickLink: { label: 'My Bookings', route: ROUTES.DASHBOARD, icon: Calendar },
+    dashboardRoute: ROUTES.DASHBOARD,
+    dashboardLabel: 'My Dashboard',
+    menuItems: [
+      { label: 'My Bookings', description: 'View and manage bookings', icon: Calendar, route: ROUTES.DASHBOARD },
+      { label: 'Upload Prescription', description: 'Get tests recommended', icon: FileText, route: '/upload-prescription' },
+      { label: 'Account Settings', description: 'Manage your preferences', icon: Settings, route: '/settings' },
+    ],
+  },
+  [ROLES.LAB_OWNER]: {
+    quickLink: { label: 'Lab Dashboard', route: ROUTES.LAB_OWNER, icon: LayoutDashboard },
+    dashboardRoute: ROUTES.LAB_OWNER,
+    dashboardLabel: 'Lab Dashboard',
+    menuItems: [
+      { label: 'Lab Dashboard', description: "Today's collections and queue", icon: LayoutDashboard, route: ROUTES.LAB_OWNER },
+      { label: 'Sample Pickups', description: 'Assigned home collections', icon: ClipboardList, route: '/sample-pickups' },
+      { label: 'Upload Reports', description: 'Attach results to bookings', icon: FileText, route: '/upload-reports' },
+      { label: 'Lab Profile', description: 'Accreditation and center details', icon: UserCog, route: '/lab-profile' },
+      { label: 'Account Settings', description: 'Login and notification preferences', icon: Settings, route: '/settings' },
+    ],
+  },
+  [ROLES.LAB_ASSISTANT]: {
+    quickLink: { label: 'Lab Dashboard', route: ROUTES.LAB_ASSISTANT, icon: LayoutDashboard },
+    dashboardRoute: ROUTES.LAB_ASSISTANT,
+    dashboardLabel: 'Lab Dashboard',
+    menuItems: [
+      { label: 'Lab Dashboard', description: "Today's collections and queue", icon: LayoutDashboard, route: ROUTES.LAB_ASSISTANT },
+      { label: 'Sample Pickups', description: 'Assigned home collections', icon: ClipboardList, route: '/sample-pickups' },
+      { label: 'Upload Reports', description: 'Attach results to bookings', icon: FileText, route: '/upload-reports' },
+      { label: 'Account Settings', description: 'Login and notification preferences', icon: Settings, route: '/settings' },
+    ],
+  },
+  [ROLES.ADMIN]: {
+    quickLink: { label: 'Admin Panel', route: ROUTES.ADMIN, icon: LayoutDashboard },
+    dashboardRoute: ROUTES.ADMIN,
+    dashboardLabel: 'Admin Panel',
+    menuItems: [
+      { label: 'Admin Dashboard', description: 'Overview and analytics', icon: LayoutDashboard, route: ROUTES.ADMIN },
+      { label: 'Manage Tests', description: 'Add, edit, remove tests', icon: TestTube, route: '/admin/tests' },
+      { label: 'Manage Packages', description: 'Configure health packages', icon: ClipboardList, route: '/admin/packages' },
+      { label: 'Account Settings', description: 'System preferences', icon: Settings, route: '/settings' },
+    ],
+  },
+}
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext)
@@ -14,6 +65,8 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [testsDropdownOpen, setTestsDropdownOpen] = useState(false)
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
+  const profileDropdownRef = useClickOutside(() => setProfileDropdownOpen(false))
 
   const isActive = (path) => location.pathname === path
 
@@ -116,7 +169,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Right Side */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-4">
           {!user ? (
             <>
               <Link to={ROUTES.LOGIN}>
@@ -131,38 +184,118 @@ const Navbar = () => {
               </Link>
             </>
           ) : (
-            <div className="flex items-center gap-3">
-              {user.role === ROLES.ADMIN && (
-                <Link to={ROUTES.ADMIN}><Button variant="primary" size="sm" className="h-10">Admin Panel</Button></Link>
+            <div className="flex items-center gap-4">
+              {/* Role-specific quick link - icon only with tooltip */}
+              {roleConfig[user.role] && (
+                <Link 
+                  to={roleConfig[user.role].quickLink.route}
+                  className="relative group/icon p-2 text-foreground hover:text-primary transition"
+                >
+                  {React.createElement(roleConfig[user.role].quickLink.icon, { size: 20 })}
+                  <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-foreground text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/icon:opacity-100 transition pointer-events-none z-50">
+                    {roleConfig[user.role].quickLink.label}
+                  </span>
+                </Link>
               )}
-              {user.role === ROLES.PATIENT && (
-                <>
-                  <Link to={ROUTES.DASHBOARD}><Button variant="outline" size="sm" className="h-10">Dashboard</Button></Link>
-                  <Link to={ROUTES.TESTS}><Button variant="primary" size="sm" className="font-semibold h-10">Book a Test</Button></Link>
-                </>
-              )}
-              {user.role === ROLES.LAB_OWNER && (
-                <Link to={ROUTES.LAB_OWNER}><Button variant="primary" size="sm" className="h-10">Lab Owner</Button></Link>
-              )}
-              {user.role === ROLES.LAB_ASSISTANT && (
-                <Link to={ROUTES.LAB_ASSISTANT}><Button variant="primary" size="sm" className="h-10">Lab Dashboard</Button></Link>
-              )}
-              {/* User badge */}
-              <div className="border border-primary rounded-lg px-3 py-1.5 flex items-center gap-2">
-                <CircleUser size={16} className="text-primary" />
-                <div>
-                  <h3 className="text-foreground text-xs font-semibold leading-none">{user.name}</h3>
-                  <p className="text-muted-foreground text-[10px] capitalize mt-0.5">{user.role}</p>
-                </div>
-              </div>
-              {/* Logout */}
-              <button
-                onClick={handleLogout}
-                aria-label="Logout"
-                className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition"
+
+              {/* Notification Bell */}
+              {/* <button className="relative p-2 text-foreground hover:text-primary transition">
+                <Bell size={20} />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+              </button> */}
+
+              {/* Book a Test - icon only with tooltip */}
+              <Link 
+                to={ROUTES.TESTS} 
+                className="relative group/icon p-2 text-foreground hover:text-primary transition"
               >
-                <LogOut size={16} />
-              </button>
+                <TestTube size={20} />
+                <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-foreground text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/icon:opacity-100 transition pointer-events-none z-50">
+                  Book a Test
+                </span>
+              </Link>
+
+              {/* Profile Dropdown */}
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-2 pl-2"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
+                    {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-foreground leading-tight">{user.name}</p>
+                    <p className="text-[10px] text-muted-foreground capitalize">{user.role?.replace('_', ' ')}</p>
+                  </div>
+                  <ChevronDown size={14} className={`text-muted-foreground transition-transform ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Dropdown Menu */}
+                <AnimatePresence>
+                  {profileDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-2 w-72 bg-white border border-border rounded-xl shadow-lg overflow-hidden z-50"
+                    >
+                      {/* Profile Header */}
+                      <div className="p-4 border-b border-border">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
+                            {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-foreground">{user.name}</p>
+                            <p className="text-xs text-muted-foreground">{user.email}</p>
+                            <span className="inline-block mt-1 px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-semibold rounded capitalize">
+                              {user.role?.replace('_', ' ')}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="py-2">
+                        {roleConfig[user.role]?.menuItems.map((item, index) => (
+                          <Link
+                            key={index}
+                            to={item.route}
+                            onClick={() => setProfileDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-accent transition"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                              <item.icon size={16} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-foreground">{item.label}</p>
+                              <p className="text-[11px] text-muted-foreground">{item.description}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+
+                      {/* Logout */}
+                      <div className="border-t border-border py-2">
+                        <button
+                          onClick={() => {
+                            setProfileDropdownOpen(false)
+                            handleLogout()
+                          }}
+                          className="flex items-center gap-3 px-4 py-3 w-full hover:bg-red-50 transition text-left"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-500 flex-shrink-0">
+                            <LogOut size={16} />
+                          </div>
+                          <p className="text-sm font-medium text-red-500">Logout</p>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           )}
         </div>
@@ -248,37 +381,48 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* User */}
+            {/* User Profile Card */}
             {user && (
-              <div className="border border-primary rounded-lg p-4 mt-10">
-                <h3 className="font-semibold text-foreground text-sm">{user.name}</h3>
-                <p className="text-muted-foreground text-xs capitalize mt-0.5">{user.role}</p>
+              <div className="mt-8 p-4 bg-accent rounded-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
+                    {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-semibold rounded capitalize">
+                      {user.role?.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* Dashboard Buttons */}
-            <div className="mt-5 flex flex-col gap-3">
-              {user?.role === ROLES.PATIENT && (
-                <Link to={ROUTES.DASHBOARD} onClick={() => setMenuOpen(false)}>
-                  <Button fullWidth>Dashboard</Button>
-                </Link>
-              )}
-              {user?.role === ROLES.ADMIN && (
-                <Link to={ROUTES.ADMIN} onClick={() => setMenuOpen(false)}>
-                  <Button fullWidth>Admin Panel</Button>
-                </Link>
-              )}
-              {user?.role === ROLES.LAB_ASSISTANT && (
-                <Link to={ROUTES.LAB_ASSISTANT} onClick={() => setMenuOpen(false)}>
-                  <Button fullWidth>Lab Dashboard</Button>
-                </Link>
-              )}
-              {user?.role === ROLES.LAB_OWNER && (
-                <Link to={ROUTES.LAB_OWNER} onClick={() => setMenuOpen(false)}>
-                  <Button fullWidth>Lab Owner Dashboard</Button>
-                </Link>
-              )}
-            </div>
+            {/* Role-specific Menu */}
+            {user && roleConfig[user.role] && (
+              <div className="mt-6">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">Menu</p>
+                <div className="flex flex-col gap-1">
+                  {roleConfig[user.role].menuItems.map((item, index) => (
+                    <Link
+                      key={index}
+                      to={item.route}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                        <item.icon size={16} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{item.label}</p>
+                        <p className="text-[11px] text-muted-foreground">{item.description}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Auth Buttons */}
             <div className="mt-6">
@@ -292,9 +436,13 @@ const Navbar = () => {
                   </Link>
                 </div>
               ) : (
-                <Button variant="outline-danger" fullWidth onClick={handleLogout}>
-                  Logout
-                </Button>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 w-full p-3 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition mt-4"
+                >
+                  <LogOut size={18} />
+                  <span className="font-semibold text-sm">Logout</span>
+                </button>
               )}
             </div>
           </motion.div>
