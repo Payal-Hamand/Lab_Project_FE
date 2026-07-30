@@ -69,7 +69,7 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
   if (!open) return null
 
   const sizeClasses = {
-    sm: 'max-w-md',
+    sm: 'max-w-sm',
     md: 'max-w-lg',
     lg: 'max-w-2xl',
     xl: 'max-w-4xl',
@@ -78,7 +78,7 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
 
   return (
     <div
-      className="fixed inset-0 bg-tertiary/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-primary/20 z-50 flex items-center justify-center p-3 sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -86,18 +86,18 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
     >
       <div
         ref={modalRef}
-        className={`bg-white border border-border rounded-xl w-full ${sizeClasses[size] || sizeClasses.md} max-h-[90vh] overflow-y-auto ${className}`}
+        className={`bg-white border border-border rounded-xl w-full ${sizeClasses[size] || sizeClasses.md} max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden ${className}`}
       >
         {(title || onClose) && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-primary/10 rounded-t-xl">
-            <div>
+          <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 border-b border-border bg-primary/10 rounded-t-xl shrink-0">
+            <div className="min-w-0">
               {title && (
-                <h2 id={titleId} className="font-serif text-lg text-foreground">
+                <h2 id={titleId} className="font-serif text-base sm:text-lg text-foreground truncate">
                   {title}
                 </h2>
               )}
               {subtitle && (
-                <p id={subtitleId} className="text-xs text-muted-foreground mt-0.5">
+                <p id={subtitleId} className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 truncate">
                   {subtitle}
                 </p>
               )}
@@ -106,14 +106,16 @@ const Modal = ({ open, onClose, title, subtitle, children, size = 'md', classNam
               <button
                 onClick={onClose}
                 aria-label="Close modal"
-                className="text-muted-foreground hover:text-red-500 transition p-1"
+                className="text-muted-foreground hover:text-foreground transition p-1 shrink-0 ml-2"
               >
                 <X size={16} />
               </button>
             )}
           </div>
         )}
-        <div className="p-5">{children}</div>
+        <div className="p-4 sm:p-5 overflow-y-auto overscroll-contain">
+          {children}
+        </div>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { createPackage } from '@/services/package.service'
-import { DashboardSidePanel } from '@/components/Dashboard'
+import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Textarea from '@/components/ui/Textarea'
 import Select from '@/components/ui/Select'
@@ -63,11 +63,12 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
   }
 
   return (
-    <DashboardSidePanel
+    <Modal
       open={open}
       title="Create Package"
       subtitle="Add healthcare package"
       onClose={onClose}
+      size="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -157,7 +158,7 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
           Create Package
         </Button>
       </form>
-    </DashboardSidePanel>
+    </Modal>
   )
 }
 

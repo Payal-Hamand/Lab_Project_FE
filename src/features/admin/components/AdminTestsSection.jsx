@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { createTest } from '@/services/test.service'
-import { DashboardSidePanel } from '@/components/Dashboard'
+import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Textarea from '@/components/ui/Textarea'
 import Button from '@/components/ui/Button'
@@ -59,11 +59,12 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
   }
 
   return (
-    <DashboardSidePanel
+    <Modal
       open={open}
       title="Create Test"
       subtitle="Fill all required details"
       onClose={onClose}
+      size="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input
@@ -119,7 +120,7 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
           Create Test
         </Button>
       </form>
-    </DashboardSidePanel>
+    </Modal>
   )
 }
 

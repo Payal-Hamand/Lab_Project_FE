@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { createLabOwner } from '@/services/user.service'
 import { updateBookingLab } from '@/services/booking.service'
-import { DashboardSidePanel, DashboardSectionHeader, EmptyState } from '@/components/Dashboard'
+import { DashboardSectionHeader, EmptyState } from '@/components/Dashboard'
 import { DataTable } from '@/components/ui/data-table'
 import { labOwnerColumns } from '@/features/admin/columns/lab-owners.columns'
 import Input from '@/components/ui/Input'
@@ -95,11 +95,12 @@ const AdminUsersSection = ({
 
   return (
     <>
-      <DashboardSidePanel
+      <Modal
         open={open}
         title="Create Lab Owner"
         subtitle="Add new laboratory owner"
         onClose={onClose}
+        size="lg"
       >
         <form onSubmit={handleCreateLabOwner} className="space-y-4">
           <Input required type="text" name="name" placeholder="Full Name" value={labOwnerData.name} onChange={handleChange} />
@@ -163,7 +164,7 @@ const AdminUsersSection = ({
             Create Lab Owner
           </Button>
         </form>
-      </DashboardSidePanel>
+      </Modal>
 
       {/* Lab Owners Table */}
       <div ref={labOwnersRef} className="bg-white border border-border rounded-xl shadow-card mt-8 p-5 md:p-6">
