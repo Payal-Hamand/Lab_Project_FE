@@ -1,8 +1,11 @@
-import React from 'react'
-import { DashboardSectionHeader, BookingsTable, EmptyState } from '@/components/Dashboard'
+import React, { useState } from 'react'
+import { DashboardSectionHeader, EmptyState } from '@/components/Dashboard'
+import { DataTable } from '@/components/ui/data-table'
+import { createAdminBookingsColumns } from '@/features/admin/columns/admin-bookings.columns'
 import { Spinner } from '@/components/ui/Loader'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
+import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { Phone, MapPin, CircleCheckBig, Pencil } from 'lucide-react'
 import { BOOKING_STATUS } from '@/constants/status'
 
@@ -14,6 +17,13 @@ const AdminBookingsSection = ({
   filteredBookings,
   tableRef,
 }) => {
+  const [previewReport, setPreviewReport] = useState(null)
+
+  const columns = React.useMemo(
+    () => createAdminBookingsColumns({ openEditModal, setPreviewReport }),
+    [openEditModal]
+  )
+
   return (
     <div ref={tableRef} className="bg-white border border-border rounded-xl shadow-card mt-8 p-5 md:p-6">
       <DashboardSectionHeader title="Recent Bookings" subtitle="Latest patient booking activity" />
@@ -30,11 +40,13 @@ const AdminBookingsSection = ({
         <EmptyState text="No Bookings Found" />
       ) : (
         <>
-          <div className="hidden lg:block overflow-x-auto mt-4">
-            <BookingsTable
-              bookings={filteredBookings}
-              isAdmin={true}
-              openEditModal={openEditModal}
+          <div className="hidden lg:block mt-4">
+            <DataTable
+              columns={columns}
+              data={filteredBookings}
+              enablePagination={true}
+              enableSorting={true}
+              pageSize={10}
             />
           </div>
           <div className="lg:hidden grid gap-3 mt-4">
@@ -113,6 +125,12 @@ const AdminBookingsSection = ({
           </div>
         </>
       )}
+
+      <ReportViewerModal
+        isOpen={!!previewReport}
+        onClose={() => setPreviewReport(null)}
+        reportUrl={previewReport}
+      />
     </div>
   )
 }

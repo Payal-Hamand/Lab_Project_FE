@@ -3,6 +3,8 @@ import { toast } from 'react-toastify'
 import { createLabOwner } from '@/services/user.service'
 import { updateBookingLab } from '@/services/booking.service'
 import { DashboardSidePanel, DashboardSectionHeader, EmptyState } from '@/components/Dashboard'
+import { DataTable } from '@/components/ui/data-table'
+import { labOwnerColumns } from '@/features/admin/columns/lab-owners.columns'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import Select from '@/components/ui/Select'
@@ -169,56 +171,14 @@ const AdminUsersSection = ({
         {labOwners.length === 0 ? (
           <EmptyState text="No Lab Owners Found" />
         ) : (
-          <div className="overflow-x-auto mt-4">
-            <table className="w-full min-w-[900px]">
-              <thead className="bg-primary/10">
-                <tr>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Owner</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Email</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Role</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Service Areas</th>
-                  <th className="py-3.5 px-4 text-left text-[11px] font-medium text-muted-foreground">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {labOwners.map((owner) => (
-                  <tr key={owner._id} className="border-b border-border hover:bg-accent transition">
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-[10px] bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm">
-                          {owner.name?.charAt(0)}
-                        </div>
-                        <div>
-                          <h3 className="text-xs font-medium text-foreground">{owner.name}</h3>
-                          <p className="text-[10px] text-muted-foreground mt-0.5">ID: {owner._id.slice(-6)}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-xs text-muted-foreground">{owner.email}</td>
-                    <td className="py-4 px-4">
-                      <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[10px] font-semibold capitalize">
-                        {owner.role}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex flex-wrap gap-1.5">
-                        {owner.servicePincodes?.map((pin, index) => (
-                          <span key={index} className="bg-primary/10 border border-border px-2 py-0.5 rounded-full text-[10px] text-muted-foreground">
-                            {pin}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-semibold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                        Active
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-4">
+            <DataTable
+              columns={labOwnerColumns}
+              data={labOwners}
+              enablePagination={true}
+              enableSorting={true}
+              pageSize={10}
+            />
           </div>
         )}
 
