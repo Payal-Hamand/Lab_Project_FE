@@ -1,13 +1,15 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { 
-  FlaskConical, Menu, X, LogOut, ChevronDown, Bell, LayoutDashboard, 
+  Menu, X, LogOut, ChevronDown, Bell, LayoutDashboard, 
   Calendar, TestTube, Settings, User, FileText, ClipboardList, UserCog
 } from 'lucide-react'
 import { AuthContext } from '@/context/AuthContext'
 import { ROUTES } from '@/constants/routes'
 import { ROLES } from '@/constants/roles'
 import Button from '@/components/ui/Button'
+import Logo from '@/components/ui/Logo'
+import Tooltip from '@/components/ui/Tooltip'
 import { motion, AnimatePresence } from 'framer-motion'
 import useClickOutside from '@/hooks/useClickOutside'
 
@@ -105,19 +107,7 @@ const Navbar = () => {
       {/* Single combined nav row */}
       <div className="enterprise-container h-[64px] flex items-center justify-between">
         {/* Logo */}
-        <Link to={ROUTES.HOME} className="flex items-center gap-2.5 flex-shrink-0">
-          <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-            <FlaskConical size={18} className="text-white" />
-          </div>
-          <div className="flex flex-col leading-none">
-            <span className="font-heading font-bold text-foreground text-lg leading-tight">
-              Checked <span className="text-primary">Up</span>
-            </span>
-            <span className="text-[9px] text-primary font-semibold tracking-wider uppercase">
-              LAB TESTS
-            </span>
-          </div>
-        </Link>
+        <Logo />
 
         {/* Desktop Nav Links */}
         <div className="hidden lg:flex items-center gap-7">
@@ -300,14 +290,30 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          className="lg:hidden text-foreground hover:text-primary transition p-1"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Right Side */}
+        <div className="flex lg:hidden items-center gap-3">
+          {user && (
+            <>
+              {/* Notification Bell */}
+              <button className="relative p-2 text-foreground hover:text-primary transition">
+                <Bell size={20} />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+              </button>
+              {/* Profile Avatar */}
+              <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">
+                {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+              </div>
+            </>
+          )}
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            className="text-foreground hover:text-primary transition p-1"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Sidebar */}
@@ -328,124 +334,146 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="relative bg-white w-[85%] max-w-[320px] h-screen shadow-2xl p-6 overflow-y-auto"
+              className="relative bg-white w-[85%] max-w-[320px] h-screen shadow-2xl overflow-y-auto flex flex-col"
             >
-            {/* Top */}
-            <div className="flex items-center justify-between border-b border-border pb-5">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <FlaskConical size={16} className="text-white" />
-                </div>
-                <span className="font-heading font-bold text-foreground text-xl leading-none">
-                  Checked <span className="text-primary">Up</span>
-                </span>
-              </div>
-              <button
-                onClick={() => setMenuOpen(false)}
-                aria-label="Close menu"
-                className="text-muted-foreground hover:text-foreground transition"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Links */}
-            <div className="flex flex-col gap-6 mt-8 text-base font-medium">
-              <Link 
-                to={ROUTES.HOME} 
-                onClick={() => setMenuOpen(false)} 
-                className={`transition ${isActive(ROUTES.HOME) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
-              >
-                Home
-              </Link>
-              <Link 
-                to={ROUTES.TESTS} 
-                onClick={() => setMenuOpen(false)} 
-                className={`transition ${isActive(ROUTES.TESTS) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
-              >
-                Tests
-              </Link>
-              <Link 
-                to={ROUTES.PACKAGES} 
-                onClick={() => setMenuOpen(false)} 
-                className={`transition ${isActive(ROUTES.PACKAGES) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
-              >
-                Packages
-              </Link>
-              <Link 
-                to={ROUTES.ABOUT} 
-                onClick={() => setMenuOpen(false)} 
-                className={`transition ${isActive(ROUTES.ABOUT) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
-              >
-                About Us
-              </Link>
-            </div>
-
-            {/* User Profile Card */}
-            {user && (
-              <div className="mt-8 p-4 bg-accent rounded-xl">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
-                    {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">{user.name}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-semibold rounded capitalize">
-                      {user.role?.replace('_', ' ')}
-                    </span>
+              {/* User Profile Header */}
+              {user && (
+                <div className="p-6 pb-4 border-b border-border">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
+                        {user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">{user.name}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{user.role?.replace('_', ' ')}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setMenuOpen(false)}
+                      aria-label="Close menu"
+                      className="text-muted-foreground hover:text-foreground transition p-1"
+                    >
+                      <X size={22} />
+                    </button>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Role-specific Menu */}
-            {user && roleConfig[user.role] && (
-              <div className="mt-6">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">Menu</p>
-                <div className="flex flex-col gap-1">
+              {/* Not logged in - Logo header */}
+              {!user && (
+                <div className="p-6 pb-4 border-b border-border">
+                  <div className="flex items-center justify-between">
+                    <Logo />
+                    <button
+                      onClick={() => setMenuOpen(false)}
+                      aria-label="Close menu"
+                      className="text-muted-foreground hover:text-foreground transition p-1"
+                    >
+                      <X size={22} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Links */}
+              <div className="flex flex-col py-4 px-6 text-base font-medium">
+                <Link 
+                  to={ROUTES.HOME} 
+                  onClick={() => setMenuOpen(false)} 
+                  className={`py-3 transition ${isActive(ROUTES.HOME) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Home
+                </Link>
+                <Link 
+                  to={ROUTES.TESTS} 
+                  onClick={() => setMenuOpen(false)} 
+                  className={`py-3 transition ${isActive(ROUTES.TESTS) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Tests
+                </Link>
+                <Link 
+                  to={ROUTES.PACKAGES} 
+                  onClick={() => setMenuOpen(false)} 
+                  className={`py-3 transition ${isActive(ROUTES.PACKAGES) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Packages
+                </Link>
+                <Link 
+                  to="/health-checkups" 
+                  onClick={() => setMenuOpen(false)} 
+                  className={`py-3 transition ${isActive('/health-checkups') ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Health Checkups
+                </Link>
+                <Link 
+                  to="/upload-prescription" 
+                  onClick={() => setMenuOpen(false)} 
+                  className={`py-3 transition ${isActive('/upload-prescription') ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Upload Prescription
+                </Link>
+                <Link 
+                  to="/blog" 
+                  onClick={() => setMenuOpen(false)} 
+                  className={`py-3 transition ${isActive('/blog') ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
+                >
+                  Blog
+                </Link>
+                <Link 
+                  to={ROUTES.ABOUT} 
+                  onClick={() => setMenuOpen(false)} 
+                  className={`py-3 transition ${isActive(ROUTES.ABOUT) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
+                >
+                  About Us
+                </Link>
+              </div>
+
+              {/* Divider */}
+              {user && <div className="border-t border-border mx-6" />}
+
+              {/* Dashboard Links */}
+              {user && roleConfig[user.role] && (
+                <div className="flex flex-col py-4 px-6">
                   {roleConfig[user.role].menuItems.map((item, index) => (
                     <Link
                       key={index}
                       to={item.route}
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition"
+                      className={`flex items-center gap-3 py-3 transition ${isActive(item.route) ? 'text-primary font-bold' : 'text-foreground hover:text-primary'}`}
                     >
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                        <item.icon size={16} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{item.label}</p>
-                        <p className="text-[11px] text-muted-foreground">{item.description}</p>
-                      </div>
+                      <item.icon size={18} className={isActive(item.route) ? 'text-primary' : 'text-muted-foreground'} />
+                      <span className="text-sm font-medium">{item.label}</span>
                     </Link>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* Auth Buttons */}
-            <div className="mt-6">
-              {!user ? (
-                <div className="flex flex-col gap-3">
-                  <Link to={ROUTES.LOGIN} onClick={() => setMenuOpen(false)}>
-                    <Button variant="outline" fullWidth>Login</Button>
-                  </Link>
-                  <Link to={ROUTES.TESTS} onClick={() => setMenuOpen(false)}>
-                    <Button fullWidth>Book a Test</Button>
-                  </Link>
-                </div>
-              ) : (
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 w-full p-3 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition mt-4"
-                >
-                  <LogOut size={18} />
-                  <span className="font-semibold text-sm">Logout</span>
-                </button>
               )}
-            </div>
-          </motion.div>
+
+              {/* Divider */}
+              {user && <div className="border-t border-border mx-6" />}
+
+              {/* Logout / Auth Buttons */}
+              <div className="px-6 py-4 mt-auto">
+                {!user ? (
+                  <div className="flex flex-col gap-3">
+                    <Link to={ROUTES.LOGIN} onClick={() => setMenuOpen(false)}>
+                      <Button variant="outline" fullWidth>Login</Button>
+                    </Link>
+                    <Link to={ROUTES.TESTS} onClick={() => setMenuOpen(false)}>
+                      <Button fullWidth>Book a Test</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 w-full py-3 text-red-500 hover:text-red-600 transition font-semibold text-sm"
+                  >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                  </button>
+                )}
+              </div>
+            </motion.div>
         </div>
         )}
       </AnimatePresence>

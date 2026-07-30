@@ -1,7 +1,6 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { FlaskConical } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
+import Logo from '@/components/ui/Logo'
 
 const linkGroups = [
   {
@@ -55,19 +54,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_repeat(4,1fr)] gap-8">
           {/* Brand column */}
           <div>
-            <Link to={ROUTES.HOME} className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                <FlaskConical size={18} className="text-white" />
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="font-heading font-bold text-white text-lg leading-tight">
-                  Checked <span className="text-primary">Up</span>
-                </span>
-                <span className="text-[9px] text-primary font-semibold tracking-wider uppercase">
-                  LAB TESTS
-                </span>
-              </div>
-            </Link>
+            <Logo variant="white" className="mb-4" />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px] mb-6">
               Book lab tests, arrange home sample collection, and get reports from accredited labs —
               all in one place.

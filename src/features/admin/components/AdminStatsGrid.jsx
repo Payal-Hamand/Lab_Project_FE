@@ -87,45 +87,45 @@ const AdminStatsGrid = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-6">
         <button
           onClick={() => setActivePanel('test')}
-          className="bg-tertiary text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-tertiary/90 transition text-left"
+          className="bg-primary/5 border border-primary/20 rounded-xl p-5 hover:bg-primary/10 transition text-left"
         >
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-[10px] bg-primary/30 flex items-center justify-center">
-              <FlaskConical size={20} className="text-primary-foreground" />
+            <div className="w-11 h-11 rounded-[10px] bg-primary/10 flex items-center justify-center">
+              <FlaskConical size={20} className="text-primary" />
             </div>
             <div>
-              <h3 className="font-serif text-base text-white">Create Test</h3>
-              <p className="text-white/50 text-[11px] mt-0.5">Add laboratory tests</p>
+              <h3 className="font-primary text-base text-foreground">Create Test</h3>
+              <p className="text-muted-foreground text-[11px] mt-0.5">Add laboratory tests</p>
             </div>
           </div>
         </button>
 
         <button
           onClick={() => setActivePanel('package')}
-          className="bg-tertiary text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-tertiary/90 transition text-left"
+          className="bg-purple-50 border border-purple-200 rounded-xl p-5 hover:bg-purple-100 transition text-left"
         >
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-[10px] bg-primary/20 flex items-center justify-center">
-              <PackageOpen size={20} />
+            <div className="w-11 h-11 rounded-[10px] bg-purple-100 flex items-center justify-center">
+              <PackageOpen size={20} className="text-purple-600" />
             </div>
             <div>
-              <h3 className="font-serif text-base text-white">Create Package</h3>
-              <p className="text-white/50 text-[11px] mt-0.5">Add health packages</p>
+              <h3 className="font-primary text-base text-foreground">Create Package</h3>
+              <p className="text-muted-foreground text-[11px] mt-0.5">Add health packages</p>
             </div>
           </div>
         </button>
 
         <button
           onClick={() => setActivePanel('lab-owner')}
-          className="bg-tertiary text-white rounded-xl p-5 shadow-card hover:shadow-card-hover hover:bg-tertiary/90 transition text-left"
+          className="bg-green-50 border border-green-200 rounded-xl p-5 hover:bg-green-100 transition text-left"
         >
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-[10px] bg-green-500/20 flex items-center justify-center">
-              <Users size={20} />
+            <div className="w-11 h-11 rounded-[10px] bg-green-100 flex items-center justify-center">
+              <Users size={20} className="text-green-600" />
             </div>
             <div>
-              <h3 className="font-serif text-base text-white">Create Lab Owner</h3>
-              <p className="text-white/50 text-[11px] mt-0.5">Add laboratory owner</p>
+              <h3 className="font-primary text-base text-foreground">Create Lab Owner</h3>
+              <p className="text-muted-foreground text-[11px] mt-0.5">Add laboratory owner</p>
             </div>
           </div>
         </button>

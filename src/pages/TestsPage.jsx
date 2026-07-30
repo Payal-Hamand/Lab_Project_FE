@@ -142,41 +142,38 @@ const TestsPage = () => {
   return (
     <PublicLayout>
       <div className="bg-background min-h-screen pb-12 relative overflow-hidden">
-        {/* Page Hero with Search */}
+        {/* Page Hero */}
         <div className="bg-white py-12 border-b border-border">
           <div className="enterprise-container relative z-10">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-              {/* Left - Heading */}
-              <div>
-                <p className="text-xs text-primary font-bold tracking-wider uppercase mb-2">
-                  Diagnostic Tests
-                </p>
-                <h1 className="font-heading font-bold text-3xl lg:text-4xl text-foreground mb-2">Browse Lab Tests</h1>
-                <p className="text-muted-foreground text-sm lg:text-base max-w-xl">
-                  Explore certified diagnostic tests with home sample collection
-                </p>
-              </div>
-
-              {/* Right - Search */}
-              <div className="w-full lg:w-[400px] flex-shrink-0">
-                <div className="bg-white border border-border rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition shadow-sm">
-                  <Search size={18} className="text-muted-foreground flex-shrink-0" />
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={handleSearch}
-                    placeholder="Search tests by name..."
-                    className="w-full outline-none text-sm text-foreground bg-transparent placeholder:text-muted-foreground/60"
-                  />
-                </div>
-              </div>
+            <div>
+              <p className="text-xs text-primary font-bold tracking-wider uppercase mb-2">
+                Diagnostic Tests
+              </p>
+              <h1 className="font-heading font-bold text-3xl lg:text-4xl text-foreground mb-2">Browse Lab Tests</h1>
+              <p className="text-muted-foreground text-sm lg:text-base max-w-xl">
+                Explore certified diagnostic tests with home sample collection
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Categories */}
+        {/* Search and Categories */}
         {!loading && categories.length > 1 && (
           <div className="enterprise-container mt-6">
+            {/* Search Bar - Left aligned, above filters */}
+            <div className="w-full max-w-md mb-4">
+              <div className="bg-white border border-border rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition shadow-sm">
+                <Search size={18} className="text-muted-foreground flex-shrink-0" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={handleSearch}
+                  placeholder="Search tests by name..."
+                  className="w-full outline-none text-sm text-foreground bg-transparent placeholder:text-muted-foreground/60"
+                />
+              </div>
+            </div>
+            {/* Category Filters */}
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
                 <button

@@ -8,9 +8,17 @@ import { ArrowRight, ChevronRight, ChevronLeft, Check } from 'lucide-react'
 
 const PackageItem = ({ item, handleBookNow }) => {
   const testsList = item.testsIncluded || []
+  const titleRef = React.useRef(null)
+  const [isTruncated, setIsTruncated] = React.useState(false)
+
+  React.useEffect(() => {
+    if (titleRef.current) {
+      setIsTruncated(titleRef.current.scrollHeight > titleRef.current.clientHeight)
+    }
+  }, [item.title])
 
   return (
-    <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex flex-col min-w-[280px] max-w-[300px] w-[280px] flex-shrink-0">
+    <div className="bg-card border border-border rounded-md overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
       {/* Image */}
       {item.image && (
         <img 
@@ -22,7 +30,20 @@ const PackageItem = ({ item, handleBookNow }) => {
 
       {/* Dark Navy Header */}
       <div className="bg-tertiary px-5 py-4">
-        <h3 className="font-heading font-bold text-lg text-tertiary-foreground leading-snug">{item.title}</h3>
+        <div className={`${isTruncated ? 'group/tooltip relative' : ''}`}>
+          <h3 
+            ref={titleRef}
+            className="font-heading font-bold text-lg text-tertiary-foreground leading-snug line-clamp-2"
+          >
+            {item.title}
+          </h3>
+          {isTruncated && (
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-foreground text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 group-hover/tooltip:opacity-100 transition pointer-events-none z-50">
+              {item.title}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-foreground"></div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Card Body */}
@@ -75,7 +96,7 @@ const PackageItem = ({ item, handleBookNow }) => {
 }
 
 const PackageSkeleton = () => (
-  <div className="bg-card border border-border rounded-lg overflow-hidden min-w-[280px] max-w-[300px] w-[280px] flex-shrink-0 animate-pulse">
+  <div className="bg-card border border-border rounded-lg overflow-hidden animate-pulse">
     <div className="h-40 bg-gray-200"></div>
     <div className="bg-tertiary/50 px-5 py-4">
       <div className="h-5 bg-white/20 rounded w-3/4"></div>
@@ -173,7 +194,7 @@ const Packages = ({ showAllPackages = false }) => {
     }
   }
 
-  const validPackages = packages.filter(p => p.testsIncluded?.length > 0)
+  const validPackages = packages
 
   return (
     <section className="py-12 bg-background border-b border-border">
@@ -201,7 +222,7 @@ const Packages = ({ showAllPackages = false }) => {
 
         {/* Loading */}
         {loading ? (
-          <div className={`${showAllPackages ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : 'relative group/scroll'}`}>
+          <div className={`${showAllPackages ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'relative group/scroll'}`}>
             {showAllPackages ? (
               [1, 2, 3, 4, 5, 6].map((i) => (
                 <PackageSkeleton key={i} />
@@ -209,7 +230,9 @@ const Packages = ({ showAllPackages = false }) => {
             ) : (
               <div ref={scrollRef} className="flex gap-6 overflow-x-auto pb-4">
                 {[1, 2, 3, 4].map((i) => (
-                  <PackageSkeleton key={i} />
+                  <div key={i} className="min-w-[300px] max-w-[340px] w-[340px] flex-shrink-0">
+                    <PackageSkeleton />
+                  </div>
                 ))}
               </div>
             )}
@@ -221,11 +244,9 @@ const Packages = ({ showAllPackages = false }) => {
           </div>
         ) : showAllPackages ? (
           /* Grid layout for all packages page */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {validPackages.map((item) => (
-              <div key={item._id} className="flex justify-center">
-                <PackageItem item={item} handleBookNow={handleBookNow} />
-              </div>
+              <PackageItem key={item._id} item={item} handleBookNow={handleBookNow} />
             ))}
           </div>
         ) : (
@@ -236,7 +257,9 @@ const Packages = ({ showAllPackages = false }) => {
               className="flex gap-6 overflow-x-auto pb-4"
             >
               {validPackages.map((item) => (
-                <PackageItem key={item._id} item={item} handleBookNow={handleBookNow} />
+                <div key={item._id} className="min-w-[300px] max-w-[340px] w-[340px] flex-shrink-0">
+                  <PackageItem item={item} handleBookNow={handleBookNow} />
+                </div>
               ))}
             </div>
 

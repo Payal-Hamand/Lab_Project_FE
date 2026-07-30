@@ -10,6 +10,7 @@ import useAuth from '@/hooks/useAuth'
 import { ROUTES } from '@/constants/routes'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import Logo from '@/components/ui/Logo'
 
 const OrbitAnimation = () => {
   const containerRef = useRef(null)
@@ -208,12 +209,7 @@ const Signup = () => {
       {/* Left Panel */}
       <div className="hidden md:flex flex-col w-[44%] bg-tertiary px-[32px] py-[36px] relative overflow-hidden justify-between">
         {/* Top: Logo */}
-        <Link to={ROUTES.HOME} className="flex items-center gap-2 z-10">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-tertiary font-bold text-xl leading-none">C</span>
-          </div>
-          <span className="font-heading font-bold text-xl text-white tracking-tight">Checked Up</span>
-        </Link>
+        <Logo variant="white" />
         
         {/* Middle: Orbit Animation & Text */}
         <div className="flex flex-col items-center justify-center z-10 w-full mt-4">
@@ -307,11 +303,8 @@ const Signup = () => {
         </Button>
         
         <div className="w-full max-w-[440px] bg-white p-[40px] border border-border rounded-[10px] shadow-sm relative z-10">
-          <div className="flex items-center gap-2 mb-6 md:hidden justify-center">
-            <div className="w-8 h-8 bg-tertiary rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-xl leading-none">C</span>
-            </div>
-            <span className="font-heading font-bold text-xl text-tertiary tracking-tight">Checked Up</span>
+          <div className="flex justify-center mb-6 md:hidden">
+            <Logo />
           </div>
           
           <div className="text-center md:text-left mb-8">
@@ -385,14 +378,14 @@ const Signup = () => {
               )}
             </div>
             
-            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-secondary hover:bg-secondary/90 text-white mt-2">
+            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-primary hover:bg-primary/90 text-white mt-2">
               Create account
             </Button>
           </form>
 
           <p className="mt-6 text-muted-foreground text-center text-sm">
             Already have an account?{' '}
-            <Link to={ROUTES.LOGIN} className="text-secondary font-bold hover:underline">
+            <Link to={ROUTES.LOGIN} className="text-primary font-bold hover:underline">
               Sign in
             </Link>
           </p>

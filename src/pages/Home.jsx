@@ -4,6 +4,7 @@ import Hero from '@/components/Hero'
 import Features from '@/components/Features'
 import PopularTests from '@/components/PopularTests'
 import Packages from '@/components/Packages'
+import WhyChoose from '@/components/WhyChoose'
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       <Features />
       <PopularTests />
       <Packages />
+      <WhyChoose />
     </PublicLayout>
   )
 }

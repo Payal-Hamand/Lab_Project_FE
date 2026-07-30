@@ -11,6 +11,7 @@ import { ROUTES } from '@/constants/routes'
 import { ROLES } from '@/constants/roles'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import Logo from '@/components/ui/Logo'
 
 const DNAAnimation = () => {
   const containerRef = useRef(null)
@@ -208,12 +209,7 @@ const Login = () => {
       {/* Left Panel */}
       <div className="hidden md:flex flex-col w-[44%] bg-tertiary px-[32px] py-[36px] relative overflow-hidden justify-between">
         {/* Top: Logo */}
-        <Link to={ROUTES.HOME} className="flex items-center gap-2 z-10">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-tertiary font-bold text-xl leading-none">C</span>
-          </div>
-          <span className="font-heading font-bold text-xl text-white tracking-tight">Checked Up</span>
-        </Link>
+        <Logo variant="white" />
         
         {/* Middle: DNA Animation & Text */}
         <div className="flex flex-col items-center justify-center z-10 w-full mt-4">
@@ -303,9 +299,7 @@ const Login = () => {
         
         <div className="w-full max-w-[440px] bg-white p-[40px] border border-border rounded-[10px] shadow-sm relative z-10">
           <div className="flex justify-center mb-6 md:hidden">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-2xl leading-none">C</span>
-            </div>
+            <Logo />
           </div>
           
           <div className="text-center md:text-left mb-6">
@@ -370,7 +364,7 @@ const Login = () => {
                 </Link>
               </div>
             </div>
-            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-secondary hover:bg-secondary/90 text-white">
+            <Button type="submit" loading={isSubmitting} fullWidth size="lg" className="bg-primary hover:bg-primary/90 text-white">
               Sign In
             </Button>
           </form>
