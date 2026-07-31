@@ -39,4 +39,8 @@ export const API_ENDPOINTS = {
     CREATE: '/payment/create',
     VERIFY: '/payment/verify',
   },
+  PAYMENT_SETTING: {
+    BASE: '/payment-setting',
+  },
+  BOOKINGS_PAYMENT_RECEIPT: (id) => `/bookings/payment/${id}`,
 }

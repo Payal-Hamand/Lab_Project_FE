@@ -28,3 +28,19 @@ export const createPaymentOrder = (data) => {
 export const verifyPayment = (data) => {
   return API.post(API_ENDPOINTS.PAYMENT.VERIFY, data)
 }
+
+export const getPaymentSetting = () => {
+  return API.get(API_ENDPOINTS.PAYMENT_SETTING.BASE)
+}
+
+export const createPaymentSetting = (formData) => {
+  return API.post(API_ENDPOINTS.PAYMENT_SETTING.BASE, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+
+export const updatePaymentSetting = (formData) => {
+  return API.put(API_ENDPOINTS.PAYMENT_SETTING.BASE, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}

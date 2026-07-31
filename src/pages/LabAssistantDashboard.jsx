@@ -6,15 +6,16 @@ import {
   searchAssignedBookings,
   markReached,
   uploadSample,
-  updatePaymentStatus,
+  uploadPaymentReceipt,
 } from '@/services/booking.service'
-import { createPaymentOrder, verifyPayment } from '@/services/user.service'
+import { getPaymentSetting } from '@/services/user.service'
 import { BOOKING_STATUS } from '@/constants/status'
 import { EmptyState } from '@/components/Dashboard'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { Spinner } from '@/components/ui/Loader'
 import { Search } from 'lucide-react'
+import Modal from '@/components/ui/Modal'
 import LabAssistantStatsGrid from '@/features/lab-assistant/components/LabAssistantStatsGrid'
 import LabAssistantBookingsTable from '@/features/lab-assistant/components/LabAssistantBookingsTable'
 import LabAssistantBookingMobileCard from '@/features/lab-assistant/components/LabAssistantBookingMobileCard'
@@ -33,6 +34,11 @@ const LabAssistantDashboard = () => {
   const [assistantNotes, setAssistantNotes] = useState('')
   const [showSampleModal, setShowSampleModal] = useState(false)
   const [previewReport, setPreviewReport] = useState(null)
+  const [paymentSetting, setPaymentSetting] = useState(null)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [paymentBooking, setPaymentBooking] = useState(null)
+  const [paymentReceipt, setPaymentReceipt] = useState(null)
+  const [uploadingPayment, setUploadingPayment] = useState(false)
 
   const fetchBookings = async () => {
     try {
@@ -49,6 +55,21 @@ const LabAssistantDashboard = () => {
   useEffect(() => {
     fetchBookings()
   }, [])
+
+  const fetchPaymentSetting = async () => {
+    try {
+      const { data } = await getPaymentSetting()
+      setPaymentSetting(data.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const handlePayment = async (booking) => {
+    setPaymentBooking(booking)
+    await fetchPaymentSetting()
+    setShowPaymentModal(true)
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -114,61 +135,24 @@ const LabAssistantDashboard = () => {
     )
   }
 
-  const handlePayment = async (booking) => {
+  const handlePaymentDone = async () => {
+    if (!paymentReceipt) {
+      toast.error('Please upload payment receipt.')
+      return
+    }
     try {
-      const { data } = await createPaymentOrder({
-        bookingId: booking._id,
-        amount: booking?.test?.price || booking?.package?.price,
-      })
-      const options = {
-        key: data.key,
-        amount: data.order.amount,
-        currency: data.order.currency,
-        name: 'MediLab Healthcare',
-        description: 'Lab Test Payment',
-        order_id: data.order.id,
-        handler: async function (response) {
-          try {
-            const verify = await verifyPayment({
-              ...response,
-              bookingId: booking._id,
-            })
-            if (verify.data.success) {
-              toast.success('Payment Successful')
-              fetchBookings()
-            } else {
-              toast.error('Payment Verification Failed')
-            }
-          } catch (error) {
-            console.log(error)
-            toast.error('Payment Verification Failed')
-          }
-        },
-        modal: {
-          ondismiss: async function () {
-            toast.info('Payment Cancelled')
-            await updatePaymentStatus(booking._id, 'Failed')
-            fetchBookings()
-          },
-        },
-        prefill: {
-          name: booking.patientName,
-          contact: booking.phone,
-        },
-        theme: {
-          color: '#2563eb',
-        },
-      }
-      const razorpay = new window.Razorpay(options)
-      razorpay.on('payment.failed', async function (response) {
-        toast.error(response.error.description || 'Payment Failed')
-        await updatePaymentStatus(booking._id, 'Failed')
-        fetchBookings()
-      })
-      razorpay.open()
-    } catch (error) {
-      console.log(error)
-      toast.error('Payment Failed')
+      setUploadingPayment(true)
+      const formData = new FormData()
+      formData.append('receipt', paymentReceipt)
+      const res = await uploadPaymentReceipt(paymentBooking._id, formData)
+      toast.success(res.data.message)
+      setShowPaymentModal(false)
+      setPaymentReceipt(null)
+      fetchBookings()
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Upload failed')
+    } finally {
+      setUploadingPayment(false)
     }
   }
 
@@ -285,6 +269,92 @@ const LabAssistantDashboard = () => {
           onClose={() => setPreviewReport(null)}
           reportUrl={previewReport}
         />
+        <Modal
+          open={showPaymentModal && !!paymentSetting}
+          title="Collect Payment"
+          onClose={() => {
+            setShowPaymentModal(false)
+            setPaymentReceipt(null)
+          }}
+          size="md"
+        >
+          <div className="flex justify-center">
+            <img src={paymentSetting?.qrImage} alt="" className="w-64 rounded-2xl border" />
+          </div>
+          <div className="mt-6 space-y-2">
+            <p><strong>Account Name:</strong> {paymentSetting?.accountName}</p>
+            <p><strong>UPI ID:</strong> {paymentSetting?.upiId}</p>
+            <p><strong>Amount:</strong> ₹{paymentBooking?.test?.price || paymentBooking?.package?.price}</p>
+          </div>
+          <div className="mt-5">
+            <h3 className="text-lg font-semibold mb-3">Upload Payment Receipt</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="border-2 border-dashed border-blue-300 rounded-2xl p-4 cursor-pointer hover:bg-blue-50 transition">
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  hidden
+                  onChange={(e) => {
+                    if (e.target.files[0]) setPaymentReceipt(e.target.files[0])
+                  }}
+                />
+                <div className="flex flex-col items-center">
+                  <div className="text-3xl">📷</div>
+                  <p className="mt-2 text-sm font-semibold">Capture</p>
+                </div>
+              </label>
+              <label className="border-2 border-dashed border-green-300 rounded-2xl p-4 cursor-pointer hover:bg-green-50 transition">
+                <input
+                  type="file"
+                  accept="image/*,.pdf"
+                  hidden
+                  onChange={(e) => {
+                    if (e.target.files[0]) setPaymentReceipt(e.target.files[0])
+                  }}
+                />
+                <div className="flex flex-col items-center">
+                  <div className="text-3xl">🖼️</div>
+                  <p className="mt-2 text-sm font-semibold">Upload</p>
+                </div>
+              </label>
+            </div>
+            {paymentReceipt && (
+              <div className="mt-4 p-3 rounded-xl bg-blue-50 border">
+                <p className="text-sm font-semibold">{paymentReceipt.name}</p>
+                {paymentReceipt.type.startsWith('image/') && (
+                  <img
+                    src={URL.createObjectURL(paymentReceipt)}
+                    alt=""
+                    className="w-28 h-28 object-cover rounded-lg mt-3 border"
+                  />
+                )}
+              </div>
+            )}
+          </div>
+          <div className="flex gap-3 mt-5">
+            <button
+              onClick={() => {
+                setShowPaymentModal(false)
+                setPaymentReceipt(null)
+              }}
+              className="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handlePaymentDone}
+              disabled={!paymentReceipt || uploadingPayment}
+              className={`flex-1 py-3 rounded-xl text-white font-semibold transition ${
+                !paymentReceipt || uploadingPayment
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
+            >
+              {uploadingPayment ? 'Uploading...' : 'Payment Done'}
+            </button>
+          </div>
+        </Modal>
       </div>
     </DashboardLayout>
   )

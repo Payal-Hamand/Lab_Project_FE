@@ -60,3 +60,9 @@ export const updateBookingLab = (bookingId, labOwnerId) => {
 export const updatePaymentStatus = (bookingId, paymentStatus) => {
   return API.put(API_ENDPOINTS.BOOKINGS.PAYMENT_STATUS(bookingId), { paymentStatus })
 }
+
+export const uploadPaymentReceipt = (bookingId, formData) => {
+  return API.put(API_ENDPOINTS.BOOKINGS_PAYMENT_RECEIPT(bookingId), formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}

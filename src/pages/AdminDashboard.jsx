@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { toast } from 'react-toastify'
 import DashboardLayout from '@/components/layout/DashboardLayout'
+import Modal from '@/components/ui/Modal'
 import { getAllTests } from '@/services/test.service'
 import { getAllPackages } from '@/services/package.service'
-import { getAllLabOwners, getBookingLabOwners } from '@/services/user.service'
+import { getAllLabOwners, getBookingLabOwners, getPaymentSetting, createPaymentSetting, updatePaymentSetting } from '@/services/user.service'
 import { getAllBookings } from '@/services/booking.service'
 import { BOOKING_STATUS } from '@/constants/status'
 import AdminStatsGrid from '@/features/admin/components/AdminStatsGrid'
@@ -30,6 +32,53 @@ const AdminDashboard = () => {
     setSelectedLab(booking.labOwner?._id || '')
     setShowEditModal(true)
   }
+
+  const [payment, setPayment] = useState(null)
+  const [form, setForm] = useState({
+    accountName: '',
+    upiId: '',
+  })
+  const [qrImage, setQrImage] = useState(null)
+
+  const fetchPayment = async () => {
+    try {
+      const { data } = await getPaymentSetting()
+      if (data.data) {
+        setPayment(data.data)
+        setForm({
+          accountName: data.data.accountName,
+          upiId: data.data.upiId,
+        })
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData()
+      formData.append('accountName', form.accountName)
+      formData.append('upiId', form.upiId)
+      if (qrImage) {
+        formData.append('qrImage', qrImage)
+      }
+      if (payment) {
+        await updatePaymentSetting(formData)
+      } else {
+        await createPaymentSetting(formData)
+      }
+      toast.success('Saved Successfully')
+      fetchPayment()
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong')
+    }
+  }
+
+  useEffect(() => {
+    fetchPayment()
+  }, [])
+
   const tableRef = useRef(null)
   const labOwnersRef = useRef(null)
 
@@ -155,6 +204,71 @@ const AdminDashboard = () => {
             open={activePanel === 'lab-owner'}
             onClose={() => setActivePanel('')}
           />
+          <Modal
+            open={activePanel === 'payment'}
+            title="Payment Settings"
+            subtitle="Upload QR Code and UPI Details"
+            onClose={() => setActivePanel('')}
+            size="lg"
+          >
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleSubmit()
+              }}
+              className="space-y-6"
+            >
+              <div>
+                <label className="block mb-2 font-semibold">Account Holder Name</label>
+                <input
+                  type="text"
+                  value={form.accountName}
+                  onChange={(e) => setForm({ ...form, accountName: e.target.value })}
+                  className="w-full border rounded-xl px-4 py-3 outline-none focus:border-primary"
+                  placeholder="Enter Account Name"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-semibold">UPI ID</label>
+                <input
+                  type="text"
+                  value={form.upiId}
+                  onChange={(e) => setForm({ ...form, upiId: e.target.value })}
+                  className="w-full border rounded-xl px-4 py-3 outline-none focus:border-primary"
+                  placeholder="abc@okaxis"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-semibold">QR Code</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setQrImage(e.target.files[0])}
+                  className="w-full"
+                />
+              </div>
+              {qrImage && (
+                <div className="bg-blue-50 rounded-xl p-4">
+                  <p className="font-medium text-blue-700 text-sm">Selected File</p>
+                  <p className="text-xs mt-1">{qrImage.name}</p>
+                </div>
+              )}
+              {payment?.qrImage && (
+                <div className="space-y-3">
+                  <p className="font-semibold text-sm">Current QR Code</p>
+                  <img src={payment.qrImage} alt="" className="w-64 rounded-xl border" />
+                </div>
+              )}
+              <button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-xl font-semibold transition"
+              >
+                {payment ? 'Update Payment Settings' : 'Save Payment Settings'}
+              </button>
+            </form>
+          </Modal>
           <AdminBookingsSection
             bookings={bookings}
             loading={loading}
