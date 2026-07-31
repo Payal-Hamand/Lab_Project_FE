@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 
-const BookingMobileCard = ({ booking, openManageModal }) => {
+const BookingMobileCard = ({ booking, openManageModal, setPreviewReport }) => {
   return (
     <div className="bg-white border border-border rounded-[10px] overflow-hidden">
       {/* Status strip */}
@@ -75,15 +75,13 @@ const BookingMobileCard = ({ booking, openManageModal }) => {
         </div>
 
         {booking.report && (
-          <a
-            href={booking.report}
-            target="_blank"
-            rel="noreferrer"
+          <button
+            onClick={() => setPreviewReport(booking.report)}
             className="mt-3 w-full flex justify-center bg-primary hover:bg-primary/90 text-primary-foreground py-2 rounded-lg font-medium text-xs transition"
           >
             <FileText className="inline mr-1.5" size={13} />
-            Download Report
-          </a>
+            View Report
+          </button>
         )}
 
         {booking.status !== BOOKING_STATUS.COMPLETED &&

@@ -19,6 +19,7 @@ const LabAssistantBookingMobileCard = ({
   openSampleModal,
   openNavigation,
   handlePayment,
+  setPreviewReport,
 }) => {
   return (
     <div className="lg:hidden space-y-3">
@@ -127,15 +128,13 @@ const LabAssistantBookingMobileCard = ({
 
             <div className="mt-4">
               {item.report ? (
-                <a
-                  href={item.report}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  onClick={() => setPreviewReport(item.report)}
                   className="w-full flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg py-2 text-xs font-medium transition"
                 >
                   <FileText size={13} />
                   View Report
-                </a>
+                </button>
               ) : item.paymentStatus !== PAYMENT_STATUS.PAID ? (
                 <div className="bg-red-50 text-red-600 rounded-lg py-2 text-center text-xs font-medium">
                   Payment Pending

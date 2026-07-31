@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import { Download, Pencil } from 'lucide-react'
 import { DashboardSectionHeader, EmptyState } from '@/components/Dashboard'
 import { DataTable } from '@/components/ui/data-table'
 import { createAdminBookingsColumns } from '@/features/admin/columns/admin-bookings.columns'
+import { BOOKING_STATUS } from '@/constants/status'
 import { Spinner } from '@/components/ui/Loader'
 import Button from '@/components/ui/Button'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
@@ -16,8 +18,26 @@ const AdminBookingsSection = ({
 }) => {
   const [previewReport, setPreviewReport] = useState(null)
 
-  const columns = React.useMemo(
-    () => createAdminBookingsColumns({ openEditModal, setPreviewReport }),
+  const columns = React.useMemo(() => createAdminBookingsColumns(), [])
+
+  const actions = React.useMemo(
+    () => [
+      {
+        label: 'Edit Lab',
+        icon: <Pencil size={14} />,
+        iconColor: 'bg-amber-100 text-amber-600',
+        onClick: openEditModal,
+        disabled: (row) =>
+          row.status === BOOKING_STATUS.COMPLETED || row.status === BOOKING_STATUS.CANCELLED,
+      },
+      {
+        label: 'View Report',
+        icon: <Download size={14} />,
+        iconColor: 'bg-blue-100 text-blue-600',
+        onClick: (row) => setPreviewReport(row.report),
+        disabled: (row) => !row.report,
+      },
+    ],
     [openEditModal]
   )
 
@@ -44,6 +64,7 @@ const AdminBookingsSection = ({
               enablePagination={true}
               enableSorting={true}
               pageSize={10}
+              actions={actions}
             />
           </div>
         </>

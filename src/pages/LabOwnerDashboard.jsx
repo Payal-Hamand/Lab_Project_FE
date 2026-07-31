@@ -19,6 +19,7 @@ import LabOwnerStatsGrid from '@/features/lab-owner/components/LabOwnerStatsGrid
 import LabOwnerAssistantsSection from '@/features/lab-owner/components/LabOwnerAssistantsSection'
 import LabOwnerBookingsTable from '@/features/lab-owner/components/LabOwnerBookingsTable'
 import LabOwnerBookingMobileCard from '@/features/lab-owner/components/LabOwnerBookingMobileCard'
+import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { Search } from 'lucide-react'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 
@@ -29,6 +30,7 @@ const LabOwnerDashboard = () => {
   const [assistants, setAssistants] = useState([])
   const [selectedReport, setSelectedReport] = useState({})
   const [uploadingReport, setUploadingReport] = useState({})
+  const [previewReport, setPreviewReport] = useState(null)
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState(null)
   const [activeSection, setActiveSection] = useState('all')
@@ -182,7 +184,7 @@ const LabOwnerDashboard = () => {
         : bookings
   return (
     <DashboardLayout>
-      <div className="bg-accent min-h-screen">
+      <div className="bg-background min-h-screen">
         <div className="bg-tertiary">
           <div className="enterprise-container py-8 text-white">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-3 py-1 rounded-full text-[10px] mb-4">
@@ -321,10 +323,10 @@ const LabOwnerDashboard = () => {
                   filteredBookings={filteredBookings}
                   assistants={assistants}
                   handleAssignAssistant={handleAssignAssistant}
-                  selectedReport={selectedReport}
                   setSelectedReport={setSelectedReport}
                   uploadingReport={uploadingReport}
                   handleUploadReport={handleUploadReport}
+                  setPreviewReport={setPreviewReport}
                 />
                 <LabOwnerBookingMobileCard
                   filteredBookings={filteredBookings}
@@ -334,12 +336,18 @@ const LabOwnerDashboard = () => {
                   setSelectedReport={setSelectedReport}
                   uploadingReport={uploadingReport}
                   handleUploadReport={handleUploadReport}
+                  setPreviewReport={setPreviewReport}
                 />
               </>
             )}
           </div>
         </div>
       </div>
+      <ReportViewerModal
+        isOpen={!!previewReport}
+        onClose={() => setPreviewReport(null)}
+        reportUrl={previewReport}
+      />
     </DashboardLayout>
   )
 }

@@ -1,6 +1,5 @@
 import React from "react"
 import { type ColumnDef } from "@tanstack/react-table"
-import { Download, UploadCloud } from "lucide-react"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { BOOKING_STATUS, PAYMENT_STATUS } from "@/constants/status"
 
@@ -46,19 +45,11 @@ export interface Booking {
 interface CreateLabOwnerBookingsColumnsParams {
   assistants: Array<{ _id: string; name: string }>
   handleAssignAssistant: (bookingId: string, assistantId: string) => void
-  selectedReport: Record<string, File>
-  setSelectedReport: React.Dispatch<React.SetStateAction<Record<string, File>>>
-  uploadingReport: Record<string, boolean>
-  handleUploadReport: (bookingId: string) => void
 }
 
 export function createLabOwnerBookingsColumns({
   assistants,
   handleAssignAssistant,
-  selectedReport,
-  setSelectedReport,
-  uploadingReport,
-  handleUploadReport,
 }: CreateLabOwnerBookingsColumnsParams): ColumnDef<Booking, any>[] {
   return [
     {
@@ -217,77 +208,6 @@ export function createLabOwnerBookingsColumns({
               </span>
             )}
           </div>
-        )
-      },
-    },
-    {
-      id: "report",
-      header: "Report",
-      enableSorting: false,
-      cell: ({ row }) => {
-        const booking = row.original
-        if (booking.report) {
-          return (
-            <a href={booking.report} target="_blank" rel="noreferrer">
-              <span className="inline-flex items-center gap-1.5 bg-success hover:bg-success/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all">
-                <Download size={14} />
-                View Report
-              </span>
-            </a>
-          )
-        }
-        if (booking.paymentStatus === PAYMENT_STATUS.PAID) {
-          return (
-            <div className="flex flex-col gap-2 min-w-[120px]">
-              <input
-                type="file"
-                accept=".pdf"
-                className="text-[10px] py-1 h-7 file:py-0 file:px-2 file:text-[10px] file:bg-gray-100 file:border-0 file:rounded-sm file:mr-2"
-                onChange={(e) =>
-                  setSelectedReport((prev) => ({
-                    ...prev,
-                    [booking._id]: e.target.files?.[0] as File,
-                  }))
-                }
-              />
-              <button
-                onClick={() => handleUploadReport(booking._id)}
-                disabled={uploadingReport[booking._id]}
-                className="inline-flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
-              >
-                {uploadingReport[booking._id] ? (
-                  <span className="inline-flex items-center gap-2">
-                    <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        opacity="0.25"
-                        fill="none"
-                      />
-                      <path
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      />
-                    </svg>
-                    Uploading...
-                  </span>
-                ) : (
-                  <>
-                    <UploadCloud size={14} />
-                    Upload
-                  </>
-                )}
-              </button>
-            </div>
-          )
-        }
-        return (
-          <span className="text-red-500 text-[11px] font-medium bg-red-50 px-2 py-1 rounded">
-            Pending
-          </span>
         )
       },
     },

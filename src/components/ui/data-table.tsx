@@ -12,6 +12,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { MoreVertical } from "lucide-react"
 
 import {
   Table,
@@ -22,6 +23,23 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { DataTablePagination } from "@/components/ui/data-table-pagination"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+export interface Action<TData> {
+  label: string
+  icon?: React.ReactNode
+  iconColor?: string
+  onClick: (row: TData) => void
+  disabled?: boolean | ((row: TData) => boolean)
+  variant?: "default" | "destructive"
+  separator?: boolean
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -32,7 +50,61 @@ interface DataTableProps<TData, TValue> {
   enablePagination?: boolean
   enableSorting?: boolean
   enableRowSelection?: boolean
+  actions?: Action<TData>[]
+  actionsHeader?: string
   className?: string
+}
+
+export function createActionsColumn<TData>(
+  actions: Action<TData>[],
+  header: string = "Actions"
+): ColumnDef<TData, any> {
+  return {
+    id: "actions",
+    header,
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ row }) => {
+      const rowData = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger className="inline-flex items-center justify-center size-8 rounded-md hover:bg-muted transition-colors outline-none cursor-pointer">
+            <MoreVertical size={16} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52">
+            {actions.map((action, index) => {
+              const isDisabled =
+                typeof action.disabled === "function"
+                  ? action.disabled(rowData)
+                  : action.disabled
+
+              return (
+                <React.Fragment key={action.label}>
+                  {action.separator && index > 0 && <DropdownMenuSeparator />}
+                  <DropdownMenuItem
+                    onClick={() => action.onClick(rowData)}
+                    disabled={isDisabled}
+                    variant={action.variant}
+                  >
+                    {action.icon && (
+                      <span
+                        className={`inline-flex items-center justify-center size-6 rounded-md ${
+                          action.iconColor || "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {action.icon}
+                      </span>
+                    )}
+                    {action.label}
+                  </DropdownMenuItem>
+                </React.Fragment>
+              )
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
+  }
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +116,8 @@ export function DataTable<TData, TValue>({
   enablePagination = true,
   enableSorting = true,
   enableRowSelection = false,
+  actions,
+  actionsHeader = "Actions",
   className,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -51,9 +125,14 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
+  const allColumns = React.useMemo(() => {
+    if (!actions || actions.length === 0) return columns
+    return [...columns, createActionsColumn<TData>(actions, actionsHeader)]
+  }, [columns, actions, actionsHeader])
+
   const table = useReactTable({
     data,
-    columns,
+    columns: allColumns,
     getCoreRowModel: getCoreRowModel(),
     ...(enablePagination && {
       getPaginationRowModel: getPaginationRowModel(),
@@ -122,7 +201,7 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={allColumns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

@@ -1,19 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { toast } from 'react-toastify'
+import { Download } from 'lucide-react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import useAuth from '@/hooks/useAuth'
 import { getMyBookings, manageBooking } from '@/services/booking.service'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
-import { BOOKING_STATUS } from '@/constants/status'
+import { DataTable } from '@/components/ui/data-table'
+import { createPatientBookingsColumns } from '@/features/patient/columns/patient-bookings.columns'
 import Button from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Loader'
 import PatientStatsGrid from '@/features/patient/components/PatientStatsGrid'
 import BookingMobileCard from '@/features/patient/components/BookingMobileCard'
 import ManageBookingModal from '@/features/patient/components/ManageBookingModal'
-import BookingsTable from '@/components/Dashboard/BookingsTable'
-import { motion } from 'framer-motion'
-import EmptyState from '@/components/EmptyState'
+import EmptyState from '@/components/Dashboard/EmptyState'
+import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { db } from '@/firebase'
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('all')
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState(null)
+  const [previewReport, setPreviewReport] = useState(null)
   const tableRef = useRef(null)
   const navigate = useNavigate()
   const [customReason, setCustomReason] = useState('')
@@ -52,7 +54,6 @@ const Dashboard = () => {
 
     if (!user?._id) return
 
-    // Listen for real-time status updates from Firestore
     const q = query(collection(db, 'bookings'), where('patient', '==', user._id))
     const unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
@@ -146,20 +147,39 @@ const Dashboard = () => {
           ? bookings.filter((item) => item.report)
           : bookings
 
+  const columns = React.useMemo(
+    () => createPatientBookingsColumns({ openManageModal }),
+    [openManageModal]
+  )
+
+  const actions = React.useMemo(
+    () => [
+      {
+        label: 'View Report',
+        icon: <Download size={14} />,
+        iconColor: 'bg-blue-100 text-blue-600',
+        onClick: (row) => {
+          if (row.report) setPreviewReport(row.report)
+        },
+        disabled: (row) => !row.report,
+      },
+    ],
+    []
+  )
+
   return (
     <DashboardLayout>
       <div className="bg-background min-h-screen pb-10">
-        {/* Greet Banner */}
-        <div className="bg-card border-b border-border">
-          <div className="enterprise-container py-10">
-            <div className="inline-flex items-center gap-2 text-primary px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-4 border border-primary">
-              <div className="w-1.5 h-1.5 rounded-full bg-success"></div>
+        <div className="bg-tertiary">
+          <div className="enterprise-container py-10 text-white">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-3 py-1 rounded-full text-[10px] mb-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
               Patient Dashboard
             </div>
-            <h1 className="font-heading font-bold text-2xl md:text-3xl text-foreground">
-              Welcome back, <span className="text-primary">{user?.name}</span>
+            <h1 className="font-serif text-2xl md:text-3xl text-white">
+              Welcome back, <span className="text-secondary">{user?.name}</span>
             </h1>
-            <p className="text-muted-foreground text-sm mt-2">
+            <p className="text-white/40 text-sm mt-2">
               Manage your bookings and download reports
             </p>
           </div>
@@ -173,10 +193,9 @@ const Dashboard = () => {
             scrollToTable={scrollToTable}
           />
 
-          {/* Bookings section */}
           <div
             ref={tableRef}
-            className="bg-card border border-border rounded-xl shadow-sm mt-8 p-6"
+            className="bg-white border border-border rounded-xl shadow-sm mt-8 p-6"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 pb-4 border-b border-border">
               <div>
@@ -203,27 +222,24 @@ const Dashboard = () => {
               <EmptyState text="No Bookings Found" />
             ) : (
               <>
-                <motion.div 
-                  className="hidden lg:block"
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <BookingsTable bookings={filteredBookings} openManageModal={openManageModal} />
-                </motion.div>
+                <div className="hidden lg:block">
+                  <DataTable
+                    columns={columns}
+                    data={filteredBookings}
+                    enablePagination={true}
+                    enableSorting={true}
+                    pageSize={10}
+                    actions={actions}
+                  />
+                </div>
                 <div className="lg:hidden grid gap-3">
-                  {filteredBookings.map((booking, index) => (
-                    <motion.div
+                  {filteredBookings.map((booking) => (
+                    <BookingMobileCard
                       key={booking._id}
-                      initial={{ opacity: 0, x: -16 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.07 }}
-                    >
-                      <BookingMobileCard
-                        booking={booking}
-                        openManageModal={openManageModal}
-                      />
-                    </motion.div>
+                      booking={booking}
+                      openManageModal={openManageModal}
+                      setPreviewReport={setPreviewReport}
+                    />
                   ))}
                 </div>
               </>
@@ -244,6 +260,11 @@ const Dashboard = () => {
           handleRescheduleChange={handleRescheduleChange}
           handleCancel={handleCancel}
           handleReschedule={handleReschedule}
+        />
+        <ReportViewerModal
+          isOpen={!!previewReport}
+          onClose={() => setPreviewReport(null)}
+          reportUrl={previewReport}
         />
       </div>
     </DashboardLayout>

@@ -19,6 +19,7 @@ import LabAssistantStatsGrid from '@/features/lab-assistant/components/LabAssist
 import LabAssistantBookingsTable from '@/features/lab-assistant/components/LabAssistantBookingsTable'
 import LabAssistantBookingMobileCard from '@/features/lab-assistant/components/LabAssistantBookingMobileCard'
 import LabAssistantSampleModal from '@/features/lab-assistant/components/LabAssistantSampleModal'
+import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 
 const LabAssistantDashboard = () => {
   const [bookings, setBookings] = useState([])
@@ -31,6 +32,7 @@ const LabAssistantDashboard = () => {
   const [sampleImages, setSampleImages] = useState([])
   const [assistantNotes, setAssistantNotes] = useState('')
   const [showSampleModal, setShowSampleModal] = useState(false)
+  const [previewReport, setPreviewReport] = useState(null)
 
   const fetchBookings = async () => {
     try {
@@ -200,7 +202,7 @@ const LabAssistantDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-accent min-h-screen">
+      <div className="bg-background min-h-screen">
         <div className="bg-tertiary">
           <div className="enterprise-container py-8 text-white">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-3 py-1 rounded-full text-[10px] mb-4">
@@ -254,6 +256,7 @@ const LabAssistantDashboard = () => {
                   openSampleModal={openSampleModal}
                   openNavigation={openNavigation}
                   handlePayment={handlePayment}
+                  setPreviewReport={setPreviewReport}
                 />
                 <LabAssistantBookingMobileCard
                   filteredBookings={filteredBookings}
@@ -261,6 +264,7 @@ const LabAssistantDashboard = () => {
                   openSampleModal={openSampleModal}
                   openNavigation={openNavigation}
                   handlePayment={handlePayment}
+                  setPreviewReport={setPreviewReport}
                 />
               </>
             )}
@@ -275,6 +279,11 @@ const LabAssistantDashboard = () => {
           setAssistantNotes={setAssistantNotes}
           handleSampleUpload={handleSampleUpload}
           uploadingSample={uploadingSample}
+        />
+        <ReportViewerModal
+          isOpen={!!previewReport}
+          onClose={() => setPreviewReport(null)}
+          reportUrl={previewReport}
         />
       </div>
     </DashboardLayout>

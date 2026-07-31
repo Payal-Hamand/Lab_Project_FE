@@ -20,10 +20,10 @@ export default function ReportViewerModal({ isOpen, onClose, reportUrl }) {
             exit={{ opacity: 0, scale: 0.95, y: 20 }} 
             className="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl h-[85vh] overflow-hidden flex flex-col"
           >
-            <div className="flex items-center justify-between px-5 py-3.5 bg-tertiary text-white">
-              <h3 className="font-serif text-lg tracking-wide">Test Report</h3>
+            <div className="flex items-center justify-between px-5 py-3.5 bg-tertiary">
+              <h3 className="text-white font-serif text-lg tracking-wide">Test Report</h3>
               <div className="flex items-center gap-3">
-                <a href={reportUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs text-secondary hover:text-white transition">
+                <a href={reportUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white transition">
                   <Download size={14} /> Download PDF
                 </a>
                 <div className="w-px h-4 bg-white/20" />

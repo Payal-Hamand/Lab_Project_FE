@@ -14,6 +14,7 @@ const LabOwnerBookingMobileCard = ({
   setSelectedReport,
   uploadingReport,
   handleUploadReport,
+  setPreviewReport,
 }) => {
   return (
     <div className="lg:hidden grid gap-3">
@@ -133,15 +134,13 @@ const LabOwnerBookingMobileCard = ({
                   </p>
                   <Badge variant="success">Ready</Badge>
                 </div>
-                <a
-                  href={booking.report}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  onClick={() => setPreviewReport(booking.report)}
                   className="mt-2 w-full flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs font-medium transition"
                 >
                   <Download size={12} />
                   View Report
-                </a>
+                </button>
               </div>
             ) : booking.paymentStatus === PAYMENT_STATUS.PAID ? (
               <div className="mt-3 space-y-2">
