@@ -211,7 +211,7 @@ export function DataTable<TData, TValue>({
       </div>
       {enablePagination && (
         <div className="py-4">
-          <DataTablePagination table={table} />
+          <DataTablePagination table={table} enableRowSelection={enableRowSelection} />
         </div>
       )}
     </div>

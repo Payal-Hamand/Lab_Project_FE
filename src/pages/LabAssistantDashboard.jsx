@@ -18,7 +18,6 @@ import { Search } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import LabAssistantStatsGrid from '@/features/lab-assistant/components/LabAssistantStatsGrid'
 import LabAssistantBookingsTable from '@/features/lab-assistant/components/LabAssistantBookingsTable'
-import LabAssistantBookingMobileCard from '@/features/lab-assistant/components/LabAssistantBookingMobileCard'
 import LabAssistantSampleModal from '@/features/lab-assistant/components/LabAssistantSampleModal'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 
@@ -235,14 +234,6 @@ const LabAssistantDashboard = () => {
             ) : (
               <>
                 <LabAssistantBookingsTable
-                  filteredBookings={filteredBookings}
-                  handleReached={handleReached}
-                  openSampleModal={openSampleModal}
-                  openNavigation={openNavigation}
-                  handlePayment={handlePayment}
-                  setPreviewReport={setPreviewReport}
-                />
-                <LabAssistantBookingMobileCard
                   filteredBookings={filteredBookings}
                   handleReached={handleReached}
                   openSampleModal={openSampleModal}
