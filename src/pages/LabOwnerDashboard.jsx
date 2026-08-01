@@ -18,7 +18,6 @@ import { Spinner } from '@/components/ui/Loader'
 import LabOwnerStatsGrid from '@/features/lab-owner/components/LabOwnerStatsGrid'
 import LabOwnerAssistantsSection from '@/features/lab-owner/components/LabOwnerAssistantsSection'
 import LabOwnerBookingsTable from '@/features/lab-owner/components/LabOwnerBookingsTable'
-import LabOwnerBookingMobileCard from '@/features/lab-owner/components/LabOwnerBookingMobileCard'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { Search } from 'lucide-react'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
@@ -243,10 +242,10 @@ const LabOwnerDashboard = () => {
                 required
               />
               <Input
-                label="Mobile Number"
+                label="Phone Number"
                 type="text"
                 name="mobile"
-                placeholder="Enter mobile number"
+                placeholder="Enter phone number"
                 value={assistantData.mobile}
                 onChange={handleChange}
                 required
@@ -323,16 +322,6 @@ const LabOwnerDashboard = () => {
                   filteredBookings={filteredBookings}
                   assistants={assistants}
                   handleAssignAssistant={handleAssignAssistant}
-                  setSelectedReport={setSelectedReport}
-                  uploadingReport={uploadingReport}
-                  handleUploadReport={handleUploadReport}
-                  setPreviewReport={setPreviewReport}
-                />
-                <LabOwnerBookingMobileCard
-                  filteredBookings={filteredBookings}
-                  assistants={assistants}
-                  handleAssignAssistant={handleAssignAssistant}
-                  selectedReport={selectedReport}
                   setSelectedReport={setSelectedReport}
                   uploadingReport={uploadingReport}
                   handleUploadReport={handleUploadReport}
