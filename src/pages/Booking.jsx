@@ -75,8 +75,8 @@ const Booking = () => {
           
           <div className="hidden lg:block">
             <BookingSummary 
-              selectedItem={tests.find(t => t._id === formData.testId) || packages.find(p => p._id === formData.packageId)} 
-              type={formData.packageId ? 'package' : 'test'} 
+              selectedItem={tests.find(t => t._id === formData.test) || packages.find(p => p._id === formData.package)} 
+              type={formData.package ? 'package' : 'test'} 
             />
           </div>
         </>
