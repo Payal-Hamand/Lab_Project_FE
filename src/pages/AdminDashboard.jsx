@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { toast } from 'react-toastify'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import Modal from '@/components/ui/Modal'
+import Input from '@/components/ui/Input'
 import { getAllTests } from '@/services/test.service'
 import { getAllPackages } from '@/services/package.service'
 import { getAllLabOwners, getBookingLabOwners, getPaymentSetting, createPaymentSetting, updatePaymentSetting } from '@/services/user.service'
@@ -218,28 +219,22 @@ const AdminDashboard = () => {
               }}
               className="space-y-6"
             >
-              <div>
-                <label className="block mb-2 font-semibold">Account Holder Name</label>
-                <input
+              <Input
+                label="Account Holder Name"
                   type="text"
                   value={form.accountName}
                   onChange={(e) => setForm({ ...form, accountName: e.target.value })}
-                  className="w-full border rounded-xl px-4 py-3 outline-none focus:border-primary"
                   placeholder="Enter Account Name"
                   required
-                />
-              </div>
-              <div>
-                <label className="block mb-2 font-semibold">UPI ID</label>
-                <input
+              />
+              <Input
+                label="UPI ID"
                   type="text"
                   value={form.upiId}
                   onChange={(e) => setForm({ ...form, upiId: e.target.value })}
-                  className="w-full border rounded-xl px-4 py-3 outline-none focus:border-primary"
                   placeholder="abc@okaxis"
                   required
-                />
-              </div>
+              />
               <div>
                 <label className="block mb-2 font-semibold">QR Code</label>
                 <input

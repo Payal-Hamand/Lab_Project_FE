@@ -48,6 +48,7 @@ const VerifyOtp = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             maxLength={6}
+            required
             placeholder="Enter OTP"
             error={errors.otp?.message}
             containerClassName="mt-6"

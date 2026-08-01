@@ -48,12 +48,14 @@ const ResetPassword = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
           <Input
             type="password"
+            required
             placeholder="New Password"
             error={errors.password?.message}
             {...register('password')}
           />
           <Input
             type="password"
+            required
             placeholder="Confirm Password"
             error={errors.confirmPassword?.message}
             {...register('confirmPassword')}

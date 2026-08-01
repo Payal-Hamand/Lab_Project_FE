@@ -331,6 +331,7 @@ const Login = () => {
             <Input
               label="Email Address"
               type="email"
+              required
               placeholder="Enter your email"
               error={errors.email?.message}
               {...register('email')}
@@ -340,6 +341,7 @@ const Login = () => {
                 <Input
                   label="Password"
                   type={showPassword ? 'text' : 'password'}
+                  required
                   placeholder="Enter your password"
                   error={errors.password?.message}
                   className="pr-10"
@@ -350,7 +352,7 @@ const Login = () => {
                   variant="ghost"
                   size="icon-sm"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-7 text-muted-foreground hover:text-primary"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </Button>

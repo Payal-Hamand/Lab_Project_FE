@@ -318,6 +318,7 @@ const Signup = () => {
             <Input
               label="Full Name"
               type="text"
+              required
               placeholder="Enter your full name"
               error={errors.name?.message}
               {...register('name')}
@@ -325,6 +326,7 @@ const Signup = () => {
             <Input
               label="Email Address"
               type="email"
+              required
               placeholder="Enter your email"
               error={errors.email?.message}
               {...register('email')}
@@ -332,6 +334,7 @@ const Signup = () => {
             <Input
               label="Phone Number"
               type="tel"
+              required
               placeholder="Enter your phone number"
               error={errors.phone?.message}
               {...register('phone')}
@@ -341,6 +344,7 @@ const Signup = () => {
                 <Input
                   label="Password"
                   type={showPassword ? 'text' : 'password'}
+                  required
                   placeholder="Create password"
                   error={errors.password?.message}
                   className="pr-10"
@@ -351,7 +355,7 @@ const Signup = () => {
                   variant="ghost"
                   size="icon-sm"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-7 text-muted-foreground hover:text-primary"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </Button>

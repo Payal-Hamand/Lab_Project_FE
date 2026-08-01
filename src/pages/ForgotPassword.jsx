@@ -39,6 +39,7 @@ const ForgotPassword = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
           <Input
             type="email"
+            required
             placeholder="Enter Email"
             error={errors.email?.message}
             {...register('email')}

@@ -8,34 +8,49 @@ const Textarea = ({
   containerClassName = '',
   name,
   id: idProp,
+  placeholder,
+  required = false,
   ...props
 }) => {
-  const textareaId =
-    idProp ||
-    (label ? `textarea-${(name || label || '').toLowerCase().replace(/\s+/g, '-')}` : undefined)
+  const generatedId = React.useId()
+  const textareaId = idProp || (name ? `textarea-${name}` : generatedId)
+  const floatingLabel = label || placeholder
+  const hasFloatingLabel = Boolean(floatingLabel)
+
   return (
     <div className={containerClassName}>
-      {label && (
-        <label
-          htmlFor={textareaId}
-          className="text-[10px] text-muted-foreground font-medium tracking-[0.3px] block mb-1.5"
-        >
-          {label}
-        </label>
-      )}
-      <textarea
-        id={textareaId}
-        name={name}
-        rows={rows}
-        className={`
-          w-full border border-border rounded-lg px-3 py-2.5
-          outline-none focus:border-primary text-xs text-muted-foreground resize-none
-          ${error ? 'border-red-500' : ''}
-          ${className}
-        `}
-        {...props}
-      />
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+      <div className="relative">
+        <textarea
+          id={textareaId}
+          name={name}
+          rows={rows}
+          required={required}
+          placeholder={hasFloatingLabel ? ' ' : placeholder}
+          className={`
+            peer w-full border border-border rounded-lg px-3 py-2.5
+            outline-none focus:border-primary focus:ring-1 focus:ring-primary text-xs text-foreground bg-card resize-none transition
+            ${hasFloatingLabel ? 'pt-4' : ''}
+            ${error ? 'border-destructive focus:border-destructive focus:ring-destructive' : ''}
+            ${className}
+          `}
+          {...props}
+        />
+        {hasFloatingLabel && (
+          <label
+            htmlFor={textareaId}
+            className={`
+              pointer-events-none absolute left-2.5 top-3 z-10 bg-card px-1 text-xs text-muted-foreground transition-all
+              peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-primary
+              peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-1/2
+              ${error ? 'text-destructive peer-focus:text-destructive' : ''}
+            `}
+          >
+            {floatingLabel}
+            {required && <span className="ml-0.5 text-destructive">*</span>}
+          </label>
+        )}
+      </div>
+      {error && <p className="text-destructive text-xs mt-1">{error}</p>}
     </div>
   )
 }
