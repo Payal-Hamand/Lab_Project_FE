@@ -1,4 +1,5 @@
 import React from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 
 const Input = ({
   label,
@@ -18,6 +19,8 @@ const Input = ({
   const floatingLabel = label || placeholder
   const hasFloatingLabel = Boolean(floatingLabel)
   const isDateField = type === 'date'
+  const isPasswordField = type === 'password'
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false)
 
   return (
     <div className={containerClassName}>
@@ -30,7 +33,7 @@ const Input = ({
         <input
           id={inputId}
           name={name}
-          type={type}
+          type={isPasswordField && isPasswordVisible ? 'text' : type}
           required={required}
           placeholder={hasFloatingLabel ? ' ' : placeholder}
           className={`
@@ -38,6 +41,7 @@ const Input = ({
             outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm text-foreground bg-card transition
             ${hasFloatingLabel ? 'pt-4 pb-2' : ''}
             ${Icon ? 'pl-10' : ''}
+            ${isPasswordField ? 'pr-10' : ''}
             ${error ? 'border-destructive focus:border-destructive focus:ring-destructive' : ''}
             ${className}
           `}
@@ -54,8 +58,18 @@ const Input = ({
             `}
           >
             {floatingLabel}
-            {required && <span className="ml-0.5 text-destructive">*</span>}
+            {required && <span className="ml-0.5">*</span>}
           </label>
+        )}
+        {isPasswordField && (
+          <button
+            type="button"
+            onClick={() => setIsPasswordVisible((visible) => !visible)}
+            className="absolute right-3 top-1/2 z-10 -translate-y-1/2 text-muted-foreground transition hover:text-primary"
+            aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+          >
+            {isPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
         )}
       </div>
       {error && <p className="text-destructive text-xs mt-1.5 font-medium">{error}</p>}

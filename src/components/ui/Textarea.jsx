@@ -46,7 +46,7 @@ const Textarea = ({
             `}
           >
             {floatingLabel}
-            {required && <span className="ml-0.5 text-destructive">*</span>}
+            {required && <span className="ml-0.5">*</span>}
           </label>
         )}
       </div>

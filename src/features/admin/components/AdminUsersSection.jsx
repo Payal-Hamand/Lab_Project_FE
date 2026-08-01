@@ -30,6 +30,7 @@ const AdminUsersSection = ({
   const [labOwnerData, setLabOwnerData] = useState({
     name: '',
     email: '',
+    mobile: '',
     password: '',
     servicePincodes: '',
     labAddress: '',
@@ -50,13 +51,17 @@ const AdminUsersSection = ({
     if (
       !labOwnerData.name ||
       !labOwnerData.email ||
+      !labOwnerData.mobile ||
       !labOwnerData.password ||
       !labOwnerData.servicePincodes ||
       !labOwnerData.labAddress ||
       !labOwnerData.latitude ||
       !labOwnerData.longitude
     ) {
-      return toast.error('Please select lab location')
+      return toast.error('Please complete all required fields and select a lab location')
+    }
+    if (!/^[6-9]\d{9}$/.test(labOwnerData.mobile)) {
+      return toast.error('Enter a valid 10-digit mobile number')
     }
     try {
       setCreating(true)
@@ -70,6 +75,7 @@ const AdminUsersSection = ({
       setLabOwnerData({
         name: '',
         email: '',
+        mobile: '',
         password: '',
         servicePincodes: '',
         labAddress: '',
@@ -105,6 +111,16 @@ const AdminUsersSection = ({
         <form onSubmit={handleCreateLabOwner} className="space-y-4">
           <Input required type="text" name="name" placeholder="Full Name" value={labOwnerData.name} onChange={handleChange} />
           <Input required type="email" name="email" placeholder="Email" value={labOwnerData.email} onChange={handleChange} />
+          <Input
+            required
+            type="tel"
+            name="mobile"
+            placeholder="Phone Number"
+            value={labOwnerData.mobile}
+            onChange={handleChange}
+            inputMode="numeric"
+            maxLength={10}
+          />
           <Input required type="password" name="password" placeholder="Password" value={labOwnerData.password} onChange={handleChange} />
           <Input required type="text" name="servicePincodes" placeholder="411033, 411044" value={labOwnerData.servicePincodes} onChange={handleChange} />
           <div>

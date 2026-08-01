@@ -109,7 +109,6 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
           onChange={handleChange}
         />
         <Input
-          required
           type="text"
           name="image"
           placeholder="Image URL"

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'react-toastify'
-import { ArrowLeft, Eye, EyeOff, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, ShieldCheck } from 'lucide-react'
 import useAuth from '@/hooks/useAuth'
 import { loginUser } from '@/services/auth.service'
 import { ROUTES } from '@/constants/routes'
@@ -131,7 +131,6 @@ const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
-  const [showPassword, setShowPassword] = useState(false)
   const bubblesRef = useRef([])
   const posRef = useRef(BUBBLES.map(b => ({ x: b.startX, y: b.startY })))
 
@@ -337,26 +336,14 @@ const Login = () => {
               {...register('email')}
             />
             <div>
-              <div className="relative">
-                <Input
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="Enter your password"
-                  error={errors.password?.message}
-                  className="pr-10"
-                  {...register('password')}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </Button>
-              </div>
+              <Input
+                label="Password"
+                type="password"
+                required
+                placeholder="Enter your password"
+                error={errors.password?.message}
+                {...register('password')}
+              />
               <div className="flex justify-end mt-2">
                 <Link
                   to={ROUTES.FORGOT_PASSWORD}

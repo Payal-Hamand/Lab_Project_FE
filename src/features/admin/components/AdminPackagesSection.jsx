@@ -152,7 +152,7 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
         </div>
         <div>
           <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Image URL</label>
-          <Input required type="text" name="image" placeholder="Enter image URL" value={packageData.image} onChange={handleChange} />
+          <Input type="text" name="image" placeholder="Enter image URL" value={packageData.image} onChange={handleChange} />
         </div>
         <Button type="submit" loading={creating} fullWidth>
           Create Package

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import { toast } from 'react-toastify'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import Modal from '@/components/ui/Modal'
-import Input from '@/components/ui/Input'
 import { getAllTests } from '@/services/test.service'
 import { getAllPackages } from '@/services/package.service'
 import { getAllLabOwners, getBookingLabOwners, getPaymentSetting, createPaymentSetting, updatePaymentSetting } from '@/services/user.service'
@@ -35,10 +34,6 @@ const AdminDashboard = () => {
   }
 
   const [payment, setPayment] = useState(null)
-  const [form, setForm] = useState({
-    accountName: '',
-    upiId: '',
-  })
   const [qrImage, setQrImage] = useState(null)
 
   const fetchPayment = async () => {
@@ -46,10 +41,6 @@ const AdminDashboard = () => {
       const { data } = await getPaymentSetting()
       if (data.data) {
         setPayment(data.data)
-        setForm({
-          accountName: data.data.accountName,
-          upiId: data.data.upiId,
-        })
       }
     } catch (err) {
       console.log(err)
@@ -59,8 +50,6 @@ const AdminDashboard = () => {
   const handleSubmit = async () => {
     try {
       const formData = new FormData()
-      formData.append('accountName', form.accountName)
-      formData.append('upiId', form.upiId)
       if (qrImage) {
         formData.append('qrImage', qrImage)
       }
@@ -208,7 +197,7 @@ const AdminDashboard = () => {
           <Modal
             open={activePanel === 'payment'}
             title="Payment Settings"
-            subtitle="Upload QR Code and UPI Details"
+            subtitle="Upload a QR code for payments"
             onClose={() => setActivePanel('')}
             size="lg"
           >
@@ -219,22 +208,6 @@ const AdminDashboard = () => {
               }}
               className="space-y-6"
             >
-              <Input
-                label="Account Holder Name"
-                  type="text"
-                  value={form.accountName}
-                  onChange={(e) => setForm({ ...form, accountName: e.target.value })}
-                  placeholder="Enter Account Name"
-                  required
-              />
-              <Input
-                label="UPI ID"
-                  type="text"
-                  value={form.upiId}
-                  onChange={(e) => setForm({ ...form, upiId: e.target.value })}
-                  placeholder="abc@okaxis"
-                  required
-              />
               <div>
                 <label className="block mb-2 font-semibold">QR Code</label>
                 <input

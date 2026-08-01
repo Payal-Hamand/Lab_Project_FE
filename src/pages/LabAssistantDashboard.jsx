@@ -273,8 +273,6 @@ const LabAssistantDashboard = () => {
             <img src={paymentSetting?.qrImage} alt="" className="w-64 rounded-2xl border" />
           </div>
           <div className="mt-6 space-y-2">
-            <p><strong>Account Name:</strong> {paymentSetting?.accountName}</p>
-            <p><strong>UPI ID:</strong> {paymentSetting?.upiId}</p>
             <p><strong>Amount:</strong> ₹{paymentBooking?.test?.price || paymentBooking?.package?.price}</p>
           </div>
           <div className="mt-5">

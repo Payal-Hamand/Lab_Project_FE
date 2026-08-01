@@ -71,6 +71,7 @@ export interface LabOwner {
   _id: string
   name: string
   email: string
+  mobile?: string
   role: string
   servicePincodes: string[]
   labAddress: string
