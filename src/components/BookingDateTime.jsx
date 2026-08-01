@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { CalendarDays, Clock } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 const BookingDateTime = ({ formData, handleChange }) => {
@@ -73,11 +72,7 @@ const BookingDateTime = ({ formData, handleChange }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
       {/* Date */}
       <Input
-        label={
-          <span className="flex items-center gap-2">
-            <CalendarDays /> Booking Date
-          </span>
-        }
+        label="Booking Date"
         type="date"
         name="bookingDate"
         value={formData.bookingDate}
@@ -87,11 +82,7 @@ const BookingDateTime = ({ formData, handleChange }) => {
       />
       {/* Time */}
       <Select
-        label={
-          <span className="flex items-center gap-2">
-            <Clock /> Booking Time
-          </span>
-        }
+        label="Booking Time"
         name="bookingTime"
         value={formData.bookingTime}
         onChange={handleChange}

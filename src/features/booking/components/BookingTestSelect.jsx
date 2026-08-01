@@ -1,15 +1,10 @@
-import { FlaskConical } from 'lucide-react'
 import Select from '@/components/ui/Select'
 
 export default function BookingTestSelect({ tests, packages, formData, handleTestPackageChange }) {
   return (
     <div>
       <Select
-        label={
-          <span className="flex items-center gap-2">
-            <FlaskConical /> Select Test / Package
-          </span>
-        }
+        label="Select Test / Package"
         name="test"
         value={formData.test || formData.package}
         required

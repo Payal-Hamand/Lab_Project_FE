@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import ProtectedRoute from './ProtectedRoutes'
 import { Spinner } from '@/components/ui/Loader'
@@ -10,7 +10,6 @@ import PageTransition from '@/components/layout/PageTransition'
 const Home = lazy(() => import('@/pages/Home'))
 const Login = lazy(() => import('@/pages/Login'))
 const Signup = lazy(() => import('@/pages/Signup'))
-const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const Booking = lazy(() => import('@/pages/Booking'))
 const PackagesPage = lazy(() => import('@/pages/PackagesPage'))
 const TestsPage = lazy(() => import('@/pages/TestsPage'))
@@ -59,14 +58,17 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-        <Route path={ROUTES.BOOKING} element={<PageTransition><Booking /></PageTransition>} />
         <Route
-          path={ROUTES.DASHBOARD}
+          path={ROUTES.BOOKING}
           element={
             <ProtectedRoute roles={[ROLES.PATIENT]}>
-              <PageTransition><Dashboard /></PageTransition>
+              <PageTransition><Booking /></PageTransition>
             </ProtectedRoute>
           }
+        />
+        <Route
+          path={ROUTES.DASHBOARD}
+          element={<PageTransition><Navigate to={ROUTES.BOOKING} replace /></PageTransition>}
         />
         <Route path={ROUTES.FORGOT_PASSWORD} element={<PageTransition><ForgotPassword /></PageTransition>} />
         <Route path={ROUTES.VERIFY_OTP} element={<PageTransition><VerifyOtp /></PageTransition>} />

@@ -203,7 +203,7 @@ export default function useBookingForm() {
       }
       await createBooking(payload)
       toast.success('Booking Created Successfully')
-      navigate(ROUTES.DASHBOARD)
+      navigate(ROUTES.HOME)
     } catch (error) {
       toast.error(error.response?.data?.message || 'Booking Failed')
     } finally {

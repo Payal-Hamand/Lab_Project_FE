@@ -1,4 +1,3 @@
-import { User, Phone } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 
@@ -7,11 +6,7 @@ export default function BookingPatientInfo({ formData, handleChange }) {
     <>
       <div>
         <Input
-          label={
-            <span className="flex items-center gap-2">
-              <User /> Patient Name
-            </span>
-          }
+          label="Patient Name"
           type="text"
           name="patientName"
           value={formData.patientName}
@@ -51,11 +46,7 @@ export default function BookingPatientInfo({ formData, handleChange }) {
       </div>
       <div>
         <Input
-          label={
-            <span className="flex items-center gap-2">
-              <Phone /> Phone Number
-            </span>
-          }
+          label="Phone Number"
           type="text"
           name="phone"
           value={formData.phone}

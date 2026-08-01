@@ -21,11 +21,7 @@ export default function BookingAddressSection({
     <div className="space-y-5">
       <div>
         <Textarea
-          label={
-            <span className="flex items-center gap-2">
-              <MapPin /> Full Address
-            </span>
-          }
+          label="Full Address"
           rows="3"
           name="address"
           value={formData.address}
