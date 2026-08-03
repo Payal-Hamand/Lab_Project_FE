@@ -9,7 +9,7 @@ const ViewToggle = ({ view, onChange, className = '' }) => {
 
   return (
     <div
-      className={`inline-flex items-center bg-accent rounded-lg p-1 gap-1 ${className}`}
+      className={`inline-flex items-center bg-accent rounded-lg p-1 gap-1 h-11 ${className}`}
       role="tablist"
       aria-label="Toggle view"
     >
@@ -22,7 +22,7 @@ const ViewToggle = ({ view, onChange, className = '' }) => {
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(option.key)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
               isActive
                 ? 'bg-white text-primary shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'

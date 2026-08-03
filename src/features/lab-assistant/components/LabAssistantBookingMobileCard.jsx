@@ -38,15 +38,27 @@ const LabAssistantBookingMobileCard = ({
             }`}
           />
           <div className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <CircleUser className="text-primary" size={18} />
+            <div className="flex justify-between items-start gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <CircleUser className="text-primary" size={18} />
+                </div>
+                <div>
+                  <h2 className="text-xs font-medium text-foreground">{item.patientName}</h2>
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                    <Phone size={11} /> {item.phone}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h2 className="text-xs font-medium text-foreground">{item.patientName}</h2>
-                <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                  <Phone size={11} /> {item.phone}
-                </p>
+              <div className="flex flex-col gap-1.5 items-end">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-muted-foreground">Status:</span>
+                  <Badge status={item.status}>{item.status}</Badge>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-muted-foreground">Payment:</span>
+                  <Badge status={item.paymentStatus}>{item.paymentStatus}</Badge>
+                </div>
               </div>
             </div>
 
@@ -81,11 +93,6 @@ const LabAssistantBookingMobileCard = ({
                   <p className="text-[11px] text-foreground mt-0.5">{item.address}</p>
                 </div>
               </div>
-            </div>
-
-            <div className="flex gap-2 mt-3 flex-wrap">
-              <Badge status={item.status}>{item.status}</Badge>
-              <Badge status={item.paymentStatus}>{item.paymentStatus}</Badge>
             </div>
 
             <div className="grid grid-cols-4 gap-2 mt-4">

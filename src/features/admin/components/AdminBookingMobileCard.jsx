@@ -27,9 +27,15 @@ const AdminBookingMobileCard = ({ booking, openEditModal }) => {
               <Phone size={11} /> {booking.phone}
             </p>
           </div>
-          <div className="flex flex-col gap-1.5 items-end">
-            <Badge status={booking.status}>{booking.status}</Badge>
-            <Badge status={booking.paymentStatus}>{booking.paymentStatus}</Badge>
+          <div className="flex flex-col gap-2 items-end">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-muted-foreground">Status:</span>
+              <Badge status={booking.status}>{booking.status}</Badge>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-muted-foreground">Payment:</span>
+              <Badge status={booking.paymentStatus}>{booking.paymentStatus}</Badge>
+            </div>
           </div>
         </div>
 

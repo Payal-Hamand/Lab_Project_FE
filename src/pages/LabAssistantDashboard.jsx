@@ -222,7 +222,7 @@ const LabAssistantDashboard = () => {
                 </div>
                 <ViewToggle view={view} onChange={setView} />
               </div>
-              <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary">
+              <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary flex items-center whitespace-nowrap h-11">
                 Total Bookings: {filteredBookings.length}
               </div>
             </div>

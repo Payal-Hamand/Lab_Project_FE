@@ -313,7 +313,7 @@ const LabOwnerDashboard = () => {
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                   />
                 </div>
-                <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary whitespace-nowrap">
+                <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary whitespace-nowrap flex items-center h-11">
                   Total: {filteredBookings.length}
                 </div>
                 <Button
