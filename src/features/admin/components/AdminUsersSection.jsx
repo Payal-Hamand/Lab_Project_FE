@@ -11,6 +11,7 @@ import Select from '@/components/ui/Select'
 import Modal from '@/components/ui/Modal'
 import LocationPicker from '@/components/LocationPicker'
 import { MapPin, Map } from 'lucide-react'
+import useFormErrors from '@/hooks/useFormErrors'
 
 const AdminUsersSection = ({
   labOwners,
@@ -27,6 +28,7 @@ const AdminUsersSection = ({
   onClose,
 }) => {
   const [creating, setCreating] = useState(false)
+  const { errors, validate, onFieldChange } = useFormErrors()
   const [labOwnerData, setLabOwnerData] = useState({
     name: '',
     email: '',
@@ -38,31 +40,41 @@ const AdminUsersSection = ({
     longitude: '',
   })
 
+  const buildErrors = (d) => ({
+    name: !d.name ? 'Full name is required' : '',
+    email:
+      !d.email
+        ? 'Email is required'
+        : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)
+          ? 'Enter a valid email'
+          : '',
+    phone:
+      !d.phone
+        ? 'Phone number is required'
+        : !/^[6-9]\d{9}$/.test(d.phone)
+          ? 'Enter a valid 10-digit mobile number'
+          : '',
+    password:
+      !d.password
+        ? 'Password is required'
+        : d.password.length < 6
+          ? 'Password must be at least 6 characters'
+          : '',
+    servicePincodes: !d.servicePincodes ? 'Service pincodes are required' : '',
+    labAddress: !d.labAddress ? 'Lab location is required' : '',
+  })
+
   const handleChange = (e) => {
-    setLabOwnerData({
-      ...labOwnerData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    const next = { ...labOwnerData, [name]: value }
+    setLabOwnerData(next)
+    onFieldChange(name, buildErrors(next))
   }
 
   const handleCreateLabOwner = async (e) => {
     e.preventDefault()
     if (creating) return
-    if (
-      !labOwnerData.name ||
-      !labOwnerData.email ||
-      !labOwnerData.phone ||
-      !labOwnerData.password ||
-      !labOwnerData.servicePincodes ||
-      !labOwnerData.labAddress ||
-      !labOwnerData.latitude ||
-      !labOwnerData.longitude
-    ) {
-      return toast.error('Please complete all required fields and select a lab location')
-    }
-    if (!/^[6-9]\d{9}$/.test(labOwnerData.phone)) {
-      return toast.error('Enter a valid 10-digit mobile number')
-    }
+    if (!validate(buildErrors(labOwnerData))) return
     try {
       setCreating(true)
       await createLabOwner({
@@ -109,8 +121,8 @@ const AdminUsersSection = ({
         size="lg"
       >
         <form onSubmit={handleCreateLabOwner} className="space-y-4">
-          <Input required type="text" name="name" placeholder="Full Name" value={labOwnerData.name} onChange={handleChange} />
-          <Input required type="email" name="email" placeholder="Email" value={labOwnerData.email} onChange={handleChange} />
+          <Input required type="text" name="name" placeholder="Full Name" value={labOwnerData.name} onChange={handleChange} error={errors.name} />
+          <Input required type="email" name="email" placeholder="Email" value={labOwnerData.email} onChange={handleChange} error={errors.email} />
           <Input
             required
             type="tel"
@@ -120,9 +132,10 @@ const AdminUsersSection = ({
             onChange={handleChange}
             inputMode="numeric"
             maxLength={10}
+            error={errors.phone}
           />
-          <Input required type="password" name="password" placeholder="Password" value={labOwnerData.password} onChange={handleChange} />
-          <Input required type="text" name="servicePincodes" placeholder="411033, 411044" value={labOwnerData.servicePincodes} onChange={handleChange} />
+          <Input required type="password" name="password" placeholder="Password" value={labOwnerData.password} onChange={handleChange} error={errors.password} />
+          <Input required type="text" name="servicePincodes" placeholder="411033, 411044" value={labOwnerData.servicePincodes} onChange={handleChange} error={errors.servicePincodes} />
           <div>
             {labOwnerData.labAddress && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-2">
@@ -131,6 +144,9 @@ const AdminUsersSection = ({
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-1">{labOwnerData.labAddress}</div>
               </div>
+            )}
+            {errors.labAddress && (
+              <p className="text-destructive text-xs mt-1.5 font-medium mb-2">{errors.labAddress}</p>
             )}
             <button
               type="button"

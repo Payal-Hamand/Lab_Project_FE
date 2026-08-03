@@ -5,9 +5,11 @@ import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Textarea from '@/components/ui/Textarea'
 import Button from '@/components/ui/Button'
+import useFormErrors from '@/hooks/useFormErrors'
 
 const AdminTestsSection = ({ open, onClose, onCreated }) => {
   const [creating, setCreating] = useState(false)
+  const { errors, validate, onFieldChange } = useFormErrors()
   const [testData, setTestData] = useState({
     title: '',
     category: '',
@@ -17,26 +19,26 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
     image: '',
   })
 
+  const buildErrors = (t) => ({
+    title: !t.title ? 'Test title is required' : '',
+    category: !t.category ? 'Category is required' : '',
+    price: !t.price ? 'Price is required' : '',
+    reportTime: !t.reportTime ? 'Report time is required' : '',
+    description: !t.description ? 'Description is required' : '',
+    image: !t.image ? 'Image URL is required' : '',
+  })
+
   const handleChange = (e) => {
-    setTestData({
-      ...testData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    const next = { ...testData, [name]: value }
+    setTestData(next)
+    onFieldChange(name, buildErrors(next))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (creating) return
-    if (
-      !testData.title ||
-      !testData.category ||
-      !testData.price ||
-      !testData.reportTime ||
-      !testData.description ||
-      !testData.image
-    ) {
-      return toast.error('Please fill all required fields')
-    }
+    if (!validate(buildErrors(testData))) return
     try {
       setCreating(true)
       await createTest(testData)
@@ -74,6 +76,7 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
           placeholder="Test Title"
           value={testData.title}
           onChange={handleChange}
+          error={errors.title}
         />
         <Input
           required
@@ -82,6 +85,7 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
           placeholder="Category"
           value={testData.category}
           onChange={handleChange}
+          error={errors.category}
         />
         <div className="grid md:grid-cols-2 gap-5">
           <Input
@@ -91,6 +95,7 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
             placeholder="Price"
             value={testData.price}
             onChange={handleChange}
+            error={errors.price}
           />
           <Input
             required
@@ -99,6 +104,7 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
             placeholder="Report Time"
             value={testData.reportTime}
             onChange={handleChange}
+            error={errors.reportTime}
           />
         </div>
         <Textarea
@@ -107,6 +113,7 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
           placeholder="Description"
           value={testData.description}
           onChange={handleChange}
+          error={errors.description}
         />
         <Input
           type="text"
@@ -114,6 +121,7 @@ const AdminTestsSection = ({ open, onClose, onCreated }) => {
           placeholder="Image URL"
           value={testData.image}
           onChange={handleChange}
+          error={errors.image}
         />
         <Button type="submit" loading={creating} fullWidth>
           Create Test

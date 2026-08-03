@@ -1,7 +1,7 @@
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 
-export default function BookingPatientInfo({ formData, handleChange }) {
+export default function BookingPatientInfo({ formData, errors, handleChange }) {
   return (
     <>
       <div>
@@ -12,6 +12,7 @@ export default function BookingPatientInfo({ formData, handleChange }) {
           value={formData.patientName}
           onChange={handleChange}
           required
+          error={errors.patientName}
           placeholder="Enter patient name"
         />
       </div>
@@ -26,6 +27,7 @@ export default function BookingPatientInfo({ formData, handleChange }) {
             required
             min="1"
             max="100"
+            error={errors.age}
             placeholder="Enter age"
           />
         </div>
@@ -36,6 +38,7 @@ export default function BookingPatientInfo({ formData, handleChange }) {
             value={formData.gender}
             onChange={handleChange}
             required
+            error={errors.gender}
           >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
@@ -52,6 +55,7 @@ export default function BookingPatientInfo({ formData, handleChange }) {
           value={formData.phone}
           onChange={handleChange}
           required
+          error={errors.phone}
           placeholder="Enter phone number"
         />
       </div>

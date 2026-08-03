@@ -5,10 +5,46 @@ import { getAllPackages } from '@/services/package.service'
 import { createBooking } from '@/services/booking.service'
 import { toast } from 'react-toastify'
 import { ROUTES } from '@/constants/routes'
+import useFormErrors from '@/hooks/useFormErrors'
 
 export default function useBookingForm() {
   const navigate = useNavigate()
   const pageLocation = useLocation()
+  const { errors, validate, onFieldChange } = useFormErrors()
+
+  const buildErrors = (f) => ({
+    test: !f.test && !f.package ? 'Please select a test or package' : '',
+    patientName:
+      !f.patientName
+        ? 'Patient name is required'
+        : f.patientName.length < 2
+          ? 'Name must be at least 2 characters'
+          : '',
+    age:
+      !f.age
+        ? 'Age is required'
+        : f.age < 1 || f.age > 99
+          ? 'Age must be between 1 and 99'
+          : '',
+    gender: !f.gender ? 'Gender is required' : '',
+    phone:
+      !f.phone
+        ? 'Phone number is required'
+        : !/^[6-9]\d{9}$/.test(f.phone)
+          ? 'Enter a valid 10 digit phone number'
+          : '',
+    flatNo: !f.flatNo ? 'Flat / apartment is required' : '',
+    city: !f.city ? 'City is required' : '',
+    pincode:
+      !f.pincode
+        ? 'Pincode is required'
+        : !/^[1-9][0-9]{5}$/.test(f.pincode)
+          ? 'Enter a valid 6 digit pincode'
+          : '',
+    address: !f.address ? 'Address is required' : '',
+    bookingDate: !f.bookingDate ? 'Booking date is required' : '',
+    bookingTime: !f.bookingTime ? 'Booking time is required' : '',
+  })
 
   const selectedItem = pageLocation.state?.selectedItem
   const bookingType = pageLocation.state?.bookingType
@@ -67,21 +103,22 @@ export default function useBookingForm() {
     if ((name === 'phone' || name === 'pincode') && value && !/^\d*$/.test(value)) {
       return
     }
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
+    const next = { ...formData, [name]: value }
+    setFormData(next)
+    onFieldChange(name, buildErrors(next))
   }
 
   const handleTestPackageChange = (e) => {
     const selectedId = e.target.value
     const isTest = tests.some((item) => item._id === selectedId)
     const isPackage = packages.some((item) => item._id === selectedId)
-    setFormData((prev) => ({
-      ...prev,
+    const next = {
+      ...formData,
       test: isTest ? selectedId : '',
       package: isPackage ? selectedId : '',
-    }))
+    }
+    setFormData(next)
+    onFieldChange('test', buildErrors(next))
   }
 
   const reverseGeocode = async (lat, lng) => {
@@ -156,42 +193,9 @@ export default function useBookingForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (
-      (!formData.test && !formData.package) ||
-      !formData.patientName ||
-      !formData.age ||
-      !formData.gender ||
-      !formData.phone ||
-      !formData.flatNo ||
-      !formData.city ||
-      !formData.pincode ||
-      !formData.address ||
-      !formData.bookingDate ||
-      !formData.bookingTime
-    ) {
-      toast.error('Please Fill All Fields')
-      return
-    }
-    if (formData.patientName.length < 2) {
-      toast.error('Patient Name Must Be At Least 2 Characters')
-      return
-    }
-    if (formData.age < 1 || formData.age > 99) {
-      toast.error('Age Must Be Between 1 and 99')
-      return
-    }
-    const phoneRegex = /^[6-9]\d{9}$/
-    if (!phoneRegex.test(formData.phone)) {
-      toast.error('Enter Valid 10 Digit Phone Number')
-      return
-    }
+    if (!validate(buildErrors(formData))) return
     if (!mapLocation) {
       toast.error('Please select location')
-      return
-    }
-    const pincodeRegex = /^[1-9][0-9]{5}$/
-    if (!pincodeRegex.test(formData.pincode)) {
-      toast.error('Enter Valid 6 Digit Pincode')
       return
     }
     try {
@@ -213,6 +217,7 @@ export default function useBookingForm() {
 
   return {
     formData,
+    errors,
     tests,
     packages,
     loading,

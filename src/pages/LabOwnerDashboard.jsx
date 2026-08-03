@@ -23,6 +23,7 @@ import ViewToggle from '@/components/ui/ViewToggle'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { Search } from 'lucide-react'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
+import useFormErrors from '@/hooks/useFormErrors'
 
 const LabOwnerDashboard = () => {
   const tableRef = useRef(null)
@@ -39,12 +40,39 @@ const LabOwnerDashboard = () => {
   const [showAssistantForm, setShowAssistantForm] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [view, setView] = useState('card')
+  const {
+    errors: assistantErrors,
+    validate: validateAssistant,
+    onFieldChange: onAssistantFieldChange,
+  } = useFormErrors()
   const [assistantData, setAssistantData] = useState({
     name: '',
     email: '',
     password: '',
     phone: '',
     document: '',
+  })
+
+  const buildAssistantErrors = (a) => ({
+    name: !a.name.trim() ? 'Full Name is required' : '',
+    email:
+      !a.email.trim()
+        ? 'Email is required'
+        : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a.email)
+          ? 'Enter a valid email'
+          : '',
+    phone:
+      !a.phone.trim()
+        ? 'Mobile Number is required'
+        : !/^[6-9]\d{9}$/.test(a.phone)
+          ? 'Enter a valid 10-digit mobile number'
+          : '',
+    password:
+      !a.password.trim()
+        ? 'Password is required'
+        : a.password.length < 6
+          ? 'Password must be at least 6 characters'
+          : '',
   })
   const fetchBookings = async () => {
     try {
@@ -70,33 +98,15 @@ const LabOwnerDashboard = () => {
     fetchAssistants()
   }, [])
   const handleChange = (e) => {
-    setAssistantData({
-      ...assistantData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    const next = { ...assistantData, [name]: value }
+    setAssistantData(next)
+    onAssistantFieldChange(name, buildAssistantErrors(next))
   }
   const handleCreateAssistant = async (e) => {
     e.preventDefault()
     if (creatingAssistant) return
-    const { name, email, phone, password } = assistantData
-    if (!name.trim()) {
-      return toast.error('Full Name is required')
-    }
-    if (!email.trim()) {
-      return toast.error('Email is required')
-    }
-    if (!phone.trim()) {
-      return toast.error('Mobile Number is required')
-    }
-    if (!/^[6-9]\d{9}$/.test(phone)) {
-      return toast.error('Enter a valid 10-digit mobile number')
-    }
-    if (!password.trim()) {
-      return toast.error('Password is required')
-    }
-    if (password.length < 6) {
-      return toast.error('Password must be at least 6 characters')
-    }
+    if (!validateAssistant(buildAssistantErrors(assistantData))) return
     try {
       setCreatingAssistant(true)
       const { data } = await createLabAssistant(assistantData)
@@ -234,6 +244,7 @@ const LabOwnerDashboard = () => {
                 value={assistantData.name}
                 onChange={handleChange}
                 required
+                error={assistantErrors.name}
               />
               <Input
                 label="Email Address"
@@ -243,6 +254,7 @@ const LabOwnerDashboard = () => {
                 value={assistantData.email}
                 onChange={handleChange}
                 required
+                error={assistantErrors.email}
               />
               <Input
                 label="Phone Number"
@@ -252,6 +264,7 @@ const LabOwnerDashboard = () => {
                 value={assistantData.phone}
                 onChange={handleChange}
                 required
+                error={assistantErrors.phone}
               />
               <Input
                 label="Verification Document"
@@ -269,6 +282,7 @@ const LabOwnerDashboard = () => {
                 value={assistantData.password}
                 onChange={handleChange}
                 required
+                error={assistantErrors.password}
               />
               <Button type="submit" loading={creatingAssistant} fullWidth size="lg">
                 Create Assistant

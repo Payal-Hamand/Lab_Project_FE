@@ -1,6 +1,6 @@
 import Select from '@/components/ui/Select'
 
-export default function BookingTestSelect({ tests, packages, formData, handleTestPackageChange }) {
+export default function BookingTestSelect({ tests, packages, formData, errors, handleTestPackageChange }) {
   return (
     <div>
       <Select
@@ -8,6 +8,7 @@ export default function BookingTestSelect({ tests, packages, formData, handleTes
         name="test"
         value={formData.test || formData.package}
         required
+        error={errors.test}
         onChange={handleTestPackageChange}
       >
         <option value="">Choose Test or Package</option>

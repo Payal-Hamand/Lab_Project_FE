@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 
 export default function BookingAddressSection({
   formData,
+  errors,
   handleChange,
   mapLocation,
   setMapLocation,
@@ -27,6 +28,7 @@ export default function BookingAddressSection({
           value={formData.address}
           onChange={handleChange}
           required
+          error={errors.address}
           placeholder="House No, Street, Area"
         />
       </div>
@@ -81,6 +83,7 @@ export default function BookingAddressSection({
             value={formData.flatNo}
             onChange={handleChange}
             required
+            error={errors.flatNo}
             placeholder="Flat No / Building"
           />
         </div>
@@ -105,6 +108,7 @@ export default function BookingAddressSection({
             value={formData.city}
             onChange={handleChange}
             required
+            error={errors.city}
             placeholder="Enter city/state"
           />
         </div>
@@ -117,6 +121,7 @@ export default function BookingAddressSection({
             value={formData.pincode}
             onChange={handleChange}
             required
+            error={errors.pincode}
             placeholder="Enter pincode"
           />
         </div>

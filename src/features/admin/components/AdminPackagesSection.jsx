@@ -6,9 +6,11 @@ import Input from '@/components/ui/Input'
 import Textarea from '@/components/ui/Textarea'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
+import useFormErrors from '@/hooks/useFormErrors'
 
 const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
   const [creating, setCreating] = useState(false)
+  const { errors, validate, onFieldChange } = useFormErrors()
   const [packageData, setPackageData] = useState({
     title: '',
     category: '',
@@ -18,26 +20,26 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
     image: '',
   })
 
+  const buildErrors = (p) => ({
+    title: !p.title ? 'Package title is required' : '',
+    category: !p.category ? 'Category is required' : '',
+    price: !p.price ? 'Package price is required' : '',
+    testsIncluded: p.testsIncluded.length === 0 ? 'Select at least one test' : '',
+    description: !p.description ? 'Description is required' : '',
+    image: !p.image ? 'Image URL is required' : '',
+  })
+
   const handleChange = (e) => {
-    setPackageData({
-      ...packageData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    const next = { ...packageData, [name]: value }
+    setPackageData(next)
+    onFieldChange(name, buildErrors(next))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (creating) return
-    if (
-      !packageData.title ||
-      !packageData.category ||
-      !packageData.price ||
-      !packageData.description ||
-      !packageData.image ||
-      packageData.testsIncluded.length === 0
-    ) {
-      return toast.error('Please fill all required fields')
-    }
+    if (!validate(buildErrors(packageData))) return
     try {
       setCreating(true)
       await createPackage({
@@ -74,11 +76,12 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Title</label>
-            <Input required type="text" name="title" placeholder="Enter package title" value={packageData.title} onChange={handleChange} />
+            <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Title</label>
+            <Input required type="text" name="title" placeholder="Enter package title" value={packageData.title} onChange={handleChange} error={errors.title} />
           </div>
           <div>
             <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Category</label>
-            <Input required type="text" name="category" placeholder="Enter category" value={packageData.category} onChange={handleChange} />
+            <Input required type="text" name="category" placeholder="Enter category" value={packageData.category} onChange={handleChange} error={errors.category} />
           </div>
         </div>
 
@@ -97,12 +100,15 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
             onChange={(e) => {
               const selectedId = e.target.value
               if (selectedId && !packageData.testsIncluded.includes(selectedId)) {
-                setPackageData({
+                const next = {
                   ...packageData,
                   testsIncluded: [...packageData.testsIncluded, selectedId],
-                })
+                }
+                setPackageData(next)
+                onFieldChange('testsIncluded', buildErrors(next))
               }
             }}
+            error={errors.testsIncluded}
           >
             <option value="">Select Test</option>
             {allTests.map((test) => (
@@ -144,15 +150,15 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
 
         <div>
           <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Price</label>
-          <Input required type="number" name="price" placeholder="Enter package price" value={packageData.price} onChange={handleChange} />
+          <Input required type="number" name="price" placeholder="Enter package price" value={packageData.price} onChange={handleChange} error={errors.price} />
         </div>
         <div>
           <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Description</label>
-          <Textarea rows="5" name="description" placeholder="Write package description" value={packageData.description} onChange={handleChange} />
+          <Textarea rows="5" name="description" placeholder="Write package description" value={packageData.description} onChange={handleChange} error={errors.description} />
         </div>
         <div>
           <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Image URL</label>
-          <Input type="text" name="image" placeholder="Enter image URL" value={packageData.image} onChange={handleChange} />
+          <Input type="text" name="image" placeholder="Enter image URL" value={packageData.image} onChange={handleChange} error={errors.image} />
         </div>
         <Button type="submit" loading={creating} fullWidth>
           Create Package

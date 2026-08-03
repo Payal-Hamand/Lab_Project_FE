@@ -12,6 +12,7 @@ import BookingSummary from '@/features/booking/components/BookingSummary'
 const Booking = () => {
   const {
     formData,
+    errors,
     tests,
     packages,
     loading,
@@ -52,11 +53,13 @@ const Booking = () => {
                 tests={tests}
                 packages={packages}
                 formData={formData}
+                errors={errors}
                 handleTestPackageChange={handleTestPackageChange}
               />
-              <BookingPatientInfo formData={formData} handleChange={handleChange} />
+              <BookingPatientInfo formData={formData} errors={errors} handleChange={handleChange} />
               <BookingAddressSection
                 formData={formData}
+                errors={errors}
                 handleChange={handleChange}
                 mapLocation={mapLocation}
                 setMapLocation={setMapLocation}
@@ -66,7 +69,7 @@ const Booking = () => {
                 openMap={openMap}
                 reverseGeocode={reverseGeocode}
               />
-              <BookingDateTime formData={formData} handleChange={handleChange} />
+              <BookingDateTime formData={formData} errors={errors} handleChange={handleChange} />
               <Button type="submit" loading={loading} fullWidth size="lg">
                 Confirm Booking
               </Button>

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
-const BookingDateTime = ({ formData, handleChange }) => {
+const BookingDateTime = ({ formData, errors, handleChange }) => {
   const today = new Date().toISOString().split('T')[0]
   // Time Slots
   const allTimeSlots = [
@@ -79,6 +79,7 @@ const BookingDateTime = ({ formData, handleChange }) => {
         onChange={handleChange}
         min={today}
         required
+        error={errors.bookingDate}
       />
       {/* Time */}
       <Select
@@ -88,6 +89,7 @@ const BookingDateTime = ({ formData, handleChange }) => {
         onChange={handleChange}
         required
         disabled={getAvailableTimeSlots().length === 0}
+        error={errors.bookingTime}
       >
         <option value="">Choose Time Slot</option>
         {getAvailableTimeSlots().map((slot, index) => (
