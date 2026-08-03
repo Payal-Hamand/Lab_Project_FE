@@ -43,7 +43,7 @@ const LabOwnerDashboard = () => {
     name: '',
     email: '',
     password: '',
-    mobile: '',
+    phone: '',
     document: '',
   })
   const fetchBookings = async () => {
@@ -78,17 +78,17 @@ const LabOwnerDashboard = () => {
   const handleCreateAssistant = async (e) => {
     e.preventDefault()
     if (creatingAssistant) return
-    const { name, email, mobile, password } = assistantData
+    const { name, email, phone, password } = assistantData
     if (!name.trim()) {
       return toast.error('Full Name is required')
     }
     if (!email.trim()) {
       return toast.error('Email is required')
     }
-    if (!mobile.trim()) {
+    if (!phone.trim()) {
       return toast.error('Mobile Number is required')
     }
-    if (!/^[6-9]\d{9}$/.test(mobile)) {
+    if (!/^[6-9]\d{9}$/.test(phone)) {
       return toast.error('Enter a valid 10-digit mobile number')
     }
     if (!password.trim()) {
@@ -106,7 +106,7 @@ const LabOwnerDashboard = () => {
         name: '',
         email: '',
         password: '',
-        mobile: '',
+        phone: '',
         document: '',
       })
       setShowAssistantForm(false)
@@ -247,9 +247,9 @@ const LabOwnerDashboard = () => {
               <Input
                 label="Phone Number"
                 type="text"
-                name="mobile"
+                name="phone"
                 placeholder="Enter phone number"
-                value={assistantData.mobile}
+                value={assistantData.phone}
                 onChange={handleChange}
                 required
               />

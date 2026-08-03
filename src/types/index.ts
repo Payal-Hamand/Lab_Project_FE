@@ -71,7 +71,7 @@ export interface LabOwner {
   _id: string
   name: string
   email: string
-  mobile?: string
+  phone?: string
   role: string
   servicePincodes: string[]
   labAddress: string
@@ -83,6 +83,6 @@ export interface LabAssistant {
   _id: string
   name: string
   email: string
-  mobile?: string
+  phone?: string
   document?: string
 }

@@ -30,7 +30,7 @@ const AdminUsersSection = ({
   const [labOwnerData, setLabOwnerData] = useState({
     name: '',
     email: '',
-    mobile: '',
+    phone: '',
     password: '',
     servicePincodes: '',
     labAddress: '',
@@ -51,7 +51,7 @@ const AdminUsersSection = ({
     if (
       !labOwnerData.name ||
       !labOwnerData.email ||
-      !labOwnerData.mobile ||
+      !labOwnerData.phone ||
       !labOwnerData.password ||
       !labOwnerData.servicePincodes ||
       !labOwnerData.labAddress ||
@@ -60,7 +60,7 @@ const AdminUsersSection = ({
     ) {
       return toast.error('Please complete all required fields and select a lab location')
     }
-    if (!/^[6-9]\d{9}$/.test(labOwnerData.mobile)) {
+    if (!/^[6-9]\d{9}$/.test(labOwnerData.phone)) {
       return toast.error('Enter a valid 10-digit mobile number')
     }
     try {
@@ -75,7 +75,7 @@ const AdminUsersSection = ({
       setLabOwnerData({
         name: '',
         email: '',
-        mobile: '',
+        phone: '',
         password: '',
         servicePincodes: '',
         labAddress: '',
@@ -114,9 +114,9 @@ const AdminUsersSection = ({
           <Input
             required
             type="tel"
-            name="mobile"
+            name="phone"
             placeholder="Phone Number"
-            value={labOwnerData.mobile}
+            value={labOwnerData.phone}
             onChange={handleChange}
             inputMode="numeric"
             maxLength={10}
