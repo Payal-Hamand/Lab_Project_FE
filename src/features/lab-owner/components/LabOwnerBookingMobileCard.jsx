@@ -17,7 +17,7 @@ const LabOwnerBookingMobileCard = ({
   setPreviewReport,
 }) => {
   return (
-    <div className="lg:hidden grid gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       {filteredBookings.map((booking) => (
         <div key={booking._id} className="bg-white border border-border rounded-[10px] overflow-hidden">
           <div

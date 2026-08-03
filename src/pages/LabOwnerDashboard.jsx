@@ -18,6 +18,8 @@ import { Spinner } from '@/components/ui/Loader'
 import LabOwnerStatsGrid from '@/features/lab-owner/components/LabOwnerStatsGrid'
 import LabOwnerAssistantsSection from '@/features/lab-owner/components/LabOwnerAssistantsSection'
 import LabOwnerBookingsTable from '@/features/lab-owner/components/LabOwnerBookingsTable'
+import LabOwnerBookingMobileCard from '@/features/lab-owner/components/LabOwnerBookingMobileCard'
+import ViewToggle from '@/components/ui/ViewToggle'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { Search } from 'lucide-react'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
@@ -36,6 +38,7 @@ const LabOwnerDashboard = () => {
   const [selectedAssistant, setSelectedAssistant] = useState(null)
   const [showAssistantForm, setShowAssistantForm] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [view, setView] = useState('card')
   const [assistantData, setAssistantData] = useState({
     name: '',
     email: '',
@@ -274,9 +277,12 @@ const LabOwnerDashboard = () => {
           </Modal>
           <div ref={tableRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900">Booking Management</h2>
-                <p className="text-gray-500">Manage laboratory bookings</p>
+              <div className="flex items-center gap-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Booking Management</h2>
+                  <p className="text-gray-500">Manage laboratory bookings</p>
+                </div>
+                <ViewToggle view={view} onChange={setView} />
               </div>
               <div className="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
                 <div className="relative flex-1 lg:w-96">
@@ -318,15 +324,28 @@ const LabOwnerDashboard = () => {
               <EmptyState text="No Bookings Found" />
             ) : (
               <>
-                <LabOwnerBookingsTable
-                  filteredBookings={filteredBookings}
-                  assistants={assistants}
-                  handleAssignAssistant={handleAssignAssistant}
-                  setSelectedReport={setSelectedReport}
-                  uploadingReport={uploadingReport}
-                  handleUploadReport={handleUploadReport}
-                  setPreviewReport={setPreviewReport}
-                />
+                {view === 'table' ? (
+                  <LabOwnerBookingsTable
+                    filteredBookings={filteredBookings}
+                    assistants={assistants}
+                    handleAssignAssistant={handleAssignAssistant}
+                    setSelectedReport={setSelectedReport}
+                    uploadingReport={uploadingReport}
+                    handleUploadReport={handleUploadReport}
+                    setPreviewReport={setPreviewReport}
+                  />
+                ) : (
+                  <LabOwnerBookingMobileCard
+                    filteredBookings={filteredBookings}
+                    assistants={assistants}
+                    handleAssignAssistant={handleAssignAssistant}
+                    selectedReport={selectedReport}
+                    setSelectedReport={setSelectedReport}
+                    uploadingReport={uploadingReport}
+                    handleUploadReport={handleUploadReport}
+                    setPreviewReport={setPreviewReport}
+                  />
+                )}
               </>
             )}
           </div>

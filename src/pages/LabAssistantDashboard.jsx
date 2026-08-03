@@ -18,7 +18,9 @@ import { Search } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import LabAssistantStatsGrid from '@/features/lab-assistant/components/LabAssistantStatsGrid'
 import LabAssistantBookingsTable from '@/features/lab-assistant/components/LabAssistantBookingsTable'
+import LabAssistantBookingMobileCard from '@/features/lab-assistant/components/LabAssistantBookingMobileCard'
 import LabAssistantSampleModal from '@/features/lab-assistant/components/LabAssistantSampleModal'
+import ViewToggle from '@/components/ui/ViewToggle'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 
 const LabAssistantDashboard = () => {
@@ -35,6 +37,7 @@ const LabAssistantDashboard = () => {
   const [previewReport, setPreviewReport] = useState(null)
   const [paymentSetting, setPaymentSetting] = useState(null)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [view, setView] = useState('card')
   const [paymentBooking, setPaymentBooking] = useState(null)
   const [paymentReceipt, setPaymentReceipt] = useState(null)
   const [uploadingPayment, setUploadingPayment] = useState(false)
@@ -203,18 +206,21 @@ const LabAssistantDashboard = () => {
           />
           <div className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
             <div className="mb-6 flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
-                <Input
-                  type="text"
-                  placeholder="Search patient, mobile, test or package..."
-                  value={searchTerm}
-                  onChange={(e) => searchBookings(e.target.value)}
-                  className="pl-12"
-                />
-                <Search
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                />
+              <div className="flex items-center gap-4 flex-1">
+                <div className="relative flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Search patient, mobile, test or package..."
+                    value={searchTerm}
+                    onChange={(e) => searchBookings(e.target.value)}
+                    className="pl-12"
+                  />
+                  <Search
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                </div>
+                <ViewToggle view={view} onChange={setView} />
               </div>
               <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary">
                 Total Bookings: {filteredBookings.length}
@@ -233,14 +239,25 @@ const LabAssistantDashboard = () => {
               <EmptyState text="No Assigned Bookings" />
             ) : (
               <>
-                <LabAssistantBookingsTable
-                  filteredBookings={filteredBookings}
-                  handleReached={handleReached}
-                  openSampleModal={openSampleModal}
-                  openNavigation={openNavigation}
-                  handlePayment={handlePayment}
-                  setPreviewReport={setPreviewReport}
-                />
+                {view === 'table' ? (
+                  <LabAssistantBookingsTable
+                    filteredBookings={filteredBookings}
+                    handleReached={handleReached}
+                    openSampleModal={openSampleModal}
+                    openNavigation={openNavigation}
+                    handlePayment={handlePayment}
+                    setPreviewReport={setPreviewReport}
+                  />
+                ) : (
+                  <LabAssistantBookingMobileCard
+                    filteredBookings={filteredBookings}
+                    handleReached={handleReached}
+                    openSampleModal={openSampleModal}
+                    openNavigation={openNavigation}
+                    handlePayment={handlePayment}
+                    setPreviewReport={setPreviewReport}
+                  />
+                )}
               </>
             )}
           </div>

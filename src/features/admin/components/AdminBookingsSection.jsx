@@ -6,6 +6,8 @@ import { createAdminBookingsColumns } from '@/features/admin/columns/admin-booki
 import { BOOKING_STATUS } from '@/constants/status'
 import { Spinner } from '@/components/ui/Loader'
 import Button from '@/components/ui/Button'
+import ViewToggle from '@/components/ui/ViewToggle'
+import AdminBookingMobileCard from '@/features/admin/components/AdminBookingMobileCard'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 
 const AdminBookingsSection = ({
@@ -17,6 +19,7 @@ const AdminBookingsSection = ({
   tableRef,
 }) => {
   const [previewReport, setPreviewReport] = useState(null)
+  const [view, setView] = useState('card')
 
   const columns = React.useMemo(() => createAdminBookingsColumns(), [])
 
@@ -43,7 +46,10 @@ const AdminBookingsSection = ({
 
   return (
     <div ref={tableRef} className="bg-white border border-border rounded-xl shadow-card mt-8 p-5 md:p-6">
-      <DashboardSectionHeader title="Recent Bookings" subtitle="Latest patient booking activity" />
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <DashboardSectionHeader title="Recent Bookings" subtitle="Latest patient booking activity" />
+        <ViewToggle view={view} onChange={setView} />
+      </div>
       {loading ? (
         <Spinner />
       ) : fetchError ? (
@@ -57,16 +63,28 @@ const AdminBookingsSection = ({
         <EmptyState text="No Bookings Found" />
       ) : (
         <>
-          <div className="mt-4 overflow-x-auto">
-            <DataTable
-              columns={columns}
-              data={filteredBookings}
-              enablePagination={true}
-              enableSorting={true}
-              pageSize={10}
-              actions={actions}
-            />
-          </div>
+          {view === 'table' ? (
+            <div className="mt-4 overflow-x-auto">
+              <DataTable
+                columns={columns}
+                data={filteredBookings}
+                enablePagination={true}
+                enableSorting={true}
+                pageSize={10}
+                actions={actions}
+              />
+            </div>
+          ) : (
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredBookings.map((booking) => (
+                <AdminBookingMobileCard
+                  key={booking._id}
+                  booking={booking}
+                  openEditModal={openEditModal}
+                />
+              ))}
+            </div>
+          )}
         </>
       )}
 

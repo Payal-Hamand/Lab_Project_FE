@@ -6,6 +6,7 @@ import useAuth from '@/hooks/useAuth'
 import { getMyBookings, manageBooking } from '@/services/booking.service'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
+import { BOOKING_STATUS } from '@/constants/status'
 import { DataTable } from '@/components/ui/data-table'
 import { createPatientBookingsColumns } from '@/features/patient/columns/patient-bookings.columns'
 import Button from '@/components/ui/Button'
@@ -15,6 +16,7 @@ import BookingMobileCard from '@/features/patient/components/BookingMobileCard'
 import ManageBookingModal from '@/features/patient/components/ManageBookingModal'
 import EmptyState from '@/components/Dashboard/EmptyState'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
+import ViewToggle from '@/components/ui/ViewToggle'
 import { db } from '@/firebase'
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 
@@ -32,6 +34,7 @@ const Dashboard = () => {
   const tableRef = useRef(null)
   const navigate = useNavigate()
   const [customReason, setCustomReason] = useState('')
+  const [view, setView] = useState('card')
   const [rescheduleData, setRescheduleData] = useState({
     bookingDate: '',
     bookingTime: '',
@@ -198,11 +201,16 @@ const Dashboard = () => {
             className="bg-white border border-border rounded-xl shadow-sm mt-8 p-6"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 pb-4 border-b border-border">
-              <div>
-                <h2 className="font-heading font-bold text-xl text-foreground">My Bookings</h2>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  View all your booked tests &amp; reports
-                </p>
+              <div className="flex items-center gap-3">
+                <div>
+                  <h2 className="font-heading font-bold text-xl text-foreground">My Bookings</h2>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    View all your booked tests &amp; reports
+                  </p>
+                </div>
+                <div className="ml-auto">
+                  <ViewToggle view={view} onChange={setView} />
+                </div>
               </div>
               <Button onClick={() => navigate(ROUTES.BOOKING)}>
                 Book New Test
@@ -222,26 +230,29 @@ const Dashboard = () => {
               <EmptyState text="No Bookings Found" />
             ) : (
               <>
-                <div className="hidden lg:block">
-                  <DataTable
-                    columns={columns}
-                    data={filteredBookings}
-                    enablePagination={true}
-                    enableSorting={true}
-                    pageSize={10}
-                    actions={actions}
-                  />
-                </div>
-                <div className="lg:hidden grid gap-3">
-                  {filteredBookings.map((booking) => (
-                    <BookingMobileCard
-                      key={booking._id}
-                      booking={booking}
-                      openManageModal={openManageModal}
-                      setPreviewReport={setPreviewReport}
+                {view === 'table' ? (
+                  <div className="overflow-x-auto">
+                    <DataTable
+                      columns={columns}
+                      data={filteredBookings}
+                      enablePagination={true}
+                      enableSorting={true}
+                      pageSize={10}
+                      actions={actions}
                     />
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {filteredBookings.map((booking) => (
+                      <BookingMobileCard
+                        key={booking._id}
+                        booking={booking}
+                        openManageModal={openManageModal}
+                        setPreviewReport={setPreviewReport}
+                      />
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>
