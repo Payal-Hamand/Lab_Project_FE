@@ -1,0 +1,16 @@
+export const ROUTES = {
+  HOME: '/',
+  LOGIN: '/login',
+  SIGNUP: '/signup',
+  ABOUT: '/about',
+  TESTS: '/tests',
+  PACKAGES: '/packages',
+  BOOKING: '/booking',
+  DASHBOARD: '/dashboard',
+  ADMIN: '/admin',
+  LAB_OWNER: '/lab-owner',
+  LAB_ASSISTANT: '/lab-assistant',
+  FORGOT_PASSWORD: '/forgot-password',
+  VERIFY_OTP: '/verify-otp',
+  RESET_PASSWORD: '/reset-password',
+}
