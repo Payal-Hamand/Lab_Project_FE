@@ -36,6 +36,7 @@ const AdminDashboard = () => {
 
   const [payment, setPayment] = useState(null)
   const [qrImage, setQrImage] = useState(null)
+  const [showPaymentOverview, setShowPaymentOverview] = useState(false)
 
   const fetchPayment = async () => {
     try {
@@ -171,6 +172,7 @@ const AdminDashboard = () => {
             scrollToTable={scrollToTable}
             scrollToLabOwners={scrollToLabOwners}
             setActivePanel={setActivePanel}
+            openPaymentOverview={() => setShowPaymentOverview(true)}
           />
           <AdminTestsSection
             open={activePanel === 'test'}
@@ -240,22 +242,19 @@ const AdminDashboard = () => {
               </button>
             </form>
           </Modal>
-          {activeSection === 'payment' ? (
-            <AdminPaymentSection />
-          ) : (
-            <AdminBookingsSection
-              bookings={bookings}
-              loading={loading}
-              fetchError={fetchError}
-              onRetry={() => {
-                fetchBookings()
-                fetchDashboardData()
-              }}
-              openEditModal={openEditModal}
-              filteredBookings={filteredBookings}
-              tableRef={tableRef}
-            />
-          )}
+          <AdminPaymentSection open={showPaymentOverview} onClose={() => setShowPaymentOverview(false)} />
+          <AdminBookingsSection
+            bookings={bookings}
+            loading={loading}
+            fetchError={fetchError}
+            onRetry={() => {
+              fetchBookings()
+              fetchDashboardData()
+            }}
+            openEditModal={openEditModal}
+            filteredBookings={filteredBookings}
+            tableRef={tableRef}
+          />
         </div>
       </div>
     </DashboardLayout>

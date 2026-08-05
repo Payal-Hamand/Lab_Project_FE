@@ -1,7 +1,8 @@
 import React from "react"
 import { type ColumnDef } from "@tanstack/react-table"
-import { CircleUser, MapPinCheck, Microscope, Banknote, MapPin, Route, Download, MoreVertical } from "lucide-react"
+import { CircleUser, MapPinCheck, Microscope, Banknote, MapPin, Route, Download, MoreVertical, Copy } from "lucide-react"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
+import Tooltip from "@/components/ui/Tooltip"
 import { BOOKING_STATUS, PAYMENT_STATUS } from "@/constants/status"
 import {
   DropdownMenu,
@@ -9,6 +10,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+const CopyAddress = ({ text }: { text: string }) => {
+  const [copied, setCopied] = React.useState(false)
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+  const stopHover = (e: React.MouseEvent) => e.stopPropagation()
+  return (
+    <span className="inline-flex items-center gap-1">
+      <span className="truncate max-w-[160px]">{text}</span>
+      <Tooltip content={copied ? "Copied!" : "Copy"} position="top">
+        <button type="button" onClick={handleCopy} onMouseEnter={stopHover} className="cursor-pointer">
+          <Copy size={12} className="text-muted-foreground hover:text-foreground shrink-0" />
+        </button>
+      </Tooltip>
+    </span>
+  )
+}
 
 const statusStyles: Record<string, string> = {
   [BOOKING_STATUS.COMPLETED]: "bg-green-50 text-green-700",
@@ -128,7 +150,9 @@ export function createLabAssistantBookingsColumns({
       cell: ({ row }) => (
         <div className="flex gap-1.5 items-start max-w-[200px]">
           <MapPin className="text-red-500 mt-0.5 flex-shrink-0" size={14} />
-          <span className="text-[12px] text-muted-foreground line-clamp-2">{row.getValue("address")}</span>
+          <span className="text-[12px] text-muted-foreground line-clamp-2">
+            <CopyAddress text={row.getValue("address")} />
+          </span>
         </div>
       ),
     },
