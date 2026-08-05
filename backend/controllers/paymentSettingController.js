@@ -1,8 +1,5 @@
 import PaymentSetting from "../models/paymentSetting.js";
 
-
-// Create Payment Setting (Only Once)
-
 export const createPaymentSetting = async (
   req,
   res
