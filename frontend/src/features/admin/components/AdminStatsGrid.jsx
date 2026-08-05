@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ClipboardList, FlaskConical, TestTubeDiagonal, PackageOpen, Users, CreditCard } from 'lucide-react'
+import { ClipboardList, FlaskConical, TestTubeDiagonal, PackageOpen, Users, CreditCard, Banknote } from 'lucide-react'
 import { ROUTES } from '@/constants/routes'
 import { BOOKING_STATUS } from '@/constants/status'
 import { DashboardStatsCard } from '@/components/Dashboard'
@@ -80,6 +80,15 @@ const AdminStatsGrid = ({
           color="green"
           bgColor="bg-green-100 text-green-600"
           onClick={scrollToLabOwners}
+        />
+        <DashboardStatsCard
+          title="Payments"
+          value={bookings.filter((item) => item.paymentStatus === 'Paid').length}
+          icon={<Banknote size={18} />}
+          color="green"
+          bgColor="bg-green-100 text-green-600"
+          active={activeSection === 'payment'}
+          onClick={() => setActiveSection('payment')}
         />
       </div>
 

@@ -134,8 +134,9 @@ const Packages = ({ showAllPackages = false }) => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const { data } = await getAllPackages()
-        setPackages(data)
+        const { data: res } = await getAllPackages()
+        const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+        setPackages(list)
       } catch (error) {
         toast.error('Failed to load packages')
       } finally {

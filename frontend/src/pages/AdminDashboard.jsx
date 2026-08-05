@@ -12,6 +12,7 @@ import AdminTestsSection from '@/features/admin/components/AdminTestsSection'
 import AdminPackagesSection from '@/features/admin/components/AdminPackagesSection'
 import AdminUsersSection from '@/features/admin/components/AdminUsersSection'
 import AdminBookingsSection from '@/features/admin/components/AdminBookingsSection'
+import AdminPaymentSection from '@/features/admin/components/AdminPaymentSection'
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState([])
@@ -74,8 +75,9 @@ const AdminDashboard = () => {
 
   const fetchLabOwners = async () => {
     try {
-      const { data } = await getBookingLabOwners()
-      setLabOwners(data)
+      const { data: res } = await getBookingLabOwners()
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setLabOwners(list)
     } catch (error) {
       console.log(error)
     }
@@ -93,10 +95,10 @@ const AdminDashboard = () => {
         getAllPackages(),
         getAllLabOwners(),
       ])
-      setTests(testsRes.data)
-      setAllTests(testsRes.data)
-      setPackages(packagesRes.data)
-      setLabOwners(labOwnersRes.data)
+      setTests(Array.isArray(testsRes.data?.data) ? testsRes.data.data : Array.isArray(testsRes.data) ? testsRes.data : [])
+      setAllTests(Array.isArray(testsRes.data?.data) ? testsRes.data.data : Array.isArray(testsRes.data) ? testsRes.data : [])
+      setPackages(Array.isArray(packagesRes.data?.data) ? packagesRes.data.data : Array.isArray(packagesRes.data) ? packagesRes.data : [])
+      setLabOwners(Array.isArray(labOwnersRes.data?.data) ? labOwnersRes.data.data : Array.isArray(labOwnersRes.data) ? labOwnersRes.data : [])
     } catch {
       setFetchError('Failed to load dashboard data. Please try again.')
     }
@@ -104,8 +106,9 @@ const AdminDashboard = () => {
 
   const fetchBookings = async () => {
     try {
-      const { data } = await getAllBookings()
-      setBookings(data)
+      const { data: res } = await getAllBookings()
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setBookings(list)
     } catch {
       setFetchError('Failed to load bookings. Please try again.')
     } finally {
@@ -237,18 +240,22 @@ const AdminDashboard = () => {
               </button>
             </form>
           </Modal>
-          <AdminBookingsSection
-            bookings={bookings}
-            loading={loading}
-            fetchError={fetchError}
-            onRetry={() => {
-              fetchBookings()
-              fetchDashboardData()
-            }}
-            openEditModal={openEditModal}
-            filteredBookings={filteredBookings}
-            tableRef={tableRef}
-          />
+          {activeSection === 'payment' ? (
+            <AdminPaymentSection />
+          ) : (
+            <AdminBookingsSection
+              bookings={bookings}
+              loading={loading}
+              fetchError={fetchError}
+              onRetry={() => {
+                fetchBookings()
+                fetchDashboardData()
+              }}
+              openEditModal={openEditModal}
+              filteredBookings={filteredBookings}
+              tableRef={tableRef}
+            />
+          )}
         </div>
       </div>
     </DashboardLayout>
