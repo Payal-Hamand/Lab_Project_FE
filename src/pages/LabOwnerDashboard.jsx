@@ -21,6 +21,7 @@ import LabOwnerBookingsTable from '@/features/lab-owner/components/LabOwnerBooki
 import LabOwnerBookingMobileCard from '@/features/lab-owner/components/LabOwnerBookingMobileCard'
 import LabOwnerPaymentSection from '@/features/lab-owner/components/LabOwnerPaymentSection'
 import ViewToggle from '@/components/ui/ViewToggle'
+import useResponsiveView from '@/hooks/useResponsiveView'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { Search } from 'lucide-react'
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
@@ -40,7 +41,7 @@ const LabOwnerDashboard = () => {
   const [selectedAssistant, setSelectedAssistant] = useState(null)
   const [showAssistantForm, setShowAssistantForm] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [view, setView] = useState('card')
+  const [view, setView] = useResponsiveView()
   const [showPaymentOverview, setShowPaymentOverview] = useState(false)
   const {
     errors: assistantErrors,

@@ -17,6 +17,7 @@ import ManageBookingModal from '@/features/patient/components/ManageBookingModal
 import EmptyState from '@/components/Dashboard/EmptyState'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import ViewToggle from '@/components/ui/ViewToggle'
+import useResponsiveView from '@/hooks/useResponsiveView'
 import { db } from '@/firebase'
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 
@@ -34,7 +35,7 @@ const Dashboard = () => {
   const tableRef = useRef(null)
   const navigate = useNavigate()
   const [customReason, setCustomReason] = useState('')
-  const [view, setView] = useState('card')
+  const [view, setView] = useResponsiveView()
   const [rescheduleData, setRescheduleData] = useState({
     bookingDate: '',
     bookingTime: '',
