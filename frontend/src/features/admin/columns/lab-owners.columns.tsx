@@ -1,5 +1,7 @@
+import React from "react"
 import { type ColumnDef } from "@tanstack/react-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
+import CopyIcon from "@/components/ui/CopyIcon"
 
 export interface LabOwner {
   _id: string
@@ -57,17 +59,20 @@ export const labOwnerColumns: ColumnDef<LabOwner, any>[] = [
       const isLastRow = row.index === table.getRowModel().rows.length - 1
 
       return (
-        <div className="group/tooltip relative w-max">
-          <p className="w-44 truncate text-xs text-muted-foreground cursor-pointer">
-            {address}
-          </p>
-          <div
-            className={`absolute hidden group-hover/tooltip:block z-[9999] bg-foreground text-background text-xs rounded-lg p-2.5 w-max max-w-[80vw] whitespace-normal break-words left-0 shadow-xl ${
-              isLastRow ? "bottom-5" : "top-5"
-            }`}
-          >
-            {address}
+        <div className="flex items-center gap-1.5 w-max">
+          <div className="group/tooltip relative">
+            <p className="w-44 truncate text-xs text-muted-foreground cursor-pointer">
+              {address}
+            </p>
+            <div
+              className={`absolute hidden group-hover/tooltip:block z-[9999] bg-foreground text-background text-xs rounded-lg p-2.5 w-max max-w-[80vw] whitespace-normal break-words left-0 shadow-xl ${
+                isLastRow ? "bottom-5" : "top-5"
+              }`}
+            >
+              {address}
+            </div>
           </div>
+          <CopyIcon text={address} />
         </div>
       )
     },

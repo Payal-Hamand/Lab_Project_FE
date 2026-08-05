@@ -4,12 +4,14 @@ const Tooltip = ({ children, content, position = 'bottom', delay = 200 }) => {
   const [show, setShow] = React.useState(false)
   const [timeoutId, setTimeoutId] = React.useState(null)
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e) => {
+    e.stopPropagation()
     const id = setTimeout(() => setShow(true), delay)
     setTimeoutId(id)
   }
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (e) => {
+    e.stopPropagation()
     clearTimeout(timeoutId)
     setShow(false)
   }

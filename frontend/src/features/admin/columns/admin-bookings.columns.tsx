@@ -2,6 +2,7 @@ import React from "react"
 import { type ColumnDef } from "@tanstack/react-table"
 import { MapPin } from "lucide-react"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
+import CopyIcon from "@/components/ui/CopyIcon"
 import { BOOKING_STATUS } from "@/constants/status"
 
 const statusStyles: Record<string, string> = {
@@ -132,14 +133,17 @@ export function createAdminBookingsColumns(): ColumnDef<AdminBooking, any>[] {
               )}
             </div>
             {lab?.labAddress && (
-              <div className="group/tooltip relative w-max mt-0.5">
-                <p className="text-xs text-muted-foreground cursor-pointer flex items-center max-w-[180px] overflow-hidden">
-                  <MapPin size={12} className="mr-1 shrink-0" />
-                  <span className="truncate">{lab.labAddress}</span>
-                </p>
-                <div className="absolute hidden group-hover/tooltip:block z-[9999] bg-foreground text-background text-xs rounded-lg p-2.5 min-w-[200px] w-max max-w-[350px] whitespace-normal break-words right-0 bottom-5 shadow-xl">
-                  {lab.labAddress}
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="group/tooltip relative">
+                  <p className="text-xs text-muted-foreground cursor-pointer flex items-center max-w-[180px] overflow-hidden">
+                    <MapPin size={12} className="mr-1 shrink-0" />
+                    <span className="truncate">{lab.labAddress}</span>
+                  </p>
+                  <div className="absolute hidden group-hover/tooltip:block z-[9999] bg-foreground text-background text-xs rounded-lg p-2.5 min-w-[200px] w-max max-w-[350px] whitespace-normal break-words right-0 bottom-5 shadow-xl">
+                    {lab.labAddress}
+                  </div>
                 </div>
+                <CopyIcon text={lab.labAddress} />
               </div>
             )}
           </div>

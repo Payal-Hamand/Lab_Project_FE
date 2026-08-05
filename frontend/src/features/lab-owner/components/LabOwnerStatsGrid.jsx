@@ -10,6 +10,7 @@ const LabOwnerStatsGrid = ({
   setActiveSection,
   setSelectedAssistant,
   scrollToTable,
+  openPaymentOverview,
 }) => {
   return (
     <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
@@ -69,11 +70,7 @@ const LabOwnerStatsGrid = ({
         icon={<Banknote />}
         color="green"
         bgColor="bg-green-100 text-green-600"
-        active={activeSection === 'payment'}
-        onClick={() => {
-          setSelectedAssistant(null)
-          setActiveSection('payment')
-        }}
+        onClick={openPaymentOverview}
       />
     </div>
   )

@@ -3,6 +3,7 @@ import { Download, MapPin, Pencil, Settings, ChevronUp, ChevronDown, ArrowUpDown
 import { BOOKING_STATUS, PAYMENT_STATUS } from '@/constants/status'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
+import CopyIcon from '@/components/ui/CopyIcon'
 import ReportViewerModal from './ReportViewerModal'
 
 const BookingsTable = ({
@@ -126,14 +127,17 @@ const BookingsTable = ({
                       {item.labOwner?.name || <span className="text-muted-foreground font-normal">Not Assigned</span>}
                     </div>
                     {item.labOwner?.labAddress && (
-                      <div className="group/tooltip relative w-max mt-0.5">
-                        <p className="text-xs text-muted-foreground cursor-pointer flex items-center max-w-[180px] truncate">
-                          <MapPin size={12} className="mr-1 shrink-0" />
-                          {item.labOwner.labAddress}
-                        </p>
-                        <div className="absolute hidden group-hover/tooltip:block z-50 bg-foreground text-background text-xs rounded-lg p-2.5 w-64 left-0 top-5 shadow-xl">
-                          {item.labOwner.labAddress}
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <div className="group/tooltip relative">
+                          <p className="text-xs text-muted-foreground cursor-pointer flex items-center max-w-[180px]">
+                            <MapPin size={12} className="mr-1 shrink-0" />
+                            <span className="truncate">{item.labOwner.labAddress}</span>
+                          </p>
+                          <div className="absolute hidden group-hover/tooltip:block z-50 bg-foreground text-background text-xs rounded-lg p-2.5 w-64 left-0 top-5 shadow-xl">
+                            {item.labOwner.labAddress}
+                          </div>
                         </div>
+                        <CopyIcon text={item.labOwner.labAddress} />
                       </div>
                     )}
                   </td>

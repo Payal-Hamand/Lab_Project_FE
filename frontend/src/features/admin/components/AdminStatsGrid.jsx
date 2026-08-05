@@ -15,6 +15,7 @@ const AdminStatsGrid = ({
   scrollToTable,
   scrollToLabOwners,
   setActivePanel,
+  openPaymentOverview,
 }) => {
   const navigate = useNavigate()
 
@@ -87,8 +88,7 @@ const AdminStatsGrid = ({
           icon={<Banknote size={18} />}
           color="green"
           bgColor="bg-green-100 text-green-600"
-          active={activeSection === 'payment'}
-          onClick={() => setActiveSection('payment')}
+          onClick={openPaymentOverview}
         />
       </div>
 

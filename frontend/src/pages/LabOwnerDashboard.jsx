@@ -41,6 +41,7 @@ const LabOwnerDashboard = () => {
   const [showAssistantForm, setShowAssistantForm] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [view, setView] = useState('card')
+  const [showPaymentOverview, setShowPaymentOverview] = useState(false)
   const {
     errors: assistantErrors,
     validate: validateAssistant,
@@ -221,6 +222,7 @@ const LabOwnerDashboard = () => {
             setActiveSection={setActiveSection}
             setSelectedAssistant={setSelectedAssistant}
             scrollToTable={scrollToTable}
+            openPaymentOverview={() => setShowPaymentOverview(true)}
           />
           <LabOwnerAssistantsSection
             assistants={assistants}
@@ -293,10 +295,8 @@ const LabOwnerDashboard = () => {
               </Button>
             </form>
           </Modal>
-          {activeSection === 'payment' ? (
-            <LabOwnerPaymentSection />
-          ) : (
-            <div ref={tableRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
+          <LabOwnerPaymentSection open={showPaymentOverview} onClose={() => setShowPaymentOverview(false)} />
+          <div ref={tableRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
                 <div className="flex items-center gap-4">
                   <div>
@@ -370,7 +370,6 @@ const LabOwnerDashboard = () => {
                 </>
               )}
             </div>
-          )}
         </div>
       </div>
       <ReportViewerModal
