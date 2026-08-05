@@ -4,13 +4,11 @@ const paymentSettingSchema = new mongoose.Schema(
   {
     accountName: {
       type: String,
-      required: true,
       trim: true,
     },
 
     upiId: {
       type: String,
-      required: true,
       trim: true,
     },
 

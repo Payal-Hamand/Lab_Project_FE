@@ -74,15 +74,8 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Title</label>
-            <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Title</label>
-            <Input required type="text" name="title" placeholder="Enter package title" value={packageData.title} onChange={handleChange} error={errors.title} />
-          </div>
-          <div>
-            <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Category</label>
-            <Input required type="text" name="category" placeholder="Enter category" value={packageData.category} onChange={handleChange} error={errors.category} />
-          </div>
+          <Input required type="text" name="title" label="Package Title" placeholder="Enter package title" value={packageData.title} onChange={handleChange} error={errors.title} />
+          <Input required type="text" name="category" label="Category" placeholder="Enter category" value={packageData.category} onChange={handleChange} error={errors.category} />
         </div>
 
         {/* Test selection box */}
@@ -148,18 +141,9 @@ const AdminPackagesSection = ({ open, onClose, onCreated, allTests }) => {
           </div>
         </div>
 
-        <div>
-          <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Package Price</label>
-          <Input required type="number" name="price" placeholder="Enter package price" value={packageData.price} onChange={handleChange} error={errors.price} />
-        </div>
-        <div>
-          <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Description</label>
-          <Textarea rows="5" name="description" placeholder="Write package description" value={packageData.description} onChange={handleChange} error={errors.description} />
-        </div>
-        <div>
-          <label className="text-[10px] text-muted-foreground font-medium block mb-1.5">Image URL</label>
-          <Input type="text" name="image" placeholder="Enter image URL" value={packageData.image} onChange={handleChange} error={errors.image} />
-        </div>
+        <Input required type="number" name="price" label="Package Price" placeholder="Enter package price" value={packageData.price} onChange={handleChange} error={errors.price} />
+        <Textarea rows="5" name="description" label="Description" placeholder="Write package description" value={packageData.description} onChange={handleChange} error={errors.description} />
+        <Input type="text" name="image" label="Image URL" placeholder="Enter image URL" value={packageData.image} onChange={handleChange} error={errors.image} />
         <Button type="submit" loading={creating} fullWidth>
           Create Package
         </Button>
