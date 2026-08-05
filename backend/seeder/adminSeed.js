@@ -40,6 +40,8 @@ router.get('/create-admin', async (
 
       email: 'admin@gmail.com',
 
+      phone: '9999999999',
+
       password: hashedPassword,
 
       role: 'admin'

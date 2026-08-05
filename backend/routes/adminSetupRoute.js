@@ -41,6 +41,8 @@ router.get(
 
         email: 'admin@gmail.com',
 
+        phone: '9999999999',
+
         password:
           hashedPassword,
 
