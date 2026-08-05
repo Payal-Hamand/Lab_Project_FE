@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import CopyIcon from '@/components/ui/CopyIcon'
 import ReportViewerModal from './ReportViewerModal'
 
+// Booking Table 
 const BookingsTable = ({
   bookings,
   showPatient = true,
@@ -33,7 +34,6 @@ const BookingsTable = ({
       sortableItems.sort((a, b) => {
         let aValue = a[sortConfig.key]
         let bValue = b[sortConfig.key]
-
         // Handle nested fields
         if (sortConfig.key === 'testTitle') {
           aValue = a.test?.title || a.package?.title || ''

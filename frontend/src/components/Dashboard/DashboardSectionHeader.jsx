@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from '@/components/ui/Button'
 
+// Dashboard Section Header
 const DashboardSectionHeader = ({ title, subtitle, button, buttonText, buttonIcon, onClick }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

@@ -17,6 +17,7 @@ const BookingDateTime = ({ formData, errors, handleChange }) => {
     '05:00 PM',
     '06:00 PM',
     '07:00 PM',
+    '08:00 PM',
   ]
   // Available Slots
   const getAvailableTimeSlots = () => {
