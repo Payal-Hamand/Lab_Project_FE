@@ -21,6 +21,7 @@ import LabAssistantBookingsTable from '@/features/lab-assistant/components/LabAs
 import LabAssistantBookingMobileCard from '@/features/lab-assistant/components/LabAssistantBookingMobileCard'
 import LabAssistantSampleModal from '@/features/lab-assistant/components/LabAssistantSampleModal'
 import ViewToggle from '@/components/ui/ViewToggle'
+import useResponsiveView from '@/hooks/useResponsiveView'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 
 const LabAssistantDashboard = () => {
@@ -37,7 +38,7 @@ const LabAssistantDashboard = () => {
   const [previewReport, setPreviewReport] = useState(null)
   const [paymentSetting, setPaymentSetting] = useState(null)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [view, setView] = useState('card')
+  const [view, setView] = useResponsiveView()
   const [paymentBooking, setPaymentBooking] = useState(null)
   const [paymentReceipt, setPaymentReceipt] = useState(null)
   const [uploadingPayment, setUploadingPayment] = useState(false)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Download, Pencil } from 'lucide-react'
 import { DashboardSectionHeader, EmptyState } from '@/components/Dashboard'
 import { DataTable } from '@/components/ui/data-table'
@@ -7,6 +7,7 @@ import { BOOKING_STATUS } from '@/constants/status'
 import { Spinner } from '@/components/ui/Loader'
 import Button from '@/components/ui/Button'
 import ViewToggle from '@/components/ui/ViewToggle'
+import useResponsiveView from '@/hooks/useResponsiveView'
 import AdminBookingMobileCard from '@/features/admin/components/AdminBookingMobileCard'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 
@@ -19,7 +20,7 @@ const AdminBookingsSection = ({
   tableRef,
 }) => {
   const [previewReport, setPreviewReport] = useState(null)
-  const [view, setView] = useState('card')
+  const [view, setView] = useResponsiveView()
 
   const columns = React.useMemo(() => createAdminBookingsColumns(), [])
 
