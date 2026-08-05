@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClipboardList, Clock, CircleCheckBig, Users } from 'lucide-react'
+import { ClipboardList, Clock, CircleCheckBig, Users, Banknote } from 'lucide-react'
 import { DashboardStatsCard } from '@/components/Dashboard'
 import { BOOKING_STATUS } from '@/constants/status'
 
@@ -61,6 +61,18 @@ const LabOwnerStatsGrid = ({
         active={activeSection === 'assistants'}
         onClick={() => {
           setActiveSection('assistants')
+        }}
+      />
+      <DashboardStatsCard
+        title="Payments"
+        value={bookings.filter((item) => item.paymentStatus === 'Paid').length}
+        icon={<Banknote />}
+        color="green"
+        bgColor="bg-green-100 text-green-600"
+        active={activeSection === 'payment'}
+        onClick={() => {
+          setSelectedAssistant(null)
+          setActiveSection('payment')
         }}
       />
     </div>

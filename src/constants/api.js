@@ -42,5 +42,9 @@ export const API_ENDPOINTS = {
   PAYMENT_SETTING: {
     BASE: '/payment-setting',
   },
+  PAYMENT_STATS: {
+    LAB_OWNER: '/payment-statistic/lab-owner',
+    ADMIN: '/payment-statistic/admin',
+  },
   BOOKINGS_PAYMENT_RECEIPT: (id) => `/bookings/payment/${id}`,
 }

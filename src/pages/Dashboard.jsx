@@ -43,8 +43,9 @@ const Dashboard = () => {
   const fetchBookings = async () => {
     try {
       setFetchError(null)
-      const { data } = await getMyBookings()
-      setBookings(data)
+      const { data: res } = await getMyBookings()
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setBookings(list)
     } catch {
       setFetchError('Failed to load bookings. Please try again.')
     } finally {

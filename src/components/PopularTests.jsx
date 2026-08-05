@@ -35,7 +35,7 @@ const PopularTests = () => {
   const [canScrollLeft, setCanScrollLeft] = useState(false)
 
   const { data: testsData, isLoading } = useTests()
-  const tests = testsData?.data || []
+  const tests = Array.isArray(testsData?.data?.data) ? testsData.data.data : Array.isArray(testsData?.data) ? testsData.data : []
 
   const categories = useMemo(() => {
     const categoryMap = {}

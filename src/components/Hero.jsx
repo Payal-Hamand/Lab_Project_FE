@@ -35,12 +35,14 @@ const Hero = () => {
     queryKey: ['heroSearchData'],
     queryFn: async () => {
       const [testsRes, packagesRes] = await Promise.all([getAllTests(), getAllPackages()])
-      return { tests: testsRes.data || [], packages: packagesRes.data || [] }
+      const testsList = Array.isArray(testsRes.data?.data) ? testsRes.data.data : Array.isArray(testsRes.data) ? testsRes.data : []
+      const packagesList = Array.isArray(packagesRes.data?.data) ? packagesRes.data.data : Array.isArray(packagesRes.data) ? packagesRes.data : []
+      return { tests: testsList, packages: packagesList }
     },
   })
 
-  const tests = combinedData?.tests || []
-  const packages = combinedData?.packages || []
+  const tests = Array.isArray(combinedData?.tests) ? combinedData.tests : []
+  const packages = Array.isArray(combinedData?.packages) ? combinedData.packages : []
 
   // Position the portal dropdown under the input
   const openDropdown = () => {

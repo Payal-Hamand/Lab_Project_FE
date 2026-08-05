@@ -73,9 +73,10 @@ const TestsPage = () => {
 
   const fetchTests = async () => {
     try {
-      const { data } = await getAllTests()
-      setTests(data)
-      setFilteredTests(data)
+      const { data: res } = await getAllTests()
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setTests(list)
+      setFilteredTests(list)
     } catch (error) {
       console.log(error)
     } finally {

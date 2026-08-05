@@ -19,6 +19,7 @@ import LabOwnerStatsGrid from '@/features/lab-owner/components/LabOwnerStatsGrid
 import LabOwnerAssistantsSection from '@/features/lab-owner/components/LabOwnerAssistantsSection'
 import LabOwnerBookingsTable from '@/features/lab-owner/components/LabOwnerBookingsTable'
 import LabOwnerBookingMobileCard from '@/features/lab-owner/components/LabOwnerBookingMobileCard'
+import LabOwnerPaymentSection from '@/features/lab-owner/components/LabOwnerPaymentSection'
 import ViewToggle from '@/components/ui/ViewToggle'
 import ReportViewerModal from '@/components/Dashboard/ReportViewerModal'
 import { Search } from 'lucide-react'
@@ -77,8 +78,9 @@ const LabOwnerDashboard = () => {
   const fetchBookings = async () => {
     try {
       setFetchError(null)
-      const { data } = await getLabOwnerBookings()
-      setBookings(data)
+      const { data: res } = await getLabOwnerBookings()
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setBookings(list)
     } catch {
       setFetchError('Failed to load bookings. Please try again.')
     } finally {
@@ -87,8 +89,9 @@ const LabOwnerDashboard = () => {
   }
   const fetchAssistants = async () => {
     try {
-      const { data } = await getMyAssistants()
-      setAssistants(data)
+      const { data: res } = await getMyAssistants()
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setAssistants(list)
     } catch (error) {
       console.log(error)
     }
@@ -141,8 +144,9 @@ const LabOwnerDashboard = () => {
   const searchBookings = async (value) => {
     setSearchTerm(value)
     try {
-      const { data } = await searchLabOwnerBookings(value)
-      setBookings(data)
+      const { data: res } = await searchLabOwnerBookings(value)
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setBookings(list)
     } catch (error) {
       console.log(error)
     }
@@ -289,80 +293,84 @@ const LabOwnerDashboard = () => {
               </Button>
             </form>
           </Modal>
-          <div ref={tableRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
-              <div className="flex items-center gap-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Booking Management</h2>
-                  <p className="text-gray-500">Manage laboratory bookings</p>
+          {activeSection === 'payment' ? (
+            <LabOwnerPaymentSection />
+          ) : (
+            <div ref={tableRef} className="bg-white rounded-[35px] shadow-sm mt-10 p-5 md:p-8">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">Booking Management</h2>
+                    <p className="text-gray-500">Manage laboratory bookings</p>
+                  </div>
+                  <ViewToggle view={view} onChange={setView} />
                 </div>
-                <ViewToggle view={view} onChange={setView} />
+                <div className="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
+                  <div className="relative flex-1 lg:w-96">
+                    <Input
+                      type="text"
+                      placeholder="Search patient, mobile, test, package..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-12"
+                      containerClassName="relative"
+                    />
+                    <Search
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
+                  </div>
+                  <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary whitespace-nowrap flex items-center h-11">
+                    Total: {filteredBookings.length}
+                  </div>
+                  <Button
+                    onClick={() => setShowAssistantForm(true)}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <UserPlus />
+                    Create Assistant
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
-                <div className="relative flex-1 lg:w-96">
-                  <Input
-                    type="text"
-                    placeholder="Search patient, mobile, test, package..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12"
-                    containerClassName="relative"
-                  />
-                  <Search
-                    size={18}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  />
+              {loading ? (
+                <Spinner />
+              ) : fetchError ? (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-5 text-center mt-6">
+                  <p className="text-red-600 text-xs font-medium">{fetchError}</p>
+                  <Button onClick={fetchBookings} variant="outline" className="mt-4">
+                    Retry
+                  </Button>
                 </div>
-                <div className="bg-primary/10 px-4 py-2.5 rounded-lg text-xs font-semibold text-primary whitespace-nowrap flex items-center h-11">
-                  Total: {filteredBookings.length}
-                </div>
-                <Button
-                  onClick={() => setShowAssistantForm(true)}
-                  className="flex items-center justify-center gap-2"
-                >
-                  <UserPlus />
-                  Create Assistant
-                </Button>
-              </div>
+              ) : filteredBookings.length === 0 ? (
+                <EmptyState text="No Bookings Found" />
+              ) : (
+                <>
+                  {view === 'table' ? (
+                    <LabOwnerBookingsTable
+                      filteredBookings={filteredBookings}
+                      assistants={assistants}
+                      handleAssignAssistant={handleAssignAssistant}
+                      setSelectedReport={setSelectedReport}
+                      uploadingReport={uploadingReport}
+                      handleUploadReport={handleUploadReport}
+                      setPreviewReport={setPreviewReport}
+                    />
+                  ) : (
+                    <LabOwnerBookingMobileCard
+                      filteredBookings={filteredBookings}
+                      assistants={assistants}
+                      handleAssignAssistant={handleAssignAssistant}
+                      selectedReport={selectedReport}
+                      setSelectedReport={setSelectedReport}
+                      uploadingReport={uploadingReport}
+                      handleUploadReport={handleUploadReport}
+                      setPreviewReport={setPreviewReport}
+                    />
+                  )}
+                </>
+              )}
             </div>
-            {loading ? (
-              <Spinner />
-            ) : fetchError ? (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-5 text-center mt-6">
-                <p className="text-red-600 text-xs font-medium">{fetchError}</p>
-                <Button onClick={fetchBookings} variant="outline" className="mt-4">
-                  Retry
-                </Button>
-              </div>
-            ) : filteredBookings.length === 0 ? (
-              <EmptyState text="No Bookings Found" />
-            ) : (
-              <>
-                {view === 'table' ? (
-                  <LabOwnerBookingsTable
-                    filteredBookings={filteredBookings}
-                    assistants={assistants}
-                    handleAssignAssistant={handleAssignAssistant}
-                    setSelectedReport={setSelectedReport}
-                    uploadingReport={uploadingReport}
-                    handleUploadReport={handleUploadReport}
-                    setPreviewReport={setPreviewReport}
-                  />
-                ) : (
-                  <LabOwnerBookingMobileCard
-                    filteredBookings={filteredBookings}
-                    assistants={assistants}
-                    handleAssignAssistant={handleAssignAssistant}
-                    selectedReport={selectedReport}
-                    setSelectedReport={setSelectedReport}
-                    uploadingReport={uploadingReport}
-                    handleUploadReport={handleUploadReport}
-                    setPreviewReport={setPreviewReport}
-                  />
-                )}
-              </>
-            )}
-          </div>
+          )}
         </div>
       </div>
       <ReportViewerModal

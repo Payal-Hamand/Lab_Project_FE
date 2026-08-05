@@ -45,8 +45,9 @@ const LabAssistantDashboard = () => {
   const fetchBookings = async () => {
     try {
       setFetchError(null)
-      const { data } = await getAssignedBookings()
-      setBookings(data)
+      const { data: res } = await getAssignedBookings()
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setBookings(list)
     } catch {
       setFetchError('Failed to load bookings. Please try again.')
     } finally {
@@ -161,8 +162,9 @@ const LabAssistantDashboard = () => {
   const searchBookings = async (value) => {
     setSearchTerm(value)
     try {
-      const { data } = await searchAssignedBookings(value)
-      setBookings(data)
+      const { data: res } = await searchAssignedBookings(value)
+      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+      setBookings(list)
     } catch (error) {
       console.log(error)
     }
