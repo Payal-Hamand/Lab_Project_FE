@@ -1,42 +1,40 @@
 import React from 'react'
-import { CalendarCheck, FlaskConical, TestTube, IndianRupee, Clock } from 'lucide-react'
-import { formatCurrency } from '@/utils/formatCurrency'
+import { ClipboardList, TestTube, FlaskConical, Microscope, Clock } from 'lucide-react'
 
 const statConfig = [
   {
-    key: 'totalBookings',
-    title: 'Total Bookings',
-    icon: CalendarCheck,
+    key: 'todayCollections',
+    title: "Today's Collections",
+    icon: ClipboardList,
     iconClass: 'bg-blue-50 text-blue-600',
   },
   {
     key: 'samplesCollected',
     title: 'Samples Collected',
-    icon: FlaskConical,
+    icon: TestTube,
     iconClass: 'bg-emerald-50 text-emerald-600',
   },
   {
-    key: 'testsCompleted',
-    title: 'Tests Completed',
-    icon: TestTube,
-    iconClass: 'bg-blue-50 text-blue-600',
+    key: 'samplesInLab',
+    title: 'Samples in Lab',
+    icon: FlaskConical,
+    iconClass: 'bg-purple-50 text-purple-600',
   },
   {
-    key: 'totalRevenue',
-    title: 'Total Revenue',
-    icon: IndianRupee,
+    key: 'testsInProgress',
+    title: 'Tests In Progress',
+    icon: Microscope,
     iconClass: 'bg-amber-50 text-amber-600',
-    isCurrency: true,
   },
   {
-    key: 'pendingReports',
-    title: 'Pending Reports',
+    key: 'testsPending',
+    title: 'Tests Pending',
     icon: Clock,
     iconClass: 'bg-rose-50 text-rose-600',
   },
 ]
 
-const LabOwnerStatsGrid = ({ stats }) => {
+const LabAssistantDashboardStats = ({ stats }) => {
   if (!stats) return null
 
   return (
@@ -56,7 +54,7 @@ const LabOwnerStatsGrid = ({ stats }) => {
               <div>
                 <p className="text-xs text-muted-foreground">{s.title}</p>
                 <p className="mt-0.5 text-xl font-bold text-foreground">
-                  {s.isCurrency ? formatCurrency(value) : value.toLocaleString('en-IN')}
+                  {value.toLocaleString('en-IN')}
                 </p>
               </div>
             </div>
@@ -67,4 +65,4 @@ const LabOwnerStatsGrid = ({ stats }) => {
   )
 }
 
-export default LabOwnerStatsGrid
+export default LabAssistantDashboardStats
